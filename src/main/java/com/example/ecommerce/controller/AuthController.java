@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -54,6 +51,46 @@ public class AuthController {
     )
     @PostMapping("/register")
     public ResponseEntity<Response> register(@RequestBody RegistrationRequest request) {
+        return null;
+    }
+
+    @ApiResponses (
+            value = {
+                    @ApiResponse (
+                            responseCode = "200",
+                            description = "Login successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                    {
+                                        "status": 200,
+                                        "message": "Login successfully",
+                                        "data": null
+                                    }
+                                    """)
+                            )
+
+                    ),
+                    @ApiResponse (
+                            responseCode = "400",
+                            description = "Wrong username or password",
+                            content = @Content (
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject ( value ="""
+                                    {
+                                        "status": 400,
+                                        "message": "Wrong username or password",
+                                        "data": null
+                                    }
+                                    """)
+                            )
+                    )
+            }
+    )
+    @GetMapping ("/login")
+    public ResponseEntity<Response> login(@RequestBody RegistrationRequest request) {
         return null;
     }
 }
