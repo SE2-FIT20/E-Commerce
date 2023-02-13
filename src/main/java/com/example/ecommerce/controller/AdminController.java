@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Get all account successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get all account successfully!",
@@ -71,18 +71,19 @@ public class AdminController {
             }
     )
     @GetMapping("/manage-accounts")
-    public ResponseEntity<Response> getAllAccounts () {
+    public ResponseEntity<Response> getAllAccounts() {
         return null;
     }
-    @ApiResponses (
+
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Get account by id successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get account by id successfully!",
@@ -115,18 +116,19 @@ public class AdminController {
             }
     )
     @GetMapping("/manage-accounts/{id}")
-    public ResponseEntity<Response> getAccountById (@PathVariable Long id) {
+    public ResponseEntity<Response> getAccountById(@PathVariable Long id) {
         return null;
     }
-    @ApiResponses (
+
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Update account successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Update account successfully!",
@@ -153,19 +155,19 @@ public class AdminController {
             }
     )
     @PutMapping("/manage-accounts")
-    public ResponseEntity<Response> updateAccount (@RequestBody AccountRequest request) {
+    public ResponseEntity<Response> updateAccount(@RequestBody AccountRequest request) {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Delete account successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Delete account successfully!",
@@ -173,22 +175,21 @@ public class AdminController {
                                             }
                                             """)
                             )
-                    ),@ApiResponse(
+                    ),
+                    @ApiResponse(
                     responseCode = "400",
                     description = "Delete account failed!",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = Response.class),
                             examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Delete account failed!",
-                                                "data": null
-                                            }
-                                            """)
-                    )
-            )
-
+                                    {
+                                        "status": 400,
+                                        "message": "Delete account failed!",
+                                        "data": null
+                                    }
+                                    """)
+                    )),
                     @ApiResponse(
                             responseCode = "404",
                             description = "Account not found!",
@@ -208,21 +209,20 @@ public class AdminController {
             }
     )
     @DeleteMapping("/manage-accounts/{id}")
-    public ResponseEntity<Response> deleteAccountById (@PathVariable int id) {
+    public ResponseEntity<Response> deleteAccountById(@PathVariable int id) {
         return null;
     }
 
 
-
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Get all products successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get all orders successfully!",
@@ -274,19 +274,19 @@ public class AdminController {
             }
     )
     @GetMapping("/manage-products")
-    public ResponseEntity<Response> getProducts () {
+    public ResponseEntity<Response> getProducts() {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Update product successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Update product successfully!",
@@ -313,19 +313,19 @@ public class AdminController {
             }
     )
     @PutMapping("/manage-products")
-    public ResponseEntity<Response> updateProduct (@RequestBody ProductRequest request) {
+    public ResponseEntity<Response> updateProduct(@RequestBody ProductRequest request) {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Delete product successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Delete product successfully!",
@@ -352,19 +352,19 @@ public class AdminController {
             }
     )
     @DeleteMapping("/manage-products/{id}")
-    public ResponseEntity<Response> deleteProductById (@PathVariable int id) {
+    public ResponseEntity<Response> deleteProductById(@PathVariable int id) {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Get feedback successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get feedback for product successfully!",
@@ -391,19 +391,19 @@ public class AdminController {
             }
     )
     @GetMapping("/feedbacks")
-    public ResponseEntity<Response> getFeedbacks () {
+    public ResponseEntity<Response> getFeedbacks() {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Get feedback successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get feedback by id successfully!",
@@ -430,19 +430,19 @@ public class AdminController {
             }
     )
     @GetMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> getFeedbacksById (@PathVariable int id) {
+    public ResponseEntity<Response> getFeedbacksById(@PathVariable int id) {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Mark feedback as read successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Mark feedback as read successfully!",
@@ -469,19 +469,19 @@ public class AdminController {
             }
     )
     @PutMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> markFeedbackAsRead (@PathVariable int id) {
+    public ResponseEntity<Response> markFeedbackAsRead(@PathVariable int id) {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (
+                    @ApiResponse(
                             responseCode = "200",
                             description = "Delete feedback successfully!",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Delete feedback successfully!",
@@ -508,16 +508,16 @@ public class AdminController {
             }
     )
     @DeleteMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> deleteFeedback (@PathVariable int id) {
+    public ResponseEntity<Response> deleteFeedback(@PathVariable int id) {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Get promotion successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Get promotion successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get all promotions successfully",
@@ -545,12 +545,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Create promotion successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Create promotion successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Create promotion successfully",
@@ -578,12 +578,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Update promotion successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Update promotion successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Update promotion successfully",
@@ -611,12 +611,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Delete promotion successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Delete promotion successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Delete promotion successfully",
@@ -644,12 +644,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Create payment gateway successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Create payment gateway successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Create payment gateway successfully",
@@ -677,12 +677,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Update payment gateway successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Update payment gateway successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Update payment gateway successfully",
@@ -710,12 +710,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Delete payment gateway successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Delete payment gateway successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Delete payment gateway successfully",
@@ -743,12 +743,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Get payment gateway successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Get payment gateway successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get payment gateway successfully",
@@ -776,12 +776,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Get all payment gateway successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Get all payment gateway successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get all payment gateway successfully",
@@ -809,12 +809,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Create delivery partner successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Create delivery partner successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Create delivery partner successfully",
@@ -842,12 +842,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Update delivery partner successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Update delivery partner successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Update delivery partner successfully",
@@ -875,12 +875,12 @@ public class AdminController {
         return null;
     }
 
-    @ApiResponses (
+    @ApiResponses(
             value = {
-                    @ApiResponse ( responseCode = "200", description = "Get list delivery partner successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Get list delivery partner successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get list delivery partner successfully",
@@ -907,12 +907,13 @@ public class AdminController {
     public ResponseEntity<Response> getAllDeliveryPartner() {
         return null;
     }
-    @ApiResponses (
+
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Get delivery partner successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Get delivery partner successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get delivery partner successfully",
@@ -939,12 +940,13 @@ public class AdminController {
     public ResponseEntity<Response> getDeliveryPartner(@PathVariable int id) {
         return null;
     }
-    @ApiResponses (
+
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Delete delivery partner successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Delete delivery partner successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Delete delivery partner successfully",
