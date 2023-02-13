@@ -1121,11 +1121,23 @@ public class AdminController {
                                             }
                                             """)
                             )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not found delivery partner!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found delivery partner!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
                     )
             }
     )
     @DeleteMapping("app-setting/delivery-partner/{id}")
-    public ResponseEntity<Response> deleteDeliveryPartner(@PathVariable int id) {
+    public ResponseEntity<Response> deleteDeliveryPartnerById(@PathVariable int id) {
         return null;
     }
 }
