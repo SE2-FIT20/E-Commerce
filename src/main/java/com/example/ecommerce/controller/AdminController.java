@@ -26,7 +26,29 @@ public class AdminController {
                                             {
                                                 "status": 200,
                                                 "message": "Get all account successfully!",
-                                                "data": null
+                                                "data": [
+                                                    {
+                                                        "id": 1 ,
+                                                        "email": "quangnam@gmail.com",
+                                                        "avatar" : "https:jadjkh.com",
+                                                        "role" : "CUSTOMER",
+                                                        "isLooked" : false
+                                                    },
+                                                    {
+                                                        "id": 2 ,
+                                                        "email": "quangnam@gmail.com",
+                                                        "avatar" : "https:jadjkh.com",
+                                                        "role" : "STORE",
+                                                        "isLooked" : false
+                                                    },
+                                                    {
+                                                        "id": 3 ,
+                                                        "email": "quangnam@gmail.com",
+                                                        "avatar" : "https:jadjkh.com",
+                                                        "role" : "DELIVERY_PARTNER",
+                                                        "isLooked" : false
+                                                    }
+                                                ]
                                             }
                                             """)
                             )
@@ -64,21 +86,27 @@ public class AdminController {
                                             {
                                                 "status": 200,
                                                 "message": "Get account by id successfully!",
-                                                "data": null
+                                                "data": {
+                                                        "id": 1 ,
+                                                        "email": "quangnam@gmail.com",
+                                                        "avatar" : "https:jadjkh.com",
+                                                        "role" : "CUSTOMER",
+                                                        "isLooked" : false
+                                                    }
                                             }
                                             """)
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "400",
+                            responseCode = "404",
                             description = "Get account by id failed!",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Response.class),
                                     examples = @ExampleObject(value = """
                                             {
-                                                "status": 400,
-                                                "message": "Wrong id!",
+                                                "status": 404,
+                                                "message": "Not found account!",
                                                 "data": null
                                             }
                                             """)
@@ -145,26 +173,42 @@ public class AdminController {
                                             }
                                             """)
                             )
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Delete account failed!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
+                    ),@ApiResponse(
+                    responseCode = "400",
+                    description = "Delete account failed!",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Response.class),
+                            examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
                                                 "message": "Delete account failed!",
                                                 "data": null
                                             }
                                             """)
+                    )
+            )
+
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Account not found!",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Account not found!",
+                                                "data": null
+                                            }
+                                            """)
                             )
                     )
+
             }
     )
-    @DeleteMapping("/manage-accounts")
-    public ResponseEntity<Response> deleteAccount (@RequestBody AccountRequest request) {
+    @DeleteMapping("/manage-accounts/{id}")
+    public ResponseEntity<Response> deleteAccountById (@PathVariable int id) {
         return null;
     }
 
@@ -182,7 +226,32 @@ public class AdminController {
                                             {
                                                 "status": 200,
                                                 "message": "Get all orders successfully!",
-                                                "data": null
+                                                "data": [
+                                                    {
+                                                        "id": 1,
+                                                        "name" : "iphone15",
+                                                        "description" : "best iphone",
+                                                        "category": "electronic",
+                                                        "price" : 999.99,
+                                                        "image" : "https:link.com"
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "name" : "apple",
+                                                        "description" : "best fruit",
+                                                        "category": "food",
+                                                        "price" : 90,
+                                                        "image" : "https:link.com"
+                                                    },
+                                                    {
+                                                        "id": 3,
+                                                        "name" : "t-shirt",
+                                                        "description" : "best shirt",
+                                                        "category": "fashion",
+                                                        "price" : 12,
+                                                        "image" : "https:link.com"
+                                                    }
+                                                ]
                                             }
                                             """)
                             )
@@ -282,8 +351,8 @@ public class AdminController {
                     )
             }
     )
-    @DeleteMapping("/manage-products")
-    public ResponseEntity<Response> deleteProduct (@RequestBody ProductRequest request) {
+    @DeleteMapping("/manage-products/{id}")
+    public ResponseEntity<Response> deleteProductById (@PathVariable int id) {
         return null;
     }
 
