@@ -173,7 +173,7 @@ public class AdminController {
                                             }
                                             """)
                             )
-                    ),@ApiResponse(
+                        ),@ApiResponse(
                     responseCode = "400",
                     description = "Delete account failed!",
                     content = @Content(
@@ -186,8 +186,8 @@ public class AdminController {
                                                 "data": null
                                             }
                                             """)
-                    )
-            )
+                        )
+                        ),
 
                     @ApiResponse(
                             responseCode = "404",
@@ -335,6 +335,21 @@ public class AdminController {
                             )
                     ),
                     @ApiResponse(
+                            reponseCode = "404",
+                            description = "Not found the account",
+                            content = @Content (
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found the account!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(
                             responseCode = "400",
                             description = "Delete product failed!",
                             content = @Content(
@@ -368,7 +383,25 @@ public class AdminController {
                                             {
                                                 "status": 200,
                                                 "message": "Get feedback for product successfully!",
-                                                "data": null
+                                                "data": [{
+                                                    "id" = 1,
+                                                    "comment": "The app is good",
+                                                    "isRead" : true,
+                                                    "UserId" : 12
+                                                },
+                                                {
+                                                    "id" = 2,
+                                                    "comment": "The app is bad",
+                                                    "isRead" : false,
+                                                    "UserId" : 35
+                                                },
+                                                {
+                                                    "id" = 3,
+                                                    "comment": "The app is ok",
+                                                    "isRead" : false,
+                                                    "UserId" : 100
+                                                }
+                                                ]
                                             }
                                             """)
                             )
@@ -407,7 +440,12 @@ public class AdminController {
                                             {
                                                 "status": 200,
                                                 "message": "Get feedback by id successfully!",
-                                                "data": null
+                                                "data": {
+                                                    "id" : 1,
+                                                    "comment" : "the app is good",
+                                                    "isRead" : false,
+                                                    "userId": 12
+                                                }
                                             }
                                             """)
                             )
@@ -422,6 +460,21 @@ public class AdminController {
                                             {
                                                 "status": 400,
                                                 "message": "Wrong id of feedback!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found the feedback!",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found the feedback!",
                                                 "data": null
                                             }
                                             """)
@@ -452,14 +505,14 @@ public class AdminController {
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "400",
-                            description = "Mark feedback as read failed!",
+                            responseCode = "404",
+                            description = "Not found the feedback id!",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Response.class),
                                     examples = @ExampleObject(value = """
                                             {
-                                                "status": 400,
+                                                "status": 404,
                                                 "message": "Wrong id of feedback!",
                                                 "data": null
                                             }
@@ -492,14 +545,29 @@ public class AdminController {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Delete feedback failed!",
+                            description = "Delete the feedback failed!",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Response.class),
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Wrong id of feedback!",
+                                                "message": "Delete the feedback failed!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found the feedback!",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found the feedback!",
                                                 "data": null
                                             }
                                             """)
@@ -521,7 +589,20 @@ public class AdminController {
                                             {
                                                 "status": 200,
                                                 "message": "Get all promotions successfully",
-                                                "data": null
+                                                "data": [
+                                                {
+                                                    "id" : 1,
+                                                    "percent" : 12,
+                                                    "storeId" : 35,
+                                                    "isGlobal": false
+                                                },
+                                                {
+                                                    "id" : 2,
+                                                    "percent" : 10,
+                                                    "storeId" : null,
+                                                    "isGlobal": true
+                                                }
+                                                ]
                                             }
                                             """)
                             )
@@ -565,7 +646,7 @@ public class AdminController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Wrong information of promotion!",
+                                                "message": "Create promotion failed!",
                                                 "data": null
                                             }
                                             """)
@@ -598,7 +679,19 @@ public class AdminController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Wrong information of promotion!",
+                                                "message": "Update information of promotion failed!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not found the promotion!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found the promotion!",
                                                 "data": null
                                             }
                                             """)
@@ -606,8 +699,8 @@ public class AdminController {
                     )
             }
     )
-    @PutMapping("/promotions")
-    public ResponseEntity<Response> updatePromotion(@RequestBody PromotionRequest promotionRequest) {
+    @PutMapping("/promotions/{id}")
+    public ResponseEntity<Response> updatePromotionById(@PathVariable int id) {
         return null;
     }
 
@@ -631,7 +724,19 @@ public class AdminController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Wrong id of promotion!",
+                                                "message": "Delete promotion failed!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not found the promotion!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found the promotion!",
                                                 "data": null
                                             }
                                             """)
@@ -640,7 +745,7 @@ public class AdminController {
             }
     )
     @DeleteMapping("/promotions/{id}")
-    public ResponseEntity<Response> deletePromotion(@PathVariable int id) {
+    public ResponseEntity<Response> deletePromotionById(@PathVariable int id) {
         return null;
     }
 
@@ -664,7 +769,7 @@ public class AdminController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Wrong information of payment gateway!",
+                                                "message": "Create payment gateway failed!",
                                                 "data": null
                                             }
                                             """)
@@ -705,8 +810,8 @@ public class AdminController {
                     )
             }
     )
-    @PutMapping("app-setting/payment-gateway")
-    public ResponseEntity<Response> updatePaymentGateway(@RequestBody PaymentGatewayRequest paymentGatewayRequest) {
+    @PutMapping("app-setting/payment-gateway/{id}")
+    public ResponseEntity<Response> updatePaymentGatewayById() {
         return null;
     }
 
@@ -730,7 +835,19 @@ public class AdminController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Wrong id of payment gateway!",
+                                                "message": "Delete payment gateway failed!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not found the payment gateway!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 400,
+                                                "message": "Not found the payment gateway!",
                                                 "data": null
                                             }
                                             """)
@@ -772,7 +889,7 @@ public class AdminController {
             }
     )
     @GetMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> getPaymentGateway(@PathVariable int id) {
+    public ResponseEntity<Response> getPaymentGatewayById(@PathVariable int id) {
         return null;
     }
 
@@ -862,7 +979,19 @@ public class AdminController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Wrong information of delivery partner!",
+                                                "message": "Update delivery partner failed!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not found the delivery partner!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found the delivery partner!",
                                                 "data": null
                                             }
                                             """)
@@ -870,8 +999,8 @@ public class AdminController {
                     )
             }
     )
-    @PutMapping("app-setting/delivery-partner")
-    public ResponseEntity<Response> updateDeliveryPartner(@RequestBody DeliveryPartnerRequest deliveryPartnerRequest) {
+    @PutMapping("app-setting/delivery-partner/{id}")
+    public ResponseEntity<Response> updateDeliveryPartnerById(@PathVariable int id) {
         return null;
     }
 
@@ -884,7 +1013,20 @@ public class AdminController {
                                             {
                                                 "status": 200,
                                                 "message": "Get list delivery partner successfully",
-                                                "data": null
+                                                "data": [
+                                                    {
+                                                    "id" : 1,
+                                                    "name": "giao hang nhanh" 
+                                                    },
+                                                    {
+                                                    "id" : 2,
+                                                    "name": "giao hang tiet kiem" 
+                                                    },
+                                                    {
+                                                    "id" : 3,
+                                                    "name": "giao hang 247" 
+                                                    }
+                                                ]
                                             }
                                             """)
                             )
@@ -916,7 +1058,10 @@ public class AdminController {
                                             {
                                                 "status": 200,
                                                 "message": "Get delivery partner successfully",
-                                                "data": null
+                                                "data": {
+                                                    "id" : 1,
+                                                    "name": "giao hang nhanh" 
+                                                }
                                             }
                                             """)
                             )
@@ -927,7 +1072,19 @@ public class AdminController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Wrong id of delivery partner!",
+                                                "message": "Get delivery partner failed!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not found delivery partner!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found delivery partner!",
                                                 "data": null
                                             }
                                             """)
@@ -936,7 +1093,7 @@ public class AdminController {
             }
     )
     @GetMapping("app-setting/delivery-partner/{id}")
-    public ResponseEntity<Response> getDeliveryPartner(@PathVariable int id) {
+    public ResponseEntity<Response> getDeliveryPartnerById(@PathVariable int id) {
         return null;
     }
     @ApiResponses (
