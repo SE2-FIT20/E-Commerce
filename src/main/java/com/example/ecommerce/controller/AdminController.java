@@ -335,7 +335,7 @@ public class AdminController {
                             )
                     ),
                     @ApiResponse(
-                            reponseCode = "404",
+                            responseCode = "404",
                             description = "Not found the account",
                             content = @Content (
                                     mediaType = "application/json",
