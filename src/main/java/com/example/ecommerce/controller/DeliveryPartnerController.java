@@ -27,7 +27,39 @@ public class DeliveryPartnerController {
                                             {
                                                 "status": 200,
                                                 "message": "Get all orders successfully",
-                                                "data": null    }
+                                                "data": [
+                                                    {
+                                                        "id": 12,
+                                                        "storeId": 20,
+                                                        "userId": 1,
+                                                        "deliveryPartner: 14,
+                                                        "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                                        "fromAddress": "Street 1 Tiger road Hanoi",
+                                                        "toAddress": "150a District 1 Saigon",
+                                                        "status": "READY"
+                                                    },
+                                                    {
+                                                        "id": 12,
+                                                        "storeId": 20,
+                                                        "userId": 1,
+                                                        "deliveryPartner: 14,
+                                                        "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                                        "fromAddress": "Street 1 Tiger road Hanoi",
+                                                        "toAddress": "150a District 1 Saigon",
+                                                        "status": "IN_PROGRESS"
+                                                    },
+                                                    {
+                                                        "id": 12,
+                                                        "storeId": 20,
+                                                        "userId": 1,
+                                                        "deliveryPartner: 14,
+                                                        "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                                        "fromAddress": "Street 1 Tiger road Hanoi",
+                                                        "toAddress": "150a District 1 Saigon",
+                                                        "status": "DELIVERED"
+                                                    }
+                                                ]
+                                                }
                                             """)
                             )
                     ),
@@ -53,6 +85,7 @@ public class DeliveryPartnerController {
         return null;
     }
 
+    //TODO: order has the attribute of deliveryTime
     @ApiResponses (
             value = {
                     @ApiResponse(
@@ -65,7 +98,32 @@ public class DeliveryPartnerController {
                                             {
                                                 "status": 200,
                                                 "message": "Get order by id successfully",
-                                                "data": null
+                                                "data": {
+                                                        "id": 12,
+                                                        "store": {
+                                                            "id": 12,
+                                                            "name": "Store 1",
+                                                            "email": "ahihi@gmail.com",
+                                                            "avatar": "http://cdnaowe/asw-ds.com"
+                                                        },
+                                                        "user": {
+                                                            "id": 1,
+                                                            "name": "Hoa",
+                                                            "email": "ahihi@gmail.com",
+                                                            "avatar": "http://cdnaowe/asw-ds.com"
+                                                            "phoneNumber: "3240234235"
+                                                        },
+                                                        "deliveryPartner": {
+                                                            "id": 12,
+                                                            "name": "Fast and Care Express",
+                                                            "email": "adw@gmail.com",
+                                                            "avatar": "http://cdnaowe/asw-ds.com"
+                                                        }
+                                                        "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                                        "fromAddress": "Street 1 Tiger road Hanoi",
+                                                        "toAddress": "150a District 1 Saigon",
+                                                        "status": "IN_PROGRESS"
+                                                    },
                                             }
                                             """)
                             )
@@ -80,6 +138,21 @@ public class DeliveryPartnerController {
                                             {
                                                 "status": 400,
                                                 "message": "Get order by id failed",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Order Not Found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Order Not Found",
                                                 "data": null
                                             }
                                             """)

@@ -61,21 +61,6 @@ public class CustomerController {
                                             }
                                             """)
                             )
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 500,
-                                                "message": "Internal server error",
-                                                "data": null
-                                            }
-                                            """)
-                            )
                     )
             }
     )
@@ -130,21 +115,6 @@ public class CustomerController {
                                             }
                                             """)
                             )
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 500,
-                                                "message": "Internal server error",
-                                                "data": null
-                                            }
-                                            """)
-                            )
                     )
             }
     )
@@ -153,6 +123,7 @@ public class CustomerController {
         return null;
     }
 
+    /* This is optional as the result of team discussion
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -221,7 +192,7 @@ public class CustomerController {
     public ResponseEntity<Response> getOrderHistory() {
         return null;
     }
-
+*/
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -268,21 +239,6 @@ public class CustomerController {
                                             }
                                             """)
                             )
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 500,
-                                                "message": "Internal server error",
-                                                "data": null
-                                            }
-                                            """)
-                            )
                     )
             }
     )
@@ -303,7 +259,13 @@ public class CustomerController {
                                             {
                                                 "status": 200,
                                                 "message": "Get account information successfully",
-                                                "data": null
+                                                "data": {
+                                                    "id": 12,
+                                                    "name": "Quan",
+                                                    "email": "quando@gmail.com",
+                                                    "address": "12b Street A District 1",
+                                                    "phoneNumber": "2058821021"
+                                                }
                                             }
                                             """)
                             )
@@ -333,21 +295,6 @@ public class CustomerController {
                                             {
                                                 "status": 404,
                                                 "message": "Account not found",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 500,
-                                                "message": "Internal server error",
                                                 "data": null
                                             }
                                             """)

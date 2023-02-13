@@ -24,7 +24,32 @@ public class StoreController {
                                     {
                                         "status": 200,
                                         "message": "Get all products successfully",
-                                        "data": null
+                                        "data": [
+                                            {
+                                                        "id": 1,
+                                                        "name" : "iphone15",
+                                                        "description" : "best iphone",
+                                                        "category": "electronic",
+                                                        "price" : 999.99,
+                                                        "image" : "https:link.com"
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "name" : "apple",
+                                                        "description" : "best fruit",
+                                                        "category": "food",
+                                                        "price" : 90,
+                                                        "image" : "https:link.com"
+                                                    },
+                                                    {
+                                                        "id": 3,
+                                                        "name" : "t-shirt",
+                                                        "description" : "best shirt",
+                                                        "category": "fashion",
+                                                        "price" : 12,
+                                                        "image" : "https:link.com"
+                                                    }
+                                        ]
                                     }
                                     """)
                     )
@@ -56,7 +81,15 @@ public class StoreController {
                                     {
                                         "status": 200,
                                         "message": "Create product by id successfully",
-                                        "data": null
+                                        "data":  {
+                                            "id": 3,
+                                            "name" : "t-shirt",
+                                            "description" : "best shirt",
+                                            "category": "fashion",
+                                            "price" : 12,
+                                            "image" : "https:link.com"
+                                        }
+                                        
                                     }
                                     """)
                     )
@@ -68,6 +101,18 @@ public class StoreController {
                                     {
                                         "status": 400,
                                         "message": "Create product failed",
+                                        "data": null
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Product Not Found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Response.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "status": 400,
+                                        "message": "Product Not Found   ",
                                         "data": null
                                     }
                                     """)
@@ -180,7 +225,38 @@ public class StoreController {
                                     {
                                         "status": 200,
                                         "message": "Update order successfully",
-                                        "data": null
+                                        "data": [
+                                          {
+                                              "id": 12,
+                                              "storeId": 20,
+                                              "userId": 1,
+                                              "deliveryPartner: 14,
+                                              "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                              "fromAddress": "Street 1 Tiger road Hanoi",
+                                              "toAddress": "150a District 1 Saigon",
+                                              "status": "READY"
+                                          },
+                                          {
+                                              "id": 12,
+                                              "storeId": 20,
+                                              "userId": 1,
+                                              "deliveryPartner: 14,
+                                              "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                              "fromAddress": "Street 1 Tiger road Hanoi",
+                                              "toAddress": "150a District 1 Saigon",
+                                              "status": "IN_PROGRESS"
+                                          },
+                                          {
+                                              "id": 12,
+                                              "storeId": 20,
+                                              "userId": 1,
+                                              "deliveryPartner: 14,
+                                              "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                              "fromAddress": "Street 1 Tiger road Hanoi",
+                                              "toAddress": "150a District 1 Saigon",
+                                              "status": "DELIVERED"
+                                          }
+                                      ]
                                     }
                                     """)
                     )
@@ -202,40 +278,42 @@ public class StoreController {
     public ResponseEntity<Response> updateOrder() {
         return null;
     }
+    /* this is optional as the result of the team discussion
 
-    @ApiResponses (
-            value = {
-                    @ApiResponse (responseCode = "200", description = "Get sale report successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Get sale report successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Get sale report failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Get sale report failed",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @GetMapping("/sale-report")
-    public ResponseEntity<Response> getSaleReport() {
-        return null;
-    }
+      @ApiResponses (
+              value = {
+                      @ApiResponse (responseCode = "200", description = "Get sale report successfully!",
+                              content = @Content (mediaType = "application/json",
+                                      schema = @Schema (implementation = Response.class),
+                                      examples = @ExampleObject (value = """
+                                              {
+                                                  "status": 200,
+                                                  "message": "Get sale report successfully",
+                                                  "data":  null
+                                              }
+                                              """)
+                              )
+                      ),
+                      @ApiResponse(responseCode = "400", description = "Get sale report failed!",
+                              content = @Content(mediaType = "application/json",
+                                      schema = @Schema(implementation = Response.class),
+                                      examples = @ExampleObject(value = """
+                                              {
+                                                  "status": 400,
+                                                  "message": "Get sale report failed",
+                                                  "data": null
+                                              }
+                                              """)
+                              )
+                      )
+              }
+      )
 
+      @GetMapping("/sale-report")
+      public ResponseEntity<Response> getSaleReport() {
+          return null;
+      }
+  */
     @ApiResponses (
             value = {
                     @ApiResponse (responseCode = "200", description = "Get promotion successfully!",
@@ -245,7 +323,29 @@ public class StoreController {
                                             {
                                                 "status": 200,
                                                 "message": "Get promotion successfully",
-                                                "data": null
+                                                "data": [
+                                                    {
+                                                        "id": 1,
+                                                        "name": "Promotion 1",
+                                                        "percent": 10,
+                                                        "storeId": null,
+                                                        "isGlobal": true,
+                                                    },
+                                                     {
+                                                        "id": 2,
+                                                        "name": "Promotion 2",
+                                                        "percent": 52,
+                                                        "storeId": 42,
+                                                        "isGlobal": false,
+                                                    }
+                                                     {
+                                                        "id": 3,
+                                                        "name": "Promotion 3",
+                                                        "percent": 50,
+                                                        "storeId": null,
+                                                        "isGlobal": true,
+                                                    }
+                                                ]
                                             }
                                             """)
                             )
@@ -344,7 +444,13 @@ public class StoreController {
                                             {
                                                 "status": 200,
                                                 "message": "Get store account successfully",
-                                                "data": null
+                                                "data": {
+                                                    "id": 10,
+                                                    "name": "Store 1",
+                                                    "email": "ekaopsdk2gmail.com",
+                                                    "address": "Hanoi",
+                                                    "description": "Our store sells everything!"
+                                                }
                                             }
                                             """)
                             )
