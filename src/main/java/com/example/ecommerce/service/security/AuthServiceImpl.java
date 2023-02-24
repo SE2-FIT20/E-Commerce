@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final JwtService jwtService;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
 
     @Override
