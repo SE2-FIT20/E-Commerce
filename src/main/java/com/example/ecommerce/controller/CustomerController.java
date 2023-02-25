@@ -1,7 +1,7 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.UpdateAccountRequest;
-import com.example.ecommerce.dto.request.OrderRequest;
+import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
+import com.example.ecommerce.dto.request.order.AddOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -65,7 +65,7 @@ public class CustomerController {
             }
     )
     @PostMapping("/add-to-cart")
-    public ResponseEntity<Response> addToCart(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Response> addToCart(@RequestBody AddOrderRequest orderRequest) {
         return null;
     }
 
@@ -119,7 +119,7 @@ public class CustomerController {
             }
     )
     @PostMapping("/checkout")
-    public ResponseEntity<Response> checkout(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Response> checkout() {
         return null;
     }
 
@@ -243,7 +243,7 @@ public class CustomerController {
             }
     )
     @PutMapping("/account")
-    public ResponseEntity<Response> updateAccount(@RequestBody UpdateAccountRequest accountRequest) {
+    public ResponseEntity<Response> updateAccount(@RequestBody UpdateCustomerRequest accountRequest) {
         return null;
     }
 
@@ -303,7 +303,7 @@ public class CustomerController {
             }
     )
     @GetMapping("/account")
-    public ResponseEntity<Response> getAccount(@RequestBody UpdateAccountRequest accountRequest) {
+    public ResponseEntity<Response> getAccount() {
         return null;
     }
 }

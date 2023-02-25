@@ -3,7 +3,7 @@ package com.example.ecommerce.service.security;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.JwtToken;
 import com.example.ecommerce.dto.LoginRequest;
-import com.example.ecommerce.dto.request.RegistrationRequest;
+import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.repository.UserRepository;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,14 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.*;
+import com.example.ecommerce.dto.deliveryPartner.CreateDeliveryParnertRequest;
+import com.example.ecommerce.dto.deliveryPartner.UpdateDeliveryPartnerRequest;
+import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
+import com.example.ecommerce.dto.request.paymentOption.CreatePaymentOption;
+import com.example.ecommerce.dto.request.paymentOption.UpdatePaymentOption;
+import com.example.ecommerce.dto.request.product.UpdateProductRequest;
+import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
-import com.example.ecommerce.dto.request.UpdatePromotionRequest;
+import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -956,7 +962,7 @@ public class AdminController {
             }
     )
     @PostMapping("app-setting/delivery-partner")
-    public ResponseEntity<Response> createDeliveryPartner(@RequestBody DeliveryPartnerRequest deliveryPartnerRequest) {
+    public ResponseEntity<Response> createDeliveryPartner(@RequestBody CreateDeliveryParnertRequest deliveryPartnerRequest) {
         return null;
     }
 

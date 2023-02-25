@@ -1,4 +1,4 @@
-package com.example.ecommerce.dto.request;
+package com.example.ecommerce.dto.request.auth;
 
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import lombok.Data;

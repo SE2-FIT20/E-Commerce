@@ -1,9 +1,12 @@
 package com.example.ecommerce.controller;
 
 
-import com.example.ecommerce.dto.request.*;
+import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
+import com.example.ecommerce.dto.request.product.CreateProductRequest;
+import com.example.ecommerce.dto.request.product.UpdateProductRequest;
+import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
-import com.example.ecommerce.dto.request.UpdatePromotionRequest;
+import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -119,7 +122,7 @@ public class StoreController {
             )
     })
     @PostMapping("/products")
-    public ResponseEntity<Response> createProduct(@RequestBody CreatProductRequest request) {
+    public ResponseEntity<Response> createProduct(@RequestBody CreateProductRequest request) {
         return null;
     }
 

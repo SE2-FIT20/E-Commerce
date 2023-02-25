@@ -1,7 +1,7 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.LoginRequest;
-import com.example.ecommerce.dto.request.RegistrationRequest;
+import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.security.AuthService;
 
@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

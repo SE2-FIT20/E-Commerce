@@ -1,4 +1,4 @@
-package com.example.ecommerce.dto.request;
+package com.example.ecommerce.dto.request.promotion;
 
 import lombok.Data;
 
