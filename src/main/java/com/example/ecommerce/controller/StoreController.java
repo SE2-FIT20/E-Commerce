@@ -7,6 +7,7 @@ import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -75,6 +76,9 @@ public class StoreController {
         return null;
     }
 
+    @Operation(
+
+    )
     @ApiResponses (value = {
             @ApiResponse (responseCode = "200", description = "Create product successfully!",
                     content = @Content (mediaType = "application/json",
@@ -184,7 +188,7 @@ public class StoreController {
             )
     })
     @DeleteMapping("/products/{id}")
-    public ResponseEntity<Response> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Response> deleteProduct(@PathVariable @Schema(description = "Id of the product") Long id) {
         return null;
     }
 

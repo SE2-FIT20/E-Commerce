@@ -1,7 +1,7 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.deliveryPartner.CreateDeliveryPartnerRequest;
-import com.example.ecommerce.dto.deliveryPartner.UpdateDeliveryPartnerRequest;
+import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
+import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
 import com.example.ecommerce.dto.request.paymentOption.CreatePaymentOption;
 import com.example.ecommerce.dto.request.paymentOption.UpdatePaymentOption;
