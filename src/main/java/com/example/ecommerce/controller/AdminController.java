@@ -2,7 +2,7 @@ package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.*;
 import com.example.ecommerce.dto.response.Response;
-import com.example.ecommerce.request.UpdatePromotionRequest;
+import com.example.ecommerce.dto.request.UpdatePromotionRequest;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -314,7 +314,7 @@ public class AdminController {
             }
     )
     @PutMapping("/manage-products")
-    public ResponseEntity<Response> updateProduct(@RequestBody UpdateProductRequest request) {
+    public ResponseEntity<Response> updateProduct(@RequestBody CreatProductRequest request) {
         return null;
     }
 

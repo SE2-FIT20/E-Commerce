@@ -1,4 +1,4 @@
 package com.example.ecommerce.dto.request;
 
-public class UpdateProductRequest {
+public class UpdatePromotionRequest {
 }
