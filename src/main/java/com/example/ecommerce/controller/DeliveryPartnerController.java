@@ -2,6 +2,7 @@ package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.RegistrationRequest;
+import com.example.ecommerce.dto.request.UpdateStatusRequest;
 import com.example.ecommerce.dto.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/delivery-partner")
 public class DeliveryPartnerController {
-
 
     @ApiResponses (
             value = {
@@ -163,7 +163,7 @@ public class DeliveryPartnerController {
             }
     )
     @GetMapping("/orders/{id}")
-    public ResponseEntity<Response> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<Response> getOrderById(@PathVariable @Schema(description = "id of order") Long id) {
         return null;
     }
 
@@ -219,7 +219,11 @@ public class DeliveryPartnerController {
     }
     )
     @PutMapping("/account")
+<<<<<<< HEAD
     public ResponseEntity<Response> updateStatusOrder(@RequestBody UpdateAccountRequest accountRequest) {
+=======
+    public ResponseEntity<Response> updateStatusOrder(@RequestBody UpdateStatusRequest accountRequest) {
+>>>>>>> 51d489b (cus and del)
         return null;
     }
 }

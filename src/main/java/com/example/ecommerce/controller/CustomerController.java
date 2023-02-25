@@ -1,7 +1,9 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
+import com.example.ecommerce.dto.request.AddOrderRequest;
 import com.example.ecommerce.dto.request.OrderRequest;
+import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.response.Response;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -65,7 +67,7 @@ public class CustomerController {
             }
     )
     @PostMapping("/add-to-cart")
-    public ResponseEntity<Response> addToCart(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Response> addToCart(@RequestBody AddOrderRequest orderRequest) {
         return null;
     }
 
