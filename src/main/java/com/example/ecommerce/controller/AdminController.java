@@ -2,6 +2,7 @@ package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.*;
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.request.UpdatePromotionRequest;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -214,7 +215,6 @@ public class AdminController {
         return null;
     }
 
-
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -314,7 +314,7 @@ public class AdminController {
             }
     )
     @PutMapping("/manage-products")
-    public ResponseEntity<Response> updateProduct(@RequestBody ProductRequest request) {
+    public ResponseEntity<Response> updateProduct(@RequestBody UpdateProductRequest request) {
         return null;
     }
 
@@ -656,7 +656,7 @@ public class AdminController {
             }
     )
     @PostMapping("/promotions")
-    public ResponseEntity<Response> createPromotion(@RequestBody PromotionRequest promotionRequest) {
+    public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
         return null;
     }
 
@@ -701,7 +701,7 @@ public class AdminController {
             }
     )
     @PutMapping("/promotions/{id}")
-    public ResponseEntity<Response> updatePromotionById(@PathVariable int id) {
+    public ResponseEntity<Response> updatePromotionById(@PathVariable int id, @RequestBody UpdatePromotionRequest promotionRequest) {
         return null;
     }
 
@@ -779,7 +779,7 @@ public class AdminController {
             }
     )
     @PostMapping("app-setting/payment-gateway")
-    public ResponseEntity<Response> createPaymentGateway(@RequestBody PaymentGatewayRequest paymentGatewayRequest) {
+    public ResponseEntity<Response> createPaymentOption(@RequestBody CreatePaymentOption paymentGatewayRequest) {
         return null;
     }
 
@@ -812,7 +812,7 @@ public class AdminController {
             }
     )
     @PutMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> updatePaymentGatewayById() {
+    public ResponseEntity<Response> updatePaymentOptionById(@PathVariable int id, @RequestBody UpdatePaymentOption paymentGatewayRequest) {
         return null;
     }
 
@@ -857,7 +857,7 @@ public class AdminController {
             }
     )
     @DeleteMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> deletePaymentGateway(@PathVariable int id) {
+    public ResponseEntity<Response> deletePaymentOption(@PathVariable int id) {
         return null;
     }
 
@@ -890,7 +890,7 @@ public class AdminController {
             }
     )
     @GetMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> getPaymentGatewayById(@PathVariable int id) {
+    public ResponseEntity<Response> getPaymentOptionById(@PathVariable int id) {
         return null;
     }
 
@@ -923,7 +923,7 @@ public class AdminController {
             }
     )
     @GetMapping("app-setting/payment-gateway")
-    public ResponseEntity<Response> getAllPaymentGateway() {
+    public ResponseEntity<Response> getAllPaymentOption() {
         return null;
     }
 

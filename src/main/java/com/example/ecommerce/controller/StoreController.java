@@ -2,8 +2,8 @@ package com.example.ecommerce.controller;
 
 
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
-import com.example.ecommerce.dto.request.ProductRequest;
-import com.example.ecommerce.dto.request.PromotionRequest;
+import com.example.ecommerce.dto.request.UpdateProductRequest;
+import com.example.ecommerce.dto.request.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -120,7 +120,7 @@ public class StoreController {
             )
     })
     @PostMapping("/products")
-    public ResponseEntity<Response> createProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<Response> createProduct(@RequestBody UpdateProductRequest productRequest) {
         return null;
     }
 
@@ -151,7 +151,7 @@ public class StoreController {
             )
     })
     @PutMapping("/products")
-    public ResponseEntity<Response> updateProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<Response> updateProduct(@RequestBody UpdateProductRequest productRequest) {
         return null;
     }
 
@@ -182,7 +182,7 @@ public class StoreController {
             )
     })
     @DeleteMapping("/products")
-    public ResponseEntity<Response> deleteProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<Response> deleteProduct(@RequestBody UpdateProductRequest productRequest) {
         return null;
     }
 
@@ -398,7 +398,7 @@ public class StoreController {
             }
     )
     @PostMapping("/promotion")
-    public ResponseEntity<Response> createPromotion(@RequestBody PromotionRequest promotionRequest) {
+    public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
         return null;
     }
 
