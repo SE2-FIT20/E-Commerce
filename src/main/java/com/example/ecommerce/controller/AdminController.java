@@ -116,7 +116,7 @@ public class AdminController {
             }
     )
     @GetMapping("/manage-accounts/{id}")
-    public ResponseEntity<Response> getAccountById(@PathVariable Long id) {
+    public ResponseEntity<Response> getAccountById(@PathVariable @Schema(description = "id of account") Long id) {
         return null;
     }
 

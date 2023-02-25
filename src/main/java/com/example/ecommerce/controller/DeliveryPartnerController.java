@@ -1,7 +1,9 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.AccountRequest;
+import com.example.ecommerce.dto.request.RegistrationRequest;
 import com.example.ecommerce.dto.response.Response;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -165,6 +167,24 @@ public class DeliveryPartnerController {
         return null;
     }
 
+    @Operation(
+            summary = "Update status of order",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RegistrationRequest.class),
+                            examples = @ExampleObject(value = """
+                                        {
+                                        "email": "Hainguyen@gmail.com",
+                                        "password": "123456",
+                                        "name": "Hai Nguyen"
+                                        }
+                                        """
+                            )
+                    )
+            )
+
+    )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
