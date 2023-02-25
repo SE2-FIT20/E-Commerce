@@ -156,7 +156,7 @@ public class AdminController {
             }
     )
     @PutMapping("/manage-accounts")
-    public ResponseEntity<Response> updateAccount(@RequestBody UpdateAccountRequest request) {
+    public ResponseEntity<Response> changeAccess(@RequestBody ChangeAccessRequest request) {
         return null;
     }
 
@@ -314,7 +314,7 @@ public class AdminController {
             }
     )
     @PutMapping("/manage-products")
-    public ResponseEntity<Response> updateProduct(@RequestBody CreatProductRequest request) {
+    public ResponseEntity<Response> updateProduct(@RequestBody UpdateProductRequest request) {
         return null;
     }
 
@@ -700,8 +700,8 @@ public class AdminController {
                     )
             }
     )
-    @PutMapping("/promotions/{id}")
-    public ResponseEntity<Response> updatePromotionById(@PathVariable int id, @RequestBody UpdatePromotionRequest promotionRequest) {
+    @PutMapping("/promotions")
+    public ResponseEntity<Response> updatePromotionById(@RequestBody UpdatePromotionRequest promotionRequest) {
         return null;
     }
 
@@ -811,8 +811,8 @@ public class AdminController {
                     )
             }
     )
-    @PutMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> updatePaymentOptionById(@PathVariable int id, @RequestBody UpdatePaymentOption paymentGatewayRequest) {
+    @PutMapping("app-setting/payment-gateway/")
+    public ResponseEntity<Response> updatePaymentOptionById(@RequestBody UpdatePaymentOption paymentGatewayRequest) {
         return null;
     }
 
@@ -1000,8 +1000,8 @@ public class AdminController {
                     )
             }
     )
-    @PutMapping("app-setting/delivery-partner/{id}")
-    public ResponseEntity<Response> updateDeliveryPartnerById(@PathVariable int id) {
+    @PutMapping("app-setting/delivery-partner")
+    public ResponseEntity<Response> updateDeliveryPartnerById(@RequestBody UpdateDeliveryPartnerRequest request) {
         return null;
     }
 
