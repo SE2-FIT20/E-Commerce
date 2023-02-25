@@ -1,6 +1,6 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.deliveryPartner.CreateDeliveryParnertRequest;
+import com.example.ecommerce.dto.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
 import com.example.ecommerce.dto.request.paymentOption.CreatePaymentOption;
@@ -962,7 +962,7 @@ public class AdminController {
             }
     )
     @PostMapping("app-setting/delivery-partner")
-    public ResponseEntity<Response> createDeliveryPartner(@RequestBody CreateDeliveryParnertRequest deliveryPartnerRequest) {
+    public ResponseEntity<Response> createDeliveryPartner(@RequestBody CreateDeliveryPartnerRequest deliveryPartnerRequest) {
         return null;
     }
 
