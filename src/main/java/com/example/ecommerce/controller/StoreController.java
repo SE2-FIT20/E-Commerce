@@ -1,6 +1,7 @@
 package com.example.ecommerce.controller;
 
 
+import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
@@ -19,11 +20,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/store")
 public class StoreController {
-    @ApiResponses (value = {
-            @ApiResponse (responseCode = "200", description = "Get all products successfully!",
-                    content = @Content (mediaType = "application/json",
-                            schema = @Schema (implementation = Response.class),
-                            examples = @ExampleObject (value = """
+
+    @Operation(summary = "Get all products")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get all products successfully!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Response.class),
+                            examples = @ExampleObject(value = """
                                     {
                                         "status": 200,
                                         "message": "Get all products successfully",
@@ -76,14 +79,30 @@ public class StoreController {
         return null;
     }
 
-    @Operation(
-
+    @Operation(summary = "Create product",
+            description = "Create product by id",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreateProductRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "name" : "t-shirt",
+                                        "description" : "best shirt",
+                                        "category": "fashion",
+                                        "price" : 12,
+                                        "image" : "https:link.com"
+                                    }
+                                    """)
+                    )
+            )
     )
-    @ApiResponses (value = {
-            @ApiResponse (responseCode = "200", description = "Create product successfully!",
-                    content = @Content (mediaType = "application/json",
-                            schema = @Schema (implementation = Response.class),
-                            examples = @ExampleObject (value = """
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Create product successfully!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Response.class),
+                            examples = @ExampleObject(value = """
+>>>>>>> b5db3b5 (check storeController)
                                     {
                                         "status": 200,
                                         "message": "Create product by id successfully",
@@ -130,11 +149,32 @@ public class StoreController {
         return null;
     }
 
-    @ApiResponses (value = {
-            @ApiResponse (responseCode = "200", description = "Update product successfully!",
-                    content = @Content (mediaType = "application/json",
-                            schema = @Schema (implementation = Response.class),
-                            examples = @ExampleObject (value = """
+
+    @Operation(
+            summary = "Update product",
+            description = "Update product by id",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UpdateProductRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "id": 3,
+                                        "name" : "t-shirt",
+                                        "description" : "best shirt",
+                                        "category": "fashion",
+                                        "price" : 12,
+                                        "image" : "https:link.com"
+                                    }
+                                    """)
+                    )
+            )
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update product successfully!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Response.class),
+                            examples = @ExampleObject(value = """
                                     {
                                         "status": 200,
                                         "message": "Update product by id successfully",
@@ -161,11 +201,14 @@ public class StoreController {
         return null;
     }
 
-    @ApiResponses (value = {
-            @ApiResponse (responseCode = "200", description = "Delete product successfully!",
-                    content = @Content (mediaType = "application/json",
-                            schema = @Schema (implementation = Response.class),
-                            examples = @ExampleObject (value = """
+
+    @Operation(summary = "Delete product",
+            description = "Delete product by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete product successfully!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Response.class),
+                            examples = @ExampleObject(value = """
                                     {
                                         "status": 200,
                                         "message": "Delete product by id successfully",
@@ -188,15 +231,19 @@ public class StoreController {
             )
     })
     @DeleteMapping("/products/{id}")
-    public ResponseEntity<Response> deleteProduct(@PathVariable @Schema(description = "Id of the product") Long id) {
+
+    public ResponseEntity<Response> deleteProduct(@PathVariable @Schema(description = "delete product by id") Long id) {
         return null;
     }
 
-    @ApiResponses (value = {
-            @ApiResponse (responseCode = "200", description = "Get order successfully!",
-                    content = @Content (mediaType = "application/json",
-                            schema = @Schema (implementation = Response.class),
-                            examples = @ExampleObject (value = """
+    @Operation(summary = "Get orders",
+            description = "Get all orders"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get order successfully!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Response.class),
+                            examples = @ExampleObject(value = """
                                     {
                                         "status": 200,
                                         "message": "Get order successfully",
@@ -223,8 +270,10 @@ public class StoreController {
         return null;
     }
 
-    @ApiResponses (value = {
-            @ApiResponse (responseCode = "200", description = "Update order successfully!",
+
+    @Operation(summary = "update order ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update order successfully!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Response.class),
                             examples = @ExampleObject(value = """
@@ -284,6 +333,7 @@ public class StoreController {
     public ResponseEntity<Response> updateOrder(@PathVariable Long id, @RequestBody UpdateOrderRequest request) {
         return null;
     }
+
     /* this is optional as the result of the team discussion
 
       @ApiResponses (
@@ -320,12 +370,13 @@ public class StoreController {
           return null;
       }
   */
-    @ApiResponses (
+    @Operation(summary = "get promotion")
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Get promotion successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Get promotion successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get promotion successfully",
@@ -375,12 +426,28 @@ public class StoreController {
         return null;
     }
 
-    @ApiResponses (
+    @Operation(summary = "create promotion",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreatePromotionRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "name": "Promotion 1",
+                                        "percent": 10,
+                                        "storeId": null,
+                                        "isGlobal": true,
+                                    }
+                                    """)
+                    )
+            )
+    )
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Create promotion successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Create promotion successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Create promotion successfully",
@@ -408,12 +475,28 @@ public class StoreController {
         return null;
     }
 
-    @ApiResponses (
+    @Operation(summary = "update promotion",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UpdatePromotionRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "name": "Promotion 1",
+                                        "percent": 10,
+                                        "storeId": null,
+                                        "isGlobal": true,
+                                    }
+                                    """)
+                    )
+            )
+    )
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Update store information successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Update store information successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Update store account successfully",
@@ -437,16 +520,17 @@ public class StoreController {
             }
     )
     @PutMapping("/account")
-    public ResponseEntity<Response> updateAccountInformation(@RequestBody UpdatePromotionRequest accountRequest) {
+    public ResponseEntity<Response> updatePromotionRequest(@RequestBody UpdatePromotionRequest updatePromotionRequest) {
         return null;
     }
 
-    @ApiResponses (
+    @Operation(summary = "delete promotion")
+    @ApiResponses(
             value = {
-                    @ApiResponse (responseCode = "200", description = "Get store information successfully!",
-                            content = @Content (mediaType = "application/json",
-                                    schema = @Schema (implementation = Response.class),
-                                    examples = @ExampleObject (value = """
+                    @ApiResponse(responseCode = "200", description = "Get store information successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
                                                 "message": "Get store account successfully",
