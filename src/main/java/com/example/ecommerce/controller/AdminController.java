@@ -9,18 +9,27 @@ import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+
 
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
 
+    @Operation(
+            summary = "Get all users",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -78,10 +87,15 @@ public class AdminController {
             }
     )
     @GetMapping("/manage-accounts")
-    public ResponseEntity<Response> getAllAccounts() {
+    public ResponseEntity<Response> getAllUsers() {
         return null;
     }
 
+    @Operation(
+            summary = "Get user by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -123,10 +137,26 @@ public class AdminController {
             }
     )
     @GetMapping("/manage-accounts/{id}")
-    public ResponseEntity<Response> getAccountById(@PathVariable @Schema(description = "id of account") Long id) {
+    public ResponseEntity<Response> getUserById(@PathVariable @Schema(description = "id of user") Long id) {
         return null;
     }
 
+    @Operation(
+            summary = "Change access of user",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ChangeAccessRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "id": 1,
+                                        "operation": "LOCK"
+                                    }
+                                    """)
+                    )
+            )
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -166,6 +196,10 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Delete user by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -217,74 +251,34 @@ public class AdminController {
             }
     )
     @DeleteMapping("/manage-accounts/{id}")
-    public ResponseEntity<Response> deleteAccountById(@PathVariable int id) {
+    public ResponseEntity<Response> deleteAccountById(@PathVariable @Schema(description = "id of user") int id) {
         return null;
     }
 
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Get all products successfully!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Get all orders successfully!",
-                                                "data": [
-                                                    {
-                                                        "id": 1,
-                                                        "name" : "iphone15",
-                                                        "description" : "best iphone",
-                                                        "category": "electronic",
-                                                        "price" : 999.99,
-                                                        "image" : "https:link.com"
-                                                    },
-                                                    {
-                                                        "id": 2,
-                                                        "name" : "apple",
-                                                        "description" : "best fruit",
-                                                        "category": "food",
-                                                        "price" : 90,
-                                                        "image" : "https:link.com"
-                                                    },
-                                                    {
-                                                        "id": 3,
-                                                        "name" : "t-shirt",
-                                                        "description" : "best shirt",
-                                                        "category": "fashion",
-                                                        "price" : 12,
-                                                        "image" : "https:link.com"
-                                                    }
-                                                ]
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Get all products failed!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Get all orders failed!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
+
+    @Operation(
+            summary = "Update product",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UpdateProductRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "productId": 1,
+                                        "name": "Iphone 12",
+                                        "price": 10000000,
+                                        "description": "Iphone 12",
+                                        "category": "Technology",
+                                        "images": "https://cdn.tgdd.vn/Products/Images/42/220533/iphone-12-pro-max-green-600x600.jpg"
+                                    }
+                                    """)
                     )
-            }
-    )
-    @GetMapping("/manage-products")
-    public ResponseEntity<Response> getProducts() {
-        return null;
-    }
 
+    )
+
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -324,6 +318,11 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Delete product by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -374,10 +373,15 @@ public class AdminController {
             }
     )
     @DeleteMapping("/manage-products/{id}")
-    public ResponseEntity<Response> deleteProductById(@PathVariable int id) {
+    public ResponseEntity<Response> deleteProductById(@PathVariable @Schema(description = "id of product")int id) {
         return null;
     }
 
+    @Operation(
+            summary = "Get all feedbacks",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -435,6 +439,11 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Get feedback by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -490,10 +499,15 @@ public class AdminController {
             }
     )
     @GetMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> getFeedbacksById(@PathVariable int id) {
+    public ResponseEntity<Response> getFeedbacksById(@PathVariable @Schema(description = "id of feedback") int id) {
         return null;
     }
 
+    @Operation(
+            summary = "Mark feedback as read by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -529,10 +543,15 @@ public class AdminController {
             }
     )
     @PutMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> markFeedbackAsRead(@PathVariable int id) {
+    public ResponseEntity<Response> markFeedbackAsRead(@PathVariable @Schema(description = "id of feedback") int id) {
         return null;
     }
 
+    @Operation(
+            summary = "Delete feedback by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -583,10 +602,15 @@ public class AdminController {
             }
     )
     @DeleteMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> deleteFeedback(@PathVariable int id) {
+    public ResponseEntity<Response> deleteFeedback(@PathVariable @Schema(description = "id of feedback") int id) {
         return null;
     }
 
+    @Operation(
+            summary = "Get all promotions",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Get promotion successfully!",
@@ -633,6 +657,25 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Create promotion",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreatePromotionRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "code": "PROMO1",
+                                        "description": "Promotion 1",
+                                        "percent": 12,
+                                        "storeId": 35
+                                    }
+                                    """)
+                    )
+            )
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Create promotion successfully!",
@@ -666,6 +709,26 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Update promotion",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UpdatePromotionRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "promotionId": 1,
+                                        "code": "PROMO1",
+                                        "description": "Promotion 1",
+                                        "percent": 12,
+                                        "storeId": 35
+                                    }
+                                    """)
+                    )
+            )
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Update promotion successfully!",
@@ -711,6 +774,12 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Delete promotion by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Delete promotion successfully!",
@@ -752,10 +821,26 @@ public class AdminController {
             }
     )
     @DeleteMapping("/promotions/{id}")
-    public ResponseEntity<Response> deletePromotionById(@PathVariable int id) {
+    public ResponseEntity<Response> deletePromotionById(@PathVariable @Schema(description = "Id of promotion") int id) {
         return null;
     }
 
+    @Operation(
+            summary = "Create payment option",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreatePaymentOption.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "name": "Credit card / Debit card"
+                                    }
+                                    """)
+                    )
+            )
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Create payment gateway successfully!",
@@ -789,6 +874,23 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Update payment option by id",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UpdatePaymentOption.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "id": 1,
+                                        "name": "Master / Visa"
+                                    }
+                                    """)
+                    )
+            )
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Update payment gateway successfully!",
@@ -822,6 +924,11 @@ public class AdminController {
         return null;
     }
 
+
+    @Operation(
+            summary = "Delete payment option by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Delete payment gateway successfully!",
@@ -863,10 +970,14 @@ public class AdminController {
             }
     )
     @DeleteMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> deletePaymentOption(@PathVariable int id) {
+    public ResponseEntity<Response> deletePaymentOption(@PathVariable @Schema(description = "Id of payment option") int id) {
         return null;
     }
 
+    @Operation(
+            summary = "Get payment option by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Get payment gateway successfully!",
@@ -896,10 +1007,14 @@ public class AdminController {
             }
     )
     @GetMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> getPaymentOptionById(@PathVariable int id) {
+    public ResponseEntity<Response> getPaymentOptionById(@PathVariable @Schema(description = "Id of payment option") int id) {
         return null;
     }
 
+    @Operation(
+            summary = "Get all payment options",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Get all payment gateway successfully!",
@@ -933,6 +1048,22 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Create payment option",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreateDeliveryPartnerRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "name": "Quick and easy delivery Inc."
+                                    }
+                                    """)
+                    )
+            )
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Create delivery partner successfully!",
@@ -966,6 +1097,23 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Update delivery partner",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UpdateDeliveryPartnerRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "deliveryPartnerId": 1,
+                                        "name": "Fast and Caring delivery Inc."
+                                    }
+                                    """)
+                    )
+            )
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Update delivery partner successfully!",
@@ -1011,6 +1159,10 @@ public class AdminController {
         return null;
     }
 
+    @Operation(
+            summary = "Get all delivery partners",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Get list delivery partner successfully!",
@@ -1023,7 +1175,7 @@ public class AdminController {
                                                 "data": [
                                                     {
                                                     "id" : 1,
-                                                    "name": "giao hang nhanh" 
+                                                    "name": "giao hang nhanh"
                                                     },
                                                     {
                                                     "id" : 2,
@@ -1053,10 +1205,15 @@ public class AdminController {
             }
     )
     @GetMapping("app-setting/delivery-partner")
-    public ResponseEntity<Response> getAllDeliveryPartner() {
+    public ResponseEntity<Response> getAllDeliveryPartners() {
         return null;
     }
 
+
+    @Operation(
+            summary = "Get delivery partner by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Get delivery partner successfully!",
@@ -1068,7 +1225,7 @@ public class AdminController {
                                                 "message": "Get delivery partner successfully",
                                                 "data": {
                                                     "id" : 1,
-                                                    "name": "giao hang nhanh" 
+                                                    "name": "giao hang nhanh"
                                                 }
                                             }
                                             """)
@@ -1101,10 +1258,14 @@ public class AdminController {
             }
     )
     @GetMapping("app-setting/delivery-partner/{id}")
-    public ResponseEntity<Response> getDeliveryPartnerById(@PathVariable int id) {
+    public ResponseEntity<Response> getDeliveryPartnerById(@PathVariable @Schema(description = "id of delivery partner") int id) {
         return null;
     }
 
+    @Operation(
+            summary = "Delete delivery partner by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Delete delivery partner successfully!",
@@ -1146,7 +1307,7 @@ public class AdminController {
             }
     )
     @DeleteMapping("app-setting/delivery-partner/{id}")
-    public ResponseEntity<Response> deleteDeliveryPartnerById(@PathVariable int id) {
+    public ResponseEntity<Response> deleteDeliveryPartnerById(@PathVariable @Schema(description = "id of delivery partner") int id) {
         return null;
     }
 }
