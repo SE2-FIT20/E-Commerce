@@ -219,44 +219,44 @@ public class StoreController {
 
     @ApiResponses (value = {
             @ApiResponse (responseCode = "200", description = "Update order successfully!",
-                    content = @Content (mediaType = "application/json",
-                            schema = @Schema (implementation = Response.class),
-                            examples = @ExampleObject (value = """
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Response.class),
+                            examples = @ExampleObject(value = """
                                     {
                                         "status": 200,
                                         "message": "Update order successfully",
                                         "data": [
-                                          {
-                                              "id": 12,
-                                              "storeId": 20,
-                                              "userId": 1,
-                                              "deliveryPartner: 14,
-                                              "orderDate": "2021-10-01T00:00:00.000+00:00",
-                                              "fromAddress": "Street 1 Tiger road Hanoi",
-                                              "toAddress": "150a District 1 Saigon",
-                                              "status": "READY"
-                                          },
-                                          {
-                                              "id": 12,
-                                              "storeId": 20,
-                                              "userId": 1,
-                                              "deliveryPartner: 14,
-                                              "orderDate": "2021-10-01T00:00:00.000+00:00",
-                                              "fromAddress": "Street 1 Tiger road Hanoi",
-                                              "toAddress": "150a District 1 Saigon",
-                                              "status": "IN_PROGRESS"
-                                          },
-                                          {
-                                              "id": 12,
-                                              "storeId": 20,
-                                              "userId": 1,
-                                              "deliveryPartner: 14,
-                                              "orderDate": "2021-10-01T00:00:00.000+00:00",
-                                              "fromAddress": "Street 1 Tiger road Hanoi",
-                                              "toAddress": "150a District 1 Saigon",
-                                              "status": "DELIVERED"
-                                          }
-                                      ]
+                                           {
+                                               "id": 12,
+                                               "storeId": 20,
+                                               "userId": 1,
+                                               "deliveryPartner": 14,
+                                               "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                               "fromAddress": "Street 1 Tiger road Hanoi",
+                                               "toAddress": "150a District 1 Saigon",
+                                               "status": "READY"
+                                           },
+                                           {
+                                               "id": 12,
+                                               "storeId": 20,
+                                               "userId": 1,
+                                               "deliveryPartner": 14,
+                                               "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                               "fromAddress": "Street 1 Tiger road Hanoi",
+                                               "toAddress": "150a District 1 Saigon",
+                                               "status": "IN_PROGRESS"
+                                           },
+                                           {
+                                               "id": 12,
+                                               "storeId": 20,
+                                               "userId": 1,
+                                               "deliveryPartner": 14,
+                                               "orderDate": "2021-10-01T00:00:00.000+00:00",
+                                               "fromAddress": "Street 1 Tiger road Hanoi",
+                                               "toAddress": "150a District 1 Saigon",
+                                               "status": "DELIVERED"
+                                           }
+                                           ]
                                     }
                                     """)
                     )
