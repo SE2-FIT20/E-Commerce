@@ -433,7 +433,7 @@ public class StoreController {
                             schema = @Schema(implementation = CreatePromotionRequest.class),
                             examples = @ExampleObject(value = """
                                     {
-                                        "name": "Promotion 1",
+                                        "code": "SHP-123",
                                         "description": "Discount 50% for all products",
                                         "percent": 50,
                                         "storeId": null,
