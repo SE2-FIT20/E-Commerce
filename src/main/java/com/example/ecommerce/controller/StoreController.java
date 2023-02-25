@@ -434,9 +434,9 @@ public class StoreController {
                             examples = @ExampleObject(value = """
                                     {
                                         "name": "Promotion 1",
-                                        "percent": 10,
+                                        "description": "Discount 50% for all products",
+                                        "percent": 50,
                                         "storeId": null,
-                                        "isGlobal": true,
                                     }
                                     """)
                     )
