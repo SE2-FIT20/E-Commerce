@@ -3,6 +3,6 @@ package com.example.ecommerce.dto.request;
 import lombok.Data;
 
 @Data
-public class AccountRequest {
+public class UpdateAccountRequest {
 
 }

@@ -1,7 +1,7 @@
 package com.example.ecommerce.controller;
 
 
-import com.example.ecommerce.dto.request.AccountRequest;
+import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.ProductRequest;
 import com.example.ecommerce.dto.request.PromotionRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -431,7 +431,7 @@ public class StoreController {
             }
     )
     @PutMapping("/account")
-    public ResponseEntity<Response> updateAccountInformation(@RequestBody AccountRequest accountRequest) {
+    public ResponseEntity<Response> updateAccountInformation(@RequestBody UpdateAccountRequest accountRequest) {
         return null;
     }
 

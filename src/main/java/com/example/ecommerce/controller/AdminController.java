@@ -155,7 +155,7 @@ public class AdminController {
             }
     )
     @PutMapping("/manage-accounts")
-    public ResponseEntity<Response> updateAccount(@RequestBody AccountRequest request) {
+    public ResponseEntity<Response> updateAccount(@RequestBody UpdateAccountRequest request) {
         return null;
     }
 

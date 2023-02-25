@@ -1,6 +1,6 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.AccountRequest;
+import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.RegistrationRequest;
 import com.example.ecommerce.dto.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -219,7 +219,7 @@ public class DeliveryPartnerController {
     }
     )
     @PutMapping("/account")
-    public ResponseEntity<Response> updateStatusOrder(@RequestBody AccountRequest accountRequest) {
+    public ResponseEntity<Response> updateStatusOrder(@RequestBody UpdateAccountRequest accountRequest) {
         return null;
     }
 }

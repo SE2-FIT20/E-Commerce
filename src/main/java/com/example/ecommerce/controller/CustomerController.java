@@ -1,6 +1,6 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.AccountRequest;
+import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.OrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -243,7 +243,7 @@ public class CustomerController {
             }
     )
     @PutMapping("/account")
-    public ResponseEntity<Response> updateAccount(@RequestBody AccountRequest accountRequest) {
+    public ResponseEntity<Response> updateAccount(@RequestBody UpdateAccountRequest accountRequest) {
         return null;
     }
 
@@ -303,7 +303,7 @@ public class CustomerController {
             }
     )
     @GetMapping("/account")
-    public ResponseEntity<Response> getAccount(@RequestBody AccountRequest accountRequest) {
+    public ResponseEntity<Response> getAccount(@RequestBody UpdateAccountRequest accountRequest) {
         return null;
     }
 }
