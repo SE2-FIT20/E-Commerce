@@ -1,6 +1,6 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.LoginRequest;
+import com.example.ecommerce.dto.request.auth.LoginRequest;
 import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.security.AuthService;
@@ -52,7 +52,7 @@ public class AuthController {
                             examples = @ExampleObject(value = """
                                     {
                                         "status": 200,
-                                        "message": "Customer registered successfully",
+                                        "message": "Registration successfully!",
                                         "data": null
                                     }
                                     """)
@@ -67,7 +67,7 @@ public class AuthController {
                             examples = @ExampleObject(value = """
                                     {
                                         "status": 400,
-                                        "message": "Wrong username or password",
+                                        "message": "Email already exists",
                                         "data": null
                                     }
                                     """)
@@ -76,8 +76,8 @@ public class AuthController {
     }
     )
     @PostMapping("/register")
-    public ResponseEntity<Response> register(@RequestBody   RegistrationRequest request) {
-        return null;
+    public ResponseEntity<Response> register(@RequestBody  RegistrationRequest request) {
+        return authService.register(request);
     }
 
     @Operation(
@@ -136,7 +136,7 @@ public class AuthController {
             }
     )
 
-    @PostMapping (value = "/login", consumes = "application/json", produces = "application/json")
+    @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody LoginRequest logInRequest) {
         return authService.login(logInRequest);
     }
