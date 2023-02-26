@@ -1,8 +1,11 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.dto.request.UpdateAccountRequest;
+import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddOrderRequest;
 import com.example.ecommerce.dto.response.Response;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +17,30 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/customer")
 public class CustomerController {
+    @Operation(
+            summary = "Register account",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AddOrderRequest.class),
+                            examples = @ExampleObject(value = """
+                                    "items" : [
+                                        {
+                                        "productId" : 1,
+                                        "quantity" : 2
+                                        },
+                                        {
+                                        "productId" : 2,
+                                        "quantity" : 3
+                                        }
+                                    ],
+                                    "status": "DELIVERED"                       
+                                    """
+                            )
+                    )
+            )
 
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -69,6 +95,9 @@ public class CustomerController {
         return null;
     }
 
+    @Operation(
+            summary = "Checkout"
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -193,6 +222,24 @@ public class CustomerController {
         return null;
     }
 */
+    @Operation(
+            summary = "Change information of account",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UpdateAccountRequest.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "fullName": "Nguyen Van A",
+                                        "email": "NguyenVanA@gmail.com"
+                                        "address": "Ha Noi",
+                                        "phoneNumber": "0123456789"
+                                    }
+                                    """)
+                    )
+            )
+
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -246,7 +293,9 @@ public class CustomerController {
     public ResponseEntity<Response> updateAccount(@RequestBody UpdateCustomerRequest accountRequest) {
         return null;
     }
-
+    @Operation (
+            summary = "Get information of account"
+    )
     @ApiResponses(
             value = {
                     @ApiResponse(

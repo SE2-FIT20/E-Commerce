@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/delivery-partner")
 public class DeliveryPartnerController {
-
+    @Operation (
+            summary = "Get all orders",
+            description = "Get all orders of delivery partner"
+    )
     @ApiResponses (
             value = {
                     @ApiResponse(
@@ -87,6 +90,11 @@ public class DeliveryPartnerController {
     }
 
     //TODO: order has the attribute of deliveryTime
+    @Operation (
+            summary = "Get order by id",
+            description = "Get order by id of delivery partner"
+
+    )
     @ApiResponses (
             value = {
                     @ApiResponse(
