@@ -1,7 +1,6 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
-import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddOrderRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -11,36 +10,16 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/customer")
+@AllArgsConstructor
 public class CustomerController {
-    @Operation(
-            summary = "Register account",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = AddOrderRequest.class),
-                            examples = @ExampleObject(value = """
-                                    "items" : [
-                                        {
-                                        "productId" : 1,
-                                        "quantity" : 2
-                                        },
-                                        {
-                                        "productId" : 2,
-                                        "quantity" : 3
-                                        }
-                                    ],
-                                    "status": "DELIVERED"                       
-                                    """
-                            )
-                    )
-            )
 
-    )
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -355,4 +334,6 @@ public class CustomerController {
     public ResponseEntity<Response> getAccount() {
         return null;
     }
+
+    
 }

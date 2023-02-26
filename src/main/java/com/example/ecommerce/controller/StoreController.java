@@ -1,26 +1,30 @@
 package com.example.ecommerce.controller;
 
 
-import com.example.ecommerce.dto.request.UpdateAccountRequest;
+import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
+import com.example.ecommerce.service.impl.StoreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/store")
+@RequestMapping("/api/store")
+@AllArgsConstructor
 public class StoreController {
-
+    private final StoreService storeService;
     @Operation(summary = "Get all products")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get all products successfully!",
@@ -433,10 +437,10 @@ public class StoreController {
                             schema = @Schema(implementation = CreatePromotionRequest.class),
                             examples = @ExampleObject(value = """
                                     {
-                                        "name": "Promotion 1",
-                                        "percent": 10,
+                                        "code": "SHP-123",
+                                        "description": "Discount 50% for all products",
+                                        "percent": 50,
                                         "storeId": null,
-                                        "isGlobal": true,
                                     }
                                     """)
                     )
@@ -524,7 +528,7 @@ public class StoreController {
         return null;
     }
 
-    @Operation(summary = "delete promotion")
+    @Operation(summary = "Get store information")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Get store information successfully!",
@@ -561,6 +565,11 @@ public class StoreController {
     )
     @GetMapping("/account")
     public ResponseEntity<Response> getAccountInformation() {
-        return null;
+        User currentStore = getCurrentStore();
+        return storeService.getStoreInformationById(currentStore.getId());
+    }
+
+    private User getCurrentStore() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
