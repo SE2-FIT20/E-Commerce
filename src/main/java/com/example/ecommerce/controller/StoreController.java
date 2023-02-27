@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/store")
 @AllArgsConstructor
+@CrossOrigin(value = "*", maxAge = 3000)
 public class StoreController {
     private final StoreService storeService;
     @Operation(summary = "Get all products")

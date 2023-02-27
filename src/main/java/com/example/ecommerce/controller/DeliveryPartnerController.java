@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/delivery-partner")
+@CrossOrigin(value = "*", maxAge = 3000)
+
 public class DeliveryPartnerController {
     @Operation (
             summary = "Get all orders",

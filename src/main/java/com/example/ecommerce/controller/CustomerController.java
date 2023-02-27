@@ -1,9 +1,11 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddOrderRequest;
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.service.impl.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -18,8 +20,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/customer")
 @AllArgsConstructor
+@CrossOrigin(value = "*", maxAge = 3000)
 public class CustomerController {
-
+    private final CustomerService customerService;
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -332,8 +335,12 @@ public class CustomerController {
     )
     @GetMapping("/account")
     public ResponseEntity<Response> getAccount() {
-        return null;
+        User currentCustomer = getCurrentCustomer();
+        return customerService.getCustomerInformationById(currentCustomer.getId());
     }
 
+    public User getCurrentCustomer() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
     
 }
