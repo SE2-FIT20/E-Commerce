@@ -1,12 +1,14 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.service.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(value = "*", maxAge = 3000)
 
 public class AnonymousController {
+
+    private ProductService productService;
+
     @Operation(
             summary = "Get all products"
     )
@@ -80,7 +85,7 @@ public class AnonymousController {
     )
     @GetMapping("/products")
     public ResponseEntity<Response> getProducts() {
-        return null;
+        return productService.getAllProduct();
     }
 
 }
