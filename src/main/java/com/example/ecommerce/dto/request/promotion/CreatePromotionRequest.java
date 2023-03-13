@@ -5,8 +5,10 @@ import lombok.Data;
 @Data
 public class CreatePromotionRequest {
 
-    private String code;
-    private String description;
+    private String name;
     private double percent;
-    private Long storedId;
+    private String description;
+    private Long storeId;
+    private boolean isGlobal;
+
 }

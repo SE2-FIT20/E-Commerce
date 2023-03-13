@@ -1,4 +1,4 @@
-package com.example.ecommerce.controller;
+package com.example.ecommerce.service.service;
 
 import com.example.ecommerce.domain.OrderItem;
 import com.example.ecommerce.dto.response.Response;

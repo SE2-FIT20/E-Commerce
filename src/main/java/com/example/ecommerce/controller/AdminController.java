@@ -1,5 +1,6 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.Promotion;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
@@ -9,6 +10,9 @@ import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
+import com.example.ecommerce.service.service.ProductService;
+import com.example.ecommerce.service.service.UserService;
+import com.example.ecommerce.service.service.PromotionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -25,6 +29,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin")
 @CrossOrigin(value = "*", maxAge = 3000)
 public class AdminController {
+    private ProductService productService;
+
+    private UserService userService;
+    private PromotionService promotionService;
 
     @Operation(
             summary = "Get all users",
@@ -89,7 +97,7 @@ public class AdminController {
     )
     @GetMapping("/manage-accounts")
     public ResponseEntity<Response> getAllUsers() {
-        return null;
+        return userService.getAllUsers();
     }
 
     @Operation(
@@ -139,7 +147,7 @@ public class AdminController {
     )
     @GetMapping("/manage-accounts/{id}")
     public ResponseEntity<Response> getUserById(@PathVariable @Schema(description = "id of user") Long id) {
-        return null;
+        return userService.getUserById(id);
     }
 
     @Operation(
@@ -252,8 +260,8 @@ public class AdminController {
             }
     )
     @DeleteMapping("/manage-accounts/{id}")
-    public ResponseEntity<Response> deleteAccountById(@PathVariable @Schema(description = "id of user") int id) {
-        return null;
+    public ResponseEntity<Response> deleteAccountById(@PathVariable @Schema(description = "id of user") Long id) {
+        return userService.deleteUserById(id);
     }
 
 
@@ -316,7 +324,7 @@ public class AdminController {
     )
     @PutMapping("/manage-products")
     public ResponseEntity<Response> updateProduct(@RequestBody UpdateProductRequest request) {
-        return null;
+        return productService.updateProduct(request.getProductId(), request);
     }
 
     @Operation(
@@ -374,8 +382,8 @@ public class AdminController {
             }
     )
     @DeleteMapping("/manage-products/{id}")
-    public ResponseEntity<Response> deleteProductById(@PathVariable @Schema(description = "id of product")int id) {
-        return null;
+    public ResponseEntity<Response> deleteProductById(@PathVariable @Schema(description = "id of product") Long id) {
+        return productService.deleteProductById(id);
     }
 
     @Operation(
@@ -500,7 +508,7 @@ public class AdminController {
             }
     )
     @GetMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> getFeedbacksById(@PathVariable @Schema(description = "id of feedback") int id) {
+    public ResponseEntity<Response> getFeedbacksById(@PathVariable @Schema(description = "id of feedback") Long id) {
         return null;
     }
 
@@ -544,7 +552,7 @@ public class AdminController {
             }
     )
     @PutMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> markFeedbackAsRead(@PathVariable @Schema(description = "id of feedback") int id) {
+    public ResponseEntity<Response> markFeedbackAsRead(@PathVariable @Schema(description = "id of feedback") Long id) {
         return null;
     }
 
@@ -655,7 +663,7 @@ public class AdminController {
     )
     @GetMapping("/promotions")
     public ResponseEntity<Response> getAllPromotion() {
-        return null;
+        return promotionService.getAllPromotions();
     }
 
     @Operation(
@@ -707,7 +715,8 @@ public class AdminController {
     )
     @PostMapping("/promotions")
     public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
-        return null;
+        Promotion promotion = Promotion.create(promotionRequest.getName(), promotionRequest.getPercent(), promotionRequest.getDescription(), promotionRequest.getStoreId(), promotionRequest.isGlobal());
+        return promotionService.createPromotion(promotion);
     }
 
     @Operation(
@@ -772,7 +781,7 @@ public class AdminController {
     )
     @PutMapping("/promotions")
     public ResponseEntity<Response> updatePromotionById(@RequestBody UpdatePromotionRequest promotionRequest) {
-        return null;
+        return promotionService.updatePromotion(promotionRequest.getPromotionId(), promotionRequest);
     }
 
     @Operation(
@@ -822,8 +831,8 @@ public class AdminController {
             }
     )
     @DeleteMapping("/promotions/{id}")
-    public ResponseEntity<Response> deletePromotionById(@PathVariable @Schema(description = "Id of promotion") int id) {
-        return null;
+    public ResponseEntity<Response> deletePromotionById(@PathVariable @Schema(description = "Id of promotion") Long id) {
+        return promotionService.deletePromotion(id);
     }
 
     @Operation(
@@ -1180,11 +1189,11 @@ public class AdminController {
                                                     },
                                                     {
                                                     "id" : 2,
-                                                    "name": "giao hang tiet kiem" 
+                                                    "name": "giao hang tiet kiem",
                                                     },
                                                     {
                                                     "id" : 3,
-                                                    "name": "giao hang 247" 
+                                                    "name": "giao hang 247",
                                                     }
                                                 ]
                                             }

@@ -2,7 +2,7 @@ package com.example.ecommerce.filter;
 
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.exception.LoginFailedException;
-import com.example.ecommerce.service.impl.UserService;
+import com.example.ecommerce.service.service.UserService;
 import com.example.ecommerce.service.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
 

@@ -5,8 +5,9 @@ import lombok.Data;
 @Data
 public class UpdatePromotionRequest {
     private Long promotionId;
-    private String code;
+    private String name;
     private String description;
     private double percent;
     private Long storedId;
+    private boolean isGlobal;
 }

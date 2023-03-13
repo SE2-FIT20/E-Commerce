@@ -2,6 +2,7 @@ package com.example.ecommerce.controller;
 
 
 import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.Promotion;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
@@ -10,7 +11,9 @@ import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.service.impl.StoreService;
+import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.ProductService;
+import com.example.ecommerce.service.service.PromotionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -29,6 +32,8 @@ import org.springframework.web.bind.annotation.*;
 public class StoreController {
     private final StoreService storeService;
     private final ProductService productService;
+    private final OrderService orderService;
+    private final PromotionService promotionService;
 
     @Operation(summary = "Get all products")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get all products successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
@@ -226,7 +231,7 @@ public class StoreController {
             """)))})
     @GetMapping("/orders")
     public ResponseEntity<Response> getOrders() {
-        return null;
+        return orderService.getAllOrder();
     }
 
 
@@ -328,7 +333,7 @@ public class StoreController {
             """)))})
     @GetMapping("/promotion")
     public ResponseEntity<Response> getPromotion() {
-        return null;
+        return promotionService.getAllPromotions();
     }
 
     @Operation(summary = "create promotion", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreatePromotionRequest.class), examples = @ExampleObject(value = """
@@ -354,7 +359,9 @@ public class StoreController {
             """)))})
     @PostMapping("/promotion")
     public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
-        return null;
+        Promotion promotion = Promotion.create(promotionRequest.getName(),promotionRequest.getPercent(),  promotionRequest.getDescription(), promotionRequest.getStoreId(), promotionRequest.isGlobal());
+        return promotionService.createPromotion(promotion);
+
     }
 
     @Operation(summary = "update promotion", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdatePromotionRequest.class), examples = @ExampleObject(value = """
@@ -380,7 +387,7 @@ public class StoreController {
             """)))})
     @PutMapping("/account")
     public ResponseEntity<Response> updatePromotionRequest(@RequestBody UpdatePromotionRequest updatePromotionRequest) {
-        return null;
+        return promotionService.updatePromotion(updatePromotionRequest.getPromotionId(), updatePromotionRequest);
     }
 
     @Operation(summary = "Get store information")

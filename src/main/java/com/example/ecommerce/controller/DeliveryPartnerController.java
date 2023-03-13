@@ -3,6 +3,7 @@ package com.example.ecommerce.controller;
 import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.service.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(value = "*", maxAge = 3000)
 
 public class DeliveryPartnerController {
+
+    private OrderService orderService;
     @Operation (
             summary = "Get all orders",
             description = "Get all orders of delivery partner"
@@ -88,7 +91,7 @@ public class DeliveryPartnerController {
     )
     @GetMapping("/orders")
     public ResponseEntity<Response> getAllOrders() {
-        return null;
+        return orderService.getAllOrder();
     }
 
     //TODO: order has the attribute of deliveryTime
@@ -173,7 +176,7 @@ public class DeliveryPartnerController {
     )
     @GetMapping("/orders/{id}")
     public ResponseEntity<Response> getOrderById(@PathVariable @Schema(description = "id of order") Long id) {
-        return null;
+        return orderService.getOrderById(id);
     }
 
     @Operation(
