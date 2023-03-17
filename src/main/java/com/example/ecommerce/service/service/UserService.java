@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-
 public interface UserService {
 
     ResponseEntity<Response> createUser(User user);
@@ -20,7 +19,5 @@ public interface UserService {
     ResponseEntity<Response> getUserById(Long userId);
 
     ResponseEntity<Response> getAllUsers();
-
-
-
+    User findByEmail(String email);
 }

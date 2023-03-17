@@ -254,9 +254,9 @@ public class StoreController {
                 "data": null
             }
             """)))})
-    @PutMapping("/orders")
+    @PutMapping("/orders/{id}")
     public ResponseEntity<Response> updateOrder(@PathVariable Long id, @RequestBody UpdateOrderRequest request) {
-        return null;
+        return orderService.updateOrder(id, request);
     }
 
     /* this is optional as the result of the team discussion
@@ -385,7 +385,7 @@ public class StoreController {
                 "data": null
             }
             """)))})
-    @PutMapping("/account")
+    @PutMapping("/promotion")
     public ResponseEntity<Response> updatePromotionRequest(@RequestBody UpdatePromotionRequest updatePromotionRequest) {
         return promotionService.updatePromotion(updatePromotionRequest.getPromotionId(), updatePromotionRequest);
     }

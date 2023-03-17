@@ -259,7 +259,7 @@ public class AdminController {
 
             }
     )
-    @DeleteMapping("/manage-accounts/{id}")
+    @DeleteMapping("/delete-accounts/{id}")
     public ResponseEntity<Response> deleteAccountById(@PathVariable @Schema(description = "id of user") Long id) {
         return userService.deleteUserById(id);
     }
@@ -381,7 +381,7 @@ public class AdminController {
                     )
             }
     )
-    @DeleteMapping("/manage-products/{id}")
+    @DeleteMapping("/delete-products/{id}")
     public ResponseEntity<Response> deleteProductById(@PathVariable @Schema(description = "id of product") Long id) {
         return productService.deleteProductById(id);
     }
@@ -713,7 +713,7 @@ public class AdminController {
                     )
             }
     )
-    @PostMapping("/promotions")
+    @PostMapping("/create-promotion")
     public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
         Promotion promotion = Promotion.create(promotionRequest.getName(), promotionRequest.getPercent(), promotionRequest.getDescription(), promotionRequest.getStoreId(), promotionRequest.isGlobal());
         return promotionService.createPromotion(promotion);

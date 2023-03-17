@@ -6,9 +6,11 @@ import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.service.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
@@ -50,5 +52,10 @@ public class UserServiceImpl implements UserService {
                 .message("Get all users successfully")
                 .data(userRepository.findAll())
                 .build());
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByUsername(email).orElseThrow(() -> new NotFoundException("User not found"));
     }
 }
