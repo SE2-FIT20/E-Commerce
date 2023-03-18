@@ -36,12 +36,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<Response> getUserById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+        User user = findUserById(userId);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get user successfully")
                 .data(user)
                 .build());
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override
@@ -56,6 +60,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByUsername(email).orElseThrow(() -> new NotFoundException("User not found"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
     }
 }

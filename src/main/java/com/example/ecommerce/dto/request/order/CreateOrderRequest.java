@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class AddOrderRequest {
+public class CreateOrderRequest {
     private List<OrderItem> items;
     private String status;
 }

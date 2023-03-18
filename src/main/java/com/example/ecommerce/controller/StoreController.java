@@ -149,7 +149,7 @@ public class StoreController {
             """)))})
     @PostMapping("/products")
     public ResponseEntity<Response> createProduct(@RequestBody CreateProductRequest request) {
-        return productService.createProduct(Product.createProduct(request.getName(),request.getDescription(),request.getCategory(),request.getPrice(),request.getImage()));
+        return productService.createProduct(request);
     }
 
 
@@ -178,7 +178,7 @@ public class StoreController {
             """)))})
     @PutMapping("/products")
     public ResponseEntity<Response> updateProduct(@RequestBody UpdateProductRequest request) {
-        return productService.updateProduct(request.getProductId(), request);
+        return productService.updateProduct(request);
     }
 
 
@@ -254,9 +254,9 @@ public class StoreController {
                 "data": null
             }
             """)))})
-    @PutMapping("/orders/{id}")
-    public ResponseEntity<Response> updateOrder(@PathVariable Long id, @RequestBody UpdateOrderRequest request) {
-        return orderService.updateOrder(id, request);
+    @PutMapping("/orders")
+    public ResponseEntity<Response> updateOrder(@RequestBody UpdateOrderRequest request) {
+        return orderService.updateOrder(request);
     }
 
     /* this is optional as the result of the team discussion
@@ -359,8 +359,7 @@ public class StoreController {
             """)))})
     @PostMapping("/promotion")
     public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
-        Promotion promotion = Promotion.create(promotionRequest.getName(),promotionRequest.getPercent(),  promotionRequest.getDescription(), promotionRequest.getStoreId(), promotionRequest.isGlobal());
-        return promotionService.createPromotion(promotion);
+        return promotionService.createPromotion(promotionRequest);
 
     }
 
@@ -387,7 +386,7 @@ public class StoreController {
             """)))})
     @PutMapping("/promotion")
     public ResponseEntity<Response> updatePromotionRequest(@RequestBody UpdatePromotionRequest updatePromotionRequest) {
-        return promotionService.updatePromotion(updatePromotionRequest.getPromotionId(), updatePromotionRequest);
+        return promotionService.updatePromotion(updatePromotionRequest);
     }
 
     @Operation(summary = "Get store information")

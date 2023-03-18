@@ -324,7 +324,7 @@ public class AdminController {
     )
     @PutMapping("/manage-products")
     public ResponseEntity<Response> updateProduct(@RequestBody UpdateProductRequest request) {
-        return productService.updateProduct(request.getProductId(), request);
+        return productService.updateProduct(request);
     }
 
     @Operation(
@@ -715,8 +715,7 @@ public class AdminController {
     )
     @PostMapping("/create-promotion")
     public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
-        Promotion promotion = Promotion.create(promotionRequest.getName(), promotionRequest.getPercent(), promotionRequest.getDescription(), promotionRequest.getStoreId(), promotionRequest.isGlobal());
-        return promotionService.createPromotion(promotion);
+        return promotionService.createPromotion(promotionRequest);
     }
 
     @Operation(
@@ -781,7 +780,7 @@ public class AdminController {
     )
     @PutMapping("/promotions")
     public ResponseEntity<Response> updatePromotionById(@RequestBody UpdatePromotionRequest promotionRequest) {
-        return promotionService.updatePromotion(promotionRequest.getPromotionId(), promotionRequest);
+        return promotionService.updatePromotion(promotionRequest);
     }
 
     @Operation(
