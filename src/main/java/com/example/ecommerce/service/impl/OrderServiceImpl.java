@@ -7,6 +7,7 @@ import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.OrderRepository;
 import com.example.ecommerce.service.service.OrderService;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -57,13 +58,13 @@ public class OrderServiceImpl implements OrderService {
     public ResponseEntity<Response> updateOrder(UpdateOrderRequest request) {
         Order order = findOrderById(request.getOrderId());
         order.setStatus(request.getStatus());
-
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Update order successfully")
                 .data(order)
                 .build());
     }
+
 
 
     @Override

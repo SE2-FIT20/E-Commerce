@@ -52,7 +52,7 @@ public class CustomerService {
         Response response = Response.builder()
                 .status(200)
                 .message("Update customer information successfully")
-                .data(null)
+                .data(customer)
                 .build();
 
         return ResponseEntity.ok(response);
