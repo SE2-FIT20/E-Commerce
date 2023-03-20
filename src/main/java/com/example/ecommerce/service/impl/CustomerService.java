@@ -23,7 +23,7 @@ public class CustomerService {
 
     public ResponseEntity<Response> getCustomerInformationById(Long customerId) {
         Customer customer = findCustomerById(customerId);
-        CustomerInformation customerInformation = new CustomerInfogit mation(customer);
+        CustomerInformation customerInformation = new CustomerInformation(customer);
 
         Response response = Response.builder()
                 .status(200)
