@@ -46,7 +46,6 @@ public class CustomerService {
         if (request.getName() != null) customer.setName(request.getName());
         if (request.getAddress() != null) customer.setAddress(request.getAddress());
         if (request.getPhone() != null) customer.setPhoneNumber(request.getPhone());
-        if (request.getAvatar() != null) customer.setAvatar(request.getAvatar());
 
         customerRepository.save(customer);
 
