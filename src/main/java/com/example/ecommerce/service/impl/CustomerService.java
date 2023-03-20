@@ -23,12 +23,12 @@ public class CustomerService {
 
     public ResponseEntity<Response> getCustomerInformationById(Long customerId) {
         Customer customer = findCustomerById(customerId);
-        CustomerInformation customerInformation = new CustomerInformation(customer);
+        CustomerInformation customerInformation = new CustomerInfogit mation(customer);
 
         Response response = Response.builder()
                 .status(200)
                 .message("Get customer information successfully")
-                .data(null)
+                .data(customerInformation)
                 .build();
 
         return ResponseEntity.ok(response);
@@ -46,13 +46,15 @@ public class CustomerService {
         if (request.getName() != null) customer.setName(request.getName());
         if (request.getAddress() != null) customer.setAddress(request.getAddress());
         if (request.getPhone() != null) customer.setPhoneNumber(request.getPhone());
+        if (request.getAvatar() != null) customer.setAvatar(request.getAvatar());
 
         customerRepository.save(customer);
+
 
         Response response = Response.builder()
                 .status(200)
                 .message("Update customer information successfully")
-                .data(customer)
+                .data(null)
                 .build();
 
         return ResponseEntity.ok(response);
