@@ -273,7 +273,8 @@ public class CustomerController {
     )
     @PutMapping("/account")
     public ResponseEntity<Response> updateAccount(@RequestBody UpdateCustomerRequest accountRequest) {
-        return null;
+        User currentCustomer = getCurrentCustomer();
+        return customerService.updateAccount(currentCustomer.getId(), accountRequest);
     }
     @Operation (
             summary = "Get information of account"

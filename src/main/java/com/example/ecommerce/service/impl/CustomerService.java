@@ -2,6 +2,7 @@ package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Customer;
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.response.CustomerInformation;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
@@ -37,5 +38,23 @@ public class CustomerService {
         return customerRepository
                 .findById(customerId)
                 .orElseThrow(() -> new NotFoundException("Customer not found for id: " + customerId));
+    }
+
+    public ResponseEntity<Response> updateAccount(Long id, UpdateCustomerRequest request) {
+        Customer customer = findCustomerById(id);
+
+        if (request.getName() != null) customer.setName(request.getName());
+        if (request.getAddress() != null) customer.setAddress(request.getAddress());
+        if (request.getPhone() != null) customer.setPhoneNumber(request.getPhone());
+
+        customerRepository.save(customer);
+
+        Response response = Response.builder()
+                .status(200)
+                .message("Update customer information successfully")
+                .data(null)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }
