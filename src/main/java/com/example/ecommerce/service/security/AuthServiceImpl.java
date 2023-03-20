@@ -48,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
             customer.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
             customer.setName(registrationRequest.getName());
             customer.setRole(registrationRequest.getRole());
+            customer.setAvatar(generateAvatarLink(customer.getName()));
             customerService.save(customer);
 
         } else if (role.equals("STORE")) {
@@ -56,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
             store.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
             store.setName(registrationRequest.getName());
             store.setRole(registrationRequest.getRole());
-
+            store.setAvatar(generateAvatarLink(store.getName()));
             storeService.save(store);
         } else {
             throw new RegistrationException("Invalid role!");
@@ -70,6 +71,9 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    private String generateAvatarLink(String name) {
+        return String.format("https://ui-avatars.com/api/?name=%s&background=random", name);
+    }
     @Override
     public ResponseEntity<Response> login(LoginRequest loginRequest) {
 
