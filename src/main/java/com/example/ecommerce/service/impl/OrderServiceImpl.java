@@ -1,9 +1,11 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Order;
+import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.repository.OrderRepository;
 import com.example.ecommerce.service.service.OrderService;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -34,8 +36,9 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+
     @Override
-    public ResponseEntity<Response> updateOrder(Long orderId, Order order) {
+    public ResponseEntity<Response> updateOrder(Long orderId, UpdateOrderRequest order) {
         Order updateOrder = orderRepository.getById(orderId);
         updateOrder.setItems(order.getItems());
         updateOrder.setStatus(order.getStatus());
