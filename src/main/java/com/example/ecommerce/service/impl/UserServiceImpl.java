@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.UserRepository;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,5 +65,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    @Override
+    public ResponseEntity<Response> changeAccess(ChangeAccessRequest request) {
+        Optional<User> user = userRepository.findById(request.getUserId());
+        return ResponseEntity.ok(Response.builder()
+                .status(200).message("Change access successfully!")
+                .data(user)
+                .build());
     }
 }

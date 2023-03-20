@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class UpdateCustomerRequest {
+    private String avatar;
     private String name;
     private String email;
     private String address;

@@ -232,6 +232,6 @@ public class DeliveryPartnerController {
     )
     @PutMapping("/update-status-order")
     public ResponseEntity<Response> updateStatusOrder(@RequestBody UpdateOrderRequest accountRequest) {
-        return null;
+        return orderService.updateOrder(accountRequest);
     }
 }

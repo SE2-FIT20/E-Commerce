@@ -77,7 +77,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<Response> login(LoginRequest loginRequest) {
 
-
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
 

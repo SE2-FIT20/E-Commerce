@@ -12,13 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/api")
+@RestController
+@RequestMapping("/api")
 @CrossOrigin(value = "*", maxAge = 3000)
 
 public class AnonymousController {
 
+    @Autowired
     private ProductService productService;
 
     @Operation(
@@ -35,7 +38,7 @@ public class AnonymousController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 200,
-                                                "message": "Get all orders successfully!",
+                                                "message": "Get all products successfully!",
                                                 "data": [
                                                     {
                                                         "id": 1,
@@ -75,7 +78,7 @@ public class AnonymousController {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "status": 400,
-                                                "message": "Get all orders failed!",
+                                                "message": "Get all products failed!",
                                                 "data": null
                                             }
                                             """)

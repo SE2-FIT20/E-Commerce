@@ -202,7 +202,7 @@ public class AdminController {
     )
     @PutMapping("/manage-accounts")
     public ResponseEntity<Response> changeAccess(@RequestBody ChangeAccessRequest request) {
-        return null;
+        return userService.changeAccess(request);
     }
 
     @Operation(
