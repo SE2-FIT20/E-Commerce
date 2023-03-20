@@ -28,7 +28,7 @@ public class CustomerService {
         Response response = Response.builder()
                 .status(200)
                 .message("Get customer information successfully")
-                .data(customerInformation)
+                .data(null)
                 .build();
 
         return ResponseEntity.ok(response);
@@ -46,6 +46,7 @@ public class CustomerService {
         if (request.getName() != null) customer.setName(request.getName());
         if (request.getAddress() != null) customer.setAddress(request.getAddress());
         if (request.getPhone() != null) customer.setPhoneNumber(request.getPhone());
+        if (request.getAvatar() != null) customer.setAvatar(request.getAvatar());
 
         customerRepository.save(customer);
 
