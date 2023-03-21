@@ -8,5 +8,6 @@ public class CreateProductRequest {
     private String description;
     private String category;
     private Double price;
+    private Integer quantity;
     private String image;
 }

@@ -21,17 +21,19 @@ public class Product {
     private String category;
     private Double price;
     private String image;
+    private Integer quantity;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    public static Product createProduct(String name, String description, String category, Double price, String image) {
+    public static Product createProduct(String name, String description, String category, Double price, String image, Integer quantity) {
         return Product.builder()
                 .name(name)
                 .description(description)
                 .category(category)
                 .price(price)
                 .image(image)
+                .quantity(quantity)
                 .build();
     }
 
