@@ -24,18 +24,12 @@ public class Product {
     private Double price;
     @ElementCollection
     private List<String> images;
+    private String image;
+    private Integer quantity;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    public static Product createProduct(String name, String description, String category, Double price, List<String> images) {
-        return Product.builder()
-                .name(name)
-                .description(description)
-                .category(category)
-                .price(price)
-                .images(images)
-                .build();
-    }
+
 
 }
