@@ -24,7 +24,6 @@ public class Product {
     private Double price;
     @ElementCollection
     private List<String> images;
-    private String image;
     private Integer quantity;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
