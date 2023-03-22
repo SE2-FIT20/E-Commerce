@@ -1,5 +1,6 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.Customer;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
@@ -74,9 +75,14 @@ public class CustomerController {
     )
     @PostMapping("/add-to-cart")
     public ResponseEntity<Response> addToCart(@RequestBody CreateOrderRequest orderRequest) {
-        return null;
+        User currentCustomer = getCurrentCustomer();
+        return customerService.addToCart(currentCustomer,orderRequest);
     }
 
+    @GetMapping("/cart")
+    public ResponseEntity<Response> getCartItems() {
+        return customerService.getCartItems(getCurrentCustomer());
+    }
     @Operation(
             summary = "Checkout"
     )

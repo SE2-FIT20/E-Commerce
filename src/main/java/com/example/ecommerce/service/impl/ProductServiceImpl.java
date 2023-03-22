@@ -27,7 +27,7 @@ public class ProductServiceImpl implements ProductService {
                 .description(request.getDescription())
                 .category(request.getCategory())
                 .price(request.getPrice())
-                .image(request.getImage())
+                .images(request.getImages())
                 .build();
         productRepository.save(product);
         return ResponseEntity.ok(Response.builder()
@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
                 .build());
     }
 
-    private Product findProductById(Long productId) {
+    public Product findProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found"));
     }
@@ -56,6 +56,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<Response> deleteProductById(Long productId) {
+        //TODO: check if this product belongs to the store
+
         Product product = findProductById(productId);
         productRepository.delete(product);
 
@@ -68,12 +70,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<Response> updateProduct(UpdateProductRequest request) {
+        //TODO: check if this product belongs to the store
         Product product = findProductById(request.getProductId());
-        product.setName(request.getName());
-        product.setDescription(request.getDescription());
-        product.setCategory(request.getCategory());
-        product.setPrice(product.getPrice());
-        product.setImage(request.getImage());
+
+
+        if (request.getName() != null) product.setName(request.getName());
+        if (request.getDescription() != null) product.setDescription(request.getDescription());
+        if (request.getCategory() != null) product.setCategory(request.getCategory());
+        if (request.getPrice() != null) product.setPrice(request.getPrice());
+        if (request.getImages() != null) product.setImages(request.getImages());
 
         productRepository.save(product);
         return ResponseEntity.ok(Response.builder()

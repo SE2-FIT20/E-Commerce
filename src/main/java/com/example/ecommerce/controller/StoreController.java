@@ -120,7 +120,6 @@ public class StoreController {
             }
             """))))
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Create product successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            >>>>>>> b5db3b5 (check storeController)
                                                 {
                                                     "status": 200,
                                                     "message": "Create product by id successfully",

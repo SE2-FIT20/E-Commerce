@@ -19,4 +19,6 @@ public interface ProductService {
     ResponseEntity<Response> getProductById(Long productId);
 
     ResponseEntity<Response> getAllProduct();
+
+    Product findProductById(Long productId);
 }

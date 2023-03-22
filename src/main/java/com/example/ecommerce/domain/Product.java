@@ -12,6 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
+//TODO: category list (admin create)
+//TODO: product (get all - brief, get detail - detailedInfo with rating)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,18 +22,19 @@ public class Product {
     private String description;
     private String category;
     private Double price;
-    private String image;
+    @ElementCollection
+    private List<String> images;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    public static Product createProduct(String name, String description, String category, Double price, String image) {
+    public static Product createProduct(String name, String description, String category, Double price, List<String> images) {
         return Product.builder()
                 .name(name)
                 .description(description)
                 .category(category)
                 .price(price)
-                .image(image)
+                .images(images)
                 .build();
     }
 

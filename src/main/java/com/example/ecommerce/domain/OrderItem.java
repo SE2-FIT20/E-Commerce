@@ -1,14 +1,12 @@
 package com.example.ecommerce.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Generated;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Data
 public class OrderItem {
 

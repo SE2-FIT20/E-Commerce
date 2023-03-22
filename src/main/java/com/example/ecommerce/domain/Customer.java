@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,9 +18,11 @@ public class Customer extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String address;
+    @ElementCollection
+    private List<String> addresses;
     private String phoneNumber;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Cart cart;
+
 }

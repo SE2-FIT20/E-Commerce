@@ -2,6 +2,8 @@ package com.example.ecommerce.dto.request.product;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UpdateProductRequest {
     private Long productId;
@@ -9,5 +11,5 @@ public class UpdateProductRequest {
     private String description;
     private String category;
     private Double price;
-    private String image;
+    private List<String> images;
 }

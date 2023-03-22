@@ -26,6 +26,7 @@ public class User implements UserDetails {
     private String name;
     private String email;
     private String password;
+    @Lob
     private String avatar;
     private boolean isLocked;
     private String role;

@@ -7,8 +7,13 @@ import java.util.List;
 
 @Data
 public class CreateOrderRequest {
-    private List<OrderItem> items;
-    private String status;
+    private List<OrderItemDTO> items;
+
+    @Data
+    public static class OrderItemDTO {
+        private Long productId;
+        private Integer quantity;
+    }
 }
 /*
 *

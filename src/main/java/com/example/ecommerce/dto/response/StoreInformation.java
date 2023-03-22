@@ -15,11 +15,13 @@ public class StoreInformation {
     private String address;
     private String description;
 
+    private String avatar;
     public StoreInformation(Store store) {
         this.id = store.getId();
         this.name = store.getName();
         this.email = store.getEmail();
         this.address = store.getAddress();
         this.description = store.getDescription();
+        this.avatar = store.getAvatar();
     }
 }

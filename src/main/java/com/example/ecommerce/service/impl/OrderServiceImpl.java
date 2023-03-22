@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Order;
+import com.example.ecommerce.domain.OrderItem;
 import com.example.ecommerce.dto.request.order.CreateOrderRequest;
 
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
@@ -8,25 +9,39 @@ import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.OrderRepository;
 import com.example.ecommerce.service.service.OrderService;
+import com.example.ecommerce.service.service.ProductService;
+import lombok.AllArgsConstructor;
 import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final ProductService productService;
 
     @Override
     public ResponseEntity<Response> createOrder(CreateOrderRequest request) {
 
+        List<OrderItem> orderItems = new ArrayList<>();
+        for (CreateOrderRequest.OrderItemDTO item : request.getItems()) {
+            OrderItem orderItem = OrderItem.builder()
+                    .product(productService.findProductById(item.getProductId()))
+                    .quantity(item.getQuantity())
+                    .build();
+            orderItems.add(orderItem);
+        }
+
+
         Order order = Order.builder()
-                .items(request.getItems())
-                .status(request.getStatus())
+                .items(orderItems)
+                .status(Order.OrderStatus.PENDING)
                 .build();
 
         orderRepository.save(order);
@@ -57,7 +72,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseEntity<Response> updateOrder(UpdateOrderRequest request) {
         Order order = findOrderById(request.getOrderId());
-        order.setStatus(request.getStatus());
+        Order.OrderStatus status = Order.OrderStatus.valueOf(request.getStatus().toString().toUpperCase());
+        order.setStatus(status);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Update order successfully")

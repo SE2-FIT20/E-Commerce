@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(value = "*", maxAge = 3000)
-
+//TODO: get detailed information of product
+//TODO: product with categories
 public class AnonymousController {
 
     @Autowired
