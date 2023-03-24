@@ -93,9 +93,7 @@ public class StoreService {
             throw new NotFoundException("Product not found for productId: " + productId);
         }
 
-        inventory.removeIf(product -> product.getId().equals(productId));
-
-        storeRepository.save(store);
+        productService.deleteProductById(productId);;
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)

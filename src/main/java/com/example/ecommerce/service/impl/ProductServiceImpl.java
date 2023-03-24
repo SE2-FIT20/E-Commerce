@@ -39,6 +39,8 @@ public class ProductServiceImpl implements ProductService {
                 .build());
     }
 
+
+
     public Product findProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found"));
@@ -51,9 +53,20 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ResponseEntity<Response> deleteProductById(Long storeId, Long productId) {
+    public ResponseEntity<Response> deleteProductByIdAndStoreId(Long storeId, Long productId) {
         //TODO: check if this product belongs to the store
 
+        Product product = findProductById(productId);
+        productRepository.delete(product);
+
+        return ResponseEntity.ok(Response .builder()
+                .status(200)
+                .message("Delete product successfully")
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> deleteProductById(Long productId) {
         Product product = findProductById(productId);
         productRepository.delete(product);
 

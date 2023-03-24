@@ -12,7 +12,9 @@ public interface ProductService {
 
     ResponseEntity<Response> addProductToCart(Long productId, Integer quantity);
 
+    ResponseEntity<Response> deleteProductByIdAndStoreId(Long storeId, Long productId);
     ResponseEntity<Response> deleteProductById(Long productId);
+
 
     ResponseEntity<Response> updateProduct(UpdateProductRequest product);
 
