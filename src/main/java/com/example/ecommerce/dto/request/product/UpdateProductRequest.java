@@ -12,4 +12,6 @@ public class UpdateProductRequest {
     private String category;
     private Double price;
     private List<String> images;
+
+    private Integer quantity;
 }

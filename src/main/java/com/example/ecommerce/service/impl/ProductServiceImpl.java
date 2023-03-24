@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ResponseEntity<Response> deleteProductById(Long productId) {
+    public ResponseEntity<Response> deleteProductById(Long storeId, Long productId) {
         //TODO: check if this product belongs to the store
 
         Product product = findProductById(productId);
@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
     public ResponseEntity<Response> getAllProducts() {
 
         List<Product> products = productRepository.findAll();
-        List<ProductBriefInfo> productBriefInfos = products.stream().map(ProductBriefInfo::new).toList();
+        List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(products);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get all product successfully")

@@ -14,4 +14,6 @@ public interface PromotionService {
     ResponseEntity<Response> getPromotionById(Long promotionId);
     ResponseEntity<Response> getAllPromotions();
 
+    void save(Promotion promotion);
+
 }

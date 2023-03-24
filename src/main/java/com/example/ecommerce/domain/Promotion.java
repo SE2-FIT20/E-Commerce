@@ -1,9 +1,7 @@
 package com.example.ecommerce.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -19,17 +17,12 @@ public class Promotion {
     private String name;
     private double percent;
     private String description;
-    private Long storeId;
-    private boolean isGlobal;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Store store;
 
 
-    public static Promotion create(String name, double percent, String description, Long storeId, boolean isGlobal) {
-        Promotion promotion = new Promotion();
-        promotion.setName(name);
-        promotion.setPercent(percent);
-        promotion.setDescription(description);
-        promotion.setStoreId(storeId);
-        promotion.setGlobal(isGlobal);
-        return promotion;
+    public boolean isGlobal() {
+        return store == null;
     }
 }

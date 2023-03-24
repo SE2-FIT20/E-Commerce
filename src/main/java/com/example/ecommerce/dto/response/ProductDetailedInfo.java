@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -43,5 +44,9 @@ public class ProductDetailedInfo {
                 .average()
                 .orElse(0.0);
         this.store = new StoreBriefInfo(product.getStore());
+    }
+
+    public static List<ProductDetailedInfo> from(List<Product> products) {
+        return products.stream().map(ProductDetailedInfo::new).collect(Collectors.toList());
     }
 }

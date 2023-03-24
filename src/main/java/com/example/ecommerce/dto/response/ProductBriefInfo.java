@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +29,9 @@ public class ProductBriefInfo {
         this.images = product.getImages();
         this.store = new StoreBriefInfo(product.getStore());
 
+    }
+
+    public static List<ProductBriefInfo> from(List<Product> products) {
+        return products.stream().map(ProductBriefInfo::new).collect(Collectors.toList());
     }
 }

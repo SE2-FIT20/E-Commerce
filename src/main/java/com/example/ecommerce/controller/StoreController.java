@@ -75,7 +75,7 @@ public class StoreController {
 
     })
     @GetMapping("/products")
-    public ResponseEntity<Response> storeService() {
+    public ResponseEntity<Response> getAllProducts() {
         User currentStore = getCurrentStore();
         return storeService.storeService(currentStore.getId());
     }
@@ -151,7 +151,8 @@ public class StoreController {
             """)))})
     @PutMapping("/products")
     public ResponseEntity<Response> updateProduct(@RequestBody UpdateProductRequest request) {
-        return productService.updateProduct(request);
+        User currentStore = getCurrentStore();
+        return storeService.updateProduct(currentStore.getId(), request);
     }
 
 
@@ -169,9 +170,10 @@ public class StoreController {
                 "data": null
             }
             """)))})
-    @DeleteMapping("/products/{id}")
-    public ResponseEntity<Response> deleteProduct(@PathVariable @Schema(description = "delete product by id") Long id) {
-        return productService.deleteProductById(id);
+    @DeleteMapping("/products/{productId}")
+    public ResponseEntity<Response> deleteProduct(@PathVariable @Schema(description = "delete product by id") Long productId) {
+        User currentStore = getCurrentStore();
+        return storeService.deleteProductById(currentStore.getId(), productId);
     }
 
     @Operation(summary = "Get orders", description = "Get all orders")
@@ -204,7 +206,8 @@ public class StoreController {
             """)))})
     @GetMapping("/orders")
     public ResponseEntity<Response> getOrders() {
-        return orderService.getAllOrder();
+        User currentStore = getCurrentStore();
+        return storeService.getAllOrder(currentStore.getId());
     }
 
 
@@ -229,7 +232,8 @@ public class StoreController {
             """)))})
     @PutMapping("/orders")
     public ResponseEntity<Response> updateOrder(@RequestBody UpdateOrderRequest request) {
-        return orderService.updateOrder(request);
+        User currentStore = getCurrentStore();
+        return storeService.updateOrder(currentStore.getId(), request);
     }
 
     /* this is optional as the result of the team discussion
@@ -306,7 +310,8 @@ public class StoreController {
             """)))})
     @GetMapping("/promotion")
     public ResponseEntity<Response> getPromotion() {
-        return promotionService.getAllPromotions();
+        User currentStore = getCurrentStore();
+        return storeService.getAllPromotions(currentStore.getId());
     }
 
     @Operation(summary = "create promotion", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreatePromotionRequest.class), examples = @ExampleObject(value = """
@@ -332,7 +337,8 @@ public class StoreController {
             """)))})
     @PostMapping("/promotion")
     public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
-        return promotionService.createPromotion(promotionRequest);
+        User currentStore = getCurrentStore();
+        return storeService.createPromotion(currentStore.getId(), promotionRequest);
 
     }
 
@@ -359,7 +365,8 @@ public class StoreController {
             """)))})
     @PutMapping("/promotion")
     public ResponseEntity<Response> updatePromotionRequest(@RequestBody UpdatePromotionRequest updatePromotionRequest) {
-        return promotionService.updatePromotion(updatePromotionRequest);
+        User currentStore = getCurrentStore();
+        return storeService.updatePromotion(currentStore.getId(), updatePromotionRequest);
     }
 
     @Operation(summary = "Get store information")
