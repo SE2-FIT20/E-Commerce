@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "Orders") // Order is a reserved word in SQL
 public class Order {
      public enum OrderStatus{
-        PENDING, READY_FOR_DELIVERY, DELIVERING, DELIVERED, CANCELLED
+        PENDING, READY_FOR_DELIVERY, DELIVERING, DELIVERED, CANCELLED;
 
          public static OrderStatus fromString(String status) {
              switch (status) {
