@@ -50,12 +50,14 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> updatePromotion(UpdatePromotionRequest updatePromotionRequest) {
+        Store store = storeService.findStoreById(updatePromotionRequest.getStoredId());
         Promotion promotion = findPromotionById(updatePromotionRequest.getPromotionId());
 
         promotion.setName(updatePromotionRequest.getName());
         promotion.setPercent(updatePromotionRequest.getPercent());
-        promotion.setStoreId(updatePromotionRequest.getStoredId());
-        promotion.setGlobal(updatePromotionRequest.isGlobal());
+        promotion.setDescription(updatePromotionRequest.getDescription());
+        promotion.setStore(store);
+
 
         promotionRepository.save(promotion);
         return ResponseEntity.ok(Response.builder()
