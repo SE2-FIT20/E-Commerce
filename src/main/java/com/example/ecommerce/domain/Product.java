@@ -24,12 +24,12 @@ public class Product {
     private Double price;
     @ElementCollection
     private List<String> images;
+    private Integer quantity;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Review> reviews;
 
-    private int quantity;
     @ManyToOne
     @JsonIgnore
     private Store store;
