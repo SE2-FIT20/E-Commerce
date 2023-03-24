@@ -7,10 +7,20 @@ import com.example.ecommerce.dto.response.CustomerInformation;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
+import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
+import static com.example.ecommerce.dto.request.order.CreateOrderRequest.*;
 
 @Service
 @AllArgsConstructor
@@ -18,7 +28,9 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final ProductService productService;
+    private final OrderService orderService;
 
+    private final StoreService storeService;
     public void save(Customer customer) {
         customerRepository.save(customer);
     }
@@ -64,14 +76,28 @@ public class CustomerService {
 
     public ResponseEntity<Response> addToCart(User user, CreateOrderRequest orderRequest) {
         Customer customer = findCustomerById(user.getId());
-        Cart cart = customer.getCart();
-        for (CreateOrderRequest.OrderItemDTO orderItem : orderRequest.getItems()) {
+        List<OrderItem> cart = customer.getCart();
+        for (OrderItemDTO orderItem : orderRequest.getItems()) {
             Product product = productService.findProductById(orderItem.getProductId());
-            OrderItem item = OrderItem.builder()
-                    .product(product)
-                    .quantity(orderItem.getQuantity())
-                    .build();
-            cart.getItems().add(item);
+
+            // check if the product is already in the cart, if yes, update the quantity
+            boolean productInCartAlready = cart.stream().anyMatch(item -> item.getProduct().getId().equals(product.getId()));
+            if (productInCartAlready) {
+                 OrderItem oldItem = cart.stream()
+                        .filter(item -> item.getProduct().getId().equals(product.getId()))
+                        .findFirst().get();
+
+                 oldItem.setQuantity(orderItem.getQuantity() + orderItem.getQuantity());
+
+            } else {
+                // if not, add the product to the cart
+                OrderItem item = OrderItem.builder()
+                        .product(product)
+                        .quantity(orderItem.getQuantity())
+                        .build();
+                customer.getCart().add(item);
+            }
+
         }
 
         customerRepository.save(customer);
@@ -87,14 +113,44 @@ public class CustomerService {
 
     public ResponseEntity<Response> getCartItems(User currentCustomer) {
         Customer customer = findCustomerById(currentCustomer.getId());
-        Cart cart = customer.getCart();
 
         Response response = Response.builder()
                 .status(200)
                 .message("Get cart items successfully")
-                .data(cart.getItems())
+                .data(customer.getCart())
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> checkout(Long customerId) {
+        Customer customer = findCustomerById(customerId);
+        List<OrderItem> cart = customer.getCart();
+
+        // items from a store will be grouped together
+        Map<Long, List<OrderItem>> groupByStoreId = cart.stream()
+                .collect(Collectors.groupingBy(item -> item.getProduct().getStore().getId()));
+
+        for (Map.Entry<Long, List<OrderItem>> entry : groupByStoreId.entrySet()) {
+            Store store = storeService.findStoreById(entry.getKey());
+            List<OrderItem> items = entry.getValue();
+
+            Order order = Order.builder()
+                    .customer(customer)
+                    .store(store)
+                    .items(items)
+                    .status(PENDING)
+                    .build();
+
+            orderService.save(order);
+        }
+
+        customer.setCart(new ArrayList<>()); // empty the cart of customer after checking out
+        customerRepository.save(customer);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Checkout successfully")
+                .data(null)
+                .build());
     }
 }

@@ -22,7 +22,7 @@ public class Customer extends User{
     private List<String> addresses;
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private Cart cart;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<OrderItem> cart;
 
 }

@@ -137,7 +137,8 @@ public class CustomerController {
     )
     @PostMapping("/checkout")
     public ResponseEntity<Response> checkout() {
-        return null;
+        User currentCustomer = getCurrentCustomer();
+        return customerService.checkout(currentCustomer.getId());
     }
 
     /* This is optional as the result of team discussion

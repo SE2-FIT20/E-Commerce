@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
 
-    ResponseEntity<Response> createProduct(CreateProductRequest request);
+//    ResponseEntity<Response> createProduct(Long storeId, CreateProductRequest request);
 
     ResponseEntity<Response> addProductToCart(Long productId, Integer quantity);
 
@@ -18,7 +18,9 @@ public interface ProductService {
 
     ResponseEntity<Response> getProductById(Long productId);
 
-    ResponseEntity<Response> getAllProduct();
+    ResponseEntity<Response> getAllProducts();
 
     Product findProductById(Long productId);
+
+    void save(Product product);
 }

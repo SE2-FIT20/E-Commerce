@@ -20,8 +20,15 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Customer customer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Store store;
+
     @OneToMany(cascade = CascadeType.ALL)
     private List<OrderItem> items;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 

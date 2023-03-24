@@ -1,6 +1,5 @@
 package com.example.ecommerce.service.security;
 
-import com.example.ecommerce.domain.Cart;
 import com.example.ecommerce.domain.Customer;
 import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.domain.User;
@@ -50,7 +49,6 @@ public class AuthServiceImpl implements AuthService {
             customer.setName(registrationRequest.getName());
             customer.setRole(registrationRequest.getRole());
             customer.setAvatar(generateAvatarLink(customer.getName()));
-            customer.setCart(Cart.initEmptyCart());
             customerService.save(customer);
 
         } else if (role.equals("STORE")) {

@@ -10,6 +10,6 @@ public class CreateProductRequest {
     private String description;
     private String category;
     private Double price;
-    private Long quantity;
+    private Integer quantity;
     private List<String> images;
 }

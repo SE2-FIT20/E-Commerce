@@ -1,5 +1,6 @@
 package com.example.ecommerce.service.service;
 
+import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.dto.request.order.CreateOrderRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -16,4 +17,6 @@ public interface OrderService {
     ResponseEntity<Response> getOrderById(Long orderId);
 
     ResponseEntity<Response> getAllOrder();
+
+    void save(Order order);
 }

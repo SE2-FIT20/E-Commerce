@@ -52,6 +52,8 @@ public class OrderServiceImpl implements OrderService {
                 .build());
     }
 
+
+
     @Override
     public ResponseEntity<Response> deleteOrderById(Long orderId) {
         Order order = findOrderById(orderId);
@@ -102,5 +104,10 @@ public class OrderServiceImpl implements OrderService {
                 .message("Get all order successfully")
                 .data(allOrder)
                 .build());
+    }
+
+    @Override
+    public void save(Order order) {
+        orderRepository.save(order);
     }
 }

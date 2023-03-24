@@ -3,6 +3,7 @@ package com.example.ecommerce.service.impl;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.dto.response.UserInformation;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.service.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get user successfully")
-                .data(user)
+                .data(new UserInformation(user))
                 .build());
     }
 
@@ -55,10 +57,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<Response> getAllUsers() {
         List<User> users = userRepository.findAll();
+        List<UserInformation> userInfo = users.stream().map(UserInformation::new).collect(Collectors.toList());
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get all users successfully")
-                .data(userRepository.findAll())
+                .data(userInfo)
                 .build());
     }
 
@@ -69,10 +72,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<Response> changeAccess(ChangeAccessRequest request) {
-        Optional<User> user = userRepository.findById(request.getUserId());
+        User user = findUserById(request.getUserId());
+        //TODO: throw exception for illegal state
+        if (request.getOperation().equals("LOCK")) {
+            user.setLocked(true);
+        } else {
+            user.setLocked(false);
+        }
+        userRepository.save(user);
         return ResponseEntity.ok(Response.builder()
-                .status(200).message("Change access successfully!")
-                .data(user)
+                .status(200)
+                .message("Change access successfully!")
                 .build());
     }
 }

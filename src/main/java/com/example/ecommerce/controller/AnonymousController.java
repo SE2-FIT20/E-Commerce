@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -89,7 +86,35 @@ public class AnonymousController {
     )
     @GetMapping("/products")
     public ResponseEntity<Response> getProducts() {
-        return productService.getAllProduct();
+        return productService.getAllProducts();
+    }
+
+    @Operation(summary = "Get product by id")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get product by id successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
+            {
+                "status": 200,
+                "message": "Get product by id successfully",
+                "data": {
+                    "id": 1,
+                    "name" : "iphone15",
+                    "description" : "best iphone",
+                    "category": "electronic",
+                    "price" : 999.99,
+                    "image" : "https:link.com"
+                }
+            }
+            """))), @ApiResponse(responseCode = "400", description = "Get product by id failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
+            {
+                "status": 400,
+                "message": "Get product failed",
+                "data": null
+            }
+            """)))
+
+    })
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<Response> getProductById(@PathVariable Long productId) {
+        return productService.getProductById(productId);
     }
 
 }

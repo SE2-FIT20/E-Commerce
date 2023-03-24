@@ -1,8 +1,6 @@
 package com.example.ecommerce.controller;
 
 
-import com.example.ecommerce.domain.Product;
-import com.example.ecommerce.domain.Promotion;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
@@ -77,37 +75,12 @@ public class StoreController {
 
     })
     @GetMapping("/products")
-    public ResponseEntity<Response> getProducts() {
-        return productService.getAllProduct();
+    public ResponseEntity<Response> storeService() {
+        User currentStore = getCurrentStore();
+        return storeService.storeService(currentStore.getId());
     }
 
-    @Operation(summary = "Get product by id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get product by id successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 200,
-                "message": "Get product by id successfully",
-                "data": {
-                    "id": 1,
-                    "name" : "iphone15",
-                    "description" : "best iphone",
-                    "category": "electronic",
-                    "price" : 999.99,
-                    "image" : "https:link.com"
-                }
-            }
-            """))), @ApiResponse(responseCode = "400", description = "Get product by id failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 400,
-                "message": "Get product failed",
-                "data": null
-            }
-            """)))
 
-    })
-    @GetMapping("/product/{productId}")
-    public ResponseEntity<Response> getProductById(@PathVariable Long productId) {
-        return productService.getProductById(productId);
-    }
 
 
     @Operation(summary = "Create product", description = "Create product", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateProductRequest.class), examples = @ExampleObject(value = """
@@ -148,7 +121,8 @@ public class StoreController {
             """)))})
     @PostMapping("/products")
     public ResponseEntity<Response> createProduct(@RequestBody CreateProductRequest request) {
-        return productService.createProduct(request);
+        User currentStore = getCurrentStore();
+        return storeService.createProduct(currentStore.getId(), request);
     }
 
 

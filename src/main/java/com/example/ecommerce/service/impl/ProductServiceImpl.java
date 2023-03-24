@@ -1,11 +1,15 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
+import com.example.ecommerce.dto.response.ProductBriefInfo;
+import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.ProductRepository;
+import com.example.ecommerce.repository.StoreRepository;
 import com.example.ecommerce.service.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,23 +23,10 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    //TODO: continue here
+//    @Autowired
+//    private StoreService storeService;
 
-    @Override
-    public ResponseEntity<Response> createProduct(CreateProductRequest request) {
-        Product product = Product.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .category(request.getCategory())
-                .price(request.getPrice())
-                .images(request.getImages())
-                .build();
-        productRepository.save(product);
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Create product successfully")
-                .data(null)
-                .build());
-    }
 
     @Override
     public ResponseEntity<Response> addProductToCart(Long productId, Integer quantity) {
@@ -43,14 +34,19 @@ public class ProductServiceImpl implements ProductService {
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Add product to cart successfully")
-                        .data(product)
-                        .data(quantity)
+                .data(product)
+                .data(quantity)
                 .build());
     }
 
     public Product findProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found"));
+    }
+
+    @Override
+    public void save(Product product) {
+        productRepository.save(product);
     }
 
 
@@ -92,20 +88,23 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<Response> getProductById(Long productId) {
         Product product = findProductById(productId);
+        ProductDetailedInfo productDetailedInfo = new ProductDetailedInfo(product);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get product successfully")
-                .data(product)
+                .data(productDetailedInfo)
                 .build());
     }
 
     @Override
-    public ResponseEntity<Response> getAllProduct() {
+    public ResponseEntity<Response> getAllProducts() {
+
         List<Product> products = productRepository.findAll();
+        List<ProductBriefInfo> productBriefInfos = products.stream().map(ProductBriefInfo::new).toList();
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get all product successfully")
-                .data(products)
+                .data(productBriefInfos)
                 .build());
     }
 

@@ -1,5 +1,8 @@
 package com.example.ecommerce.domain;
 
+import com.example.ecommerce.dto.response.ProductBriefInfo;
+import com.example.ecommerce.dto.response.ProductDetailedInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +17,11 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Product product;
     private Integer quantity;
+
+    public ProductBriefInfo getProduct() {
+        return new ProductBriefInfo(product);
+    }
 }
