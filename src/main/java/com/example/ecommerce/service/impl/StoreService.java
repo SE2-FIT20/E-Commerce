@@ -106,8 +106,6 @@ public class StoreService {
     public ResponseEntity<Response> getAllOrder(Long storeId) {
         Store store = findStoreById(storeId);
         List<Order> orders = store.getOrders();
-
-
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get all orders successfully")
