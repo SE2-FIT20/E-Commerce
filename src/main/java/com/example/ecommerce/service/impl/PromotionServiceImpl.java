@@ -20,13 +20,12 @@ import java.util.List;
 public class PromotionServiceImpl implements PromotionService {
 
     private final PromotionRepository promotionRepository;
-    private final StoreService storeService;
+//    private final StoreService storeService;
     @Override
     public ResponseEntity<Response> createPromotion(CreatePromotionRequest request) {
-        Store store = storeService.findStoreById(request.getStoreId());
+        //TODO: admin  use this method
         Promotion promotion = Promotion.builder()
                 .name(request.getName())
-                .store(store)
                 .description(request.getDescription())
                 .percent(request.getPercent())
                 .build();
@@ -50,13 +49,13 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> updatePromotion(UpdatePromotionRequest updatePromotionRequest) {
-        Store store = storeService.findStoreById(updatePromotionRequest.getStoredId());
         Promotion promotion = findPromotionById(updatePromotionRequest.getPromotionId());
+        //TODO: admin  use this method
 
         promotion.setName(updatePromotionRequest.getName());
         promotion.setPercent(updatePromotionRequest.getPercent());
         promotion.setDescription(updatePromotionRequest.getDescription());
-        promotion.setStore(store);
+
 
 
         promotionRepository.save(promotion);
