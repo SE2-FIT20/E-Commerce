@@ -1,5 +1,7 @@
-package com.example.ecommerce.domain;
+package com.example.ecommerce.dto.response;
 
+import com.example.ecommerce.domain.OrderItem;
+import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.response.StoreBriefInfo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,23 +11,14 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CartStoreItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Store store;
+    private StoreBriefInfo store;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
 
-    public StoreBriefInfo getStore() {
-        return new StoreBriefInfo(store);
-    }
 }

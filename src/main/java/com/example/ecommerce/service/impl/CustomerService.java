@@ -4,6 +4,7 @@ import com.example.ecommerce.domain.*;
 import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
+import com.example.ecommerce.dto.response.CartStoreItem;
 import com.example.ecommerce.dto.response.CustomerInformation;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
@@ -16,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.*;
@@ -100,7 +99,7 @@ public class CustomerService {
         Response response = Response.builder()
                 .status(200)
                 .message("Get cart items successfully")
-                .data(customer.getCart())
+                .data(customer.getCart().getItems())
                 .build();
 
         return ResponseEntity.ok(response);
@@ -112,8 +111,8 @@ public class CustomerService {
 
 
 
-        for (CartStoreItem cartStoreItem : cart.getStores()) {
-            Store store = storeService.findStoreById(cartStoreItem.getId());
+        for (CartStoreItem cartStoreItem : cart.getItems()) {
+            Store store = storeService.findStoreById(cartStoreItem.getStore().getId());
             List<OrderItem> items = cartStoreItem.getItems();
 
             Order order = Order.builder()
@@ -126,7 +125,7 @@ public class CustomerService {
             orderService.save(order);
         }
 
-        cart.setStores(new ArrayList<>()); // empty the cart of customer after checking out
+        cart.setItems(new ArrayList<>()); // empty the cart of customer after checking out
         customerRepository.save(customer);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
@@ -148,5 +147,18 @@ public class CustomerService {
                 .data(null)
                 .build());
 
+    }
+
+    public ResponseEntity<Response> previewCart(User currentCustomer) {
+        Customer customer = findCustomerById(currentCustomer.getId());
+        Cart cart = customer.getCart();
+
+        List<OrderItem> previewList = cart.getOrderItemsPreview();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get cart preview successfully")
+                .data(previewList)
+                .build());
     }
 }

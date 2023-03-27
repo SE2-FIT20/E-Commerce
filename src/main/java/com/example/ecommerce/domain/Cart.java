@@ -1,14 +1,15 @@
 package com.example.ecommerce.domain;
 
+import com.example.ecommerce.dto.response.CartStoreItem;
+import com.example.ecommerce.dto.response.StoreBriefInfo;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Deque;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -18,88 +19,139 @@ public class Cart {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    List<CartStoreItem> stores; // group the items by store
+    List<OrderItem> items; // group the items by store
 
     public void addItem(Product product, Integer quantity) {
-        Store productStore = product.getStore();
 
-        boolean added = false;
+        boolean alreadyExists = items.stream()
+                .anyMatch(item -> item.getProduct().getId().equals(product.getId()));
 
-        // store already exists in the cart
-        for (int i = 0; i < stores.size(); i++) {
-            CartStoreItem cartStoreItem = stores.get(i);
-            if (cartStoreItem.getStore().getId().equals(productStore.getId())) {
-                List<OrderItem> items = cartStoreItem.getItems();
-                // check if the product already exists cart also
-                boolean alreadyExists = items.stream()
-                        .anyMatch(item -> item.getProduct().getId().equals(product.getId()));
-
-                // update the quantity if the product already exists
-                if (alreadyExists) {
-                    OrderItem oldItem = items.stream()
-                            .filter(item -> item.getProduct().getId().equals(product.getId()))
-                            .findFirst()
-                            .get();
-                    oldItem.setQuantity(oldItem.getQuantity() + quantity);
-
-                } else {
-                    // add the product to the cart if it doesn't exist
-                    OrderItem newItem = OrderItem.builder()
-                            .product(product)
-                            .quantity(quantity)
-                            .build();
-
-                    items.add(newItem);
+        if (alreadyExists) {
+            for (OrderItem item : items) {
+                if (item.getProduct().getId().equals(product.getId())) {
+                    item.setQuantity(item.getQuantity() + quantity);
                 }
-
-                added = true;
             }
-            // move the store to the first in the list
-            stores.remove(i);
-            stores.add(0, cartStoreItem);
-        }
-
-        // store doesn't exist in the cart
-        if (!added) {
+        } else {
             OrderItem newItem = OrderItem.builder()
                     .product(product)
                     .quantity(quantity)
                     .build();
-            List<OrderItem> items = new ArrayList<OrderItem>();
             items.add(newItem);
-
-            CartStoreItem store = CartStoreItem.builder()
-                    .id(productStore.getId())
-                    .store(productStore)
-                    .items(items)
-                    .build();
-//            Store store = new Store()
-            // add the store to the first in the list
-            stores.add(0, store);
         }
+//        boolean added = false;
+//
+//        // store already exists in the cart
+//        for (int i = 0; i < stores.size(); i++) {
+//            CartStoreItem cartStoreItem = stores.get(i);
+//            if (cartStoreItem.getStore().getId().equals(productStore.getId())) {
+//                List<OrderItem> items = cartStoreItem.getItems();
+//                // check if the product already exists cart also
+//                boolean alreadyExists = items.stream()
+//                        .anyMatch(item -> item.getProduct().getId().equals(product.getId()));
+//
+//                // update the quantity if the product already exists
+//                if (alreadyExists) {
+//                    OrderItem oldItem = items.stream()
+//                            .filter(item -> item.getProduct().getId().equals(product.getId()))
+//                            .findFirst()
+//                            .get();
+//                    oldItem.setQuantity(oldItem.getQuantity() + quantity);
+//
+//                } else {
+//                    // add the product to the cart if it doesn't exist
+//                    OrderItem newItem = OrderItem.builder()
+//                            .product(product)
+//                            .quantity(quantity)
+//                            .build();
+//
+//                    items.add(newItem);
+//                }
+//
+//                added = true;
+//            }
+//            // move the store to the first in the list
+//            stores.remove(i);
+//            stores.add(0, cartStoreItem);
+//        }
+//
+//        // store doesn't exist in the cart
+//        if (!added) {
+//            OrderItem newItem = OrderItem.builder()
+//                    .product(product)
+//                    .quantity(quantity)
+//                    .build();
+//            List<OrderItem> items = new ArrayList<OrderItem>();
+//            items.add(newItem);
+//
+//            CartStoreItem store = CartStoreItem.builder()
+//                    .id(productStore.getId())
+//                    .store(productStore)
+//                    .items(items)
+//                    .build();
+////            Store store = new Store()
+//            // add the store to the first in the list
+//            stores.add(0, store);
+//        }
     }
 
     public void removeItem(Product product) {
-        Store productStore = product.getStore();
-        boolean removed = false;
-        for (int i = 0; i < stores.size(); i++) {
-            CartStoreItem cartStoreItem = stores.get(i);
+        boolean alreadyExists = items.stream()
+                .anyMatch(item -> item.getProduct().getId().equals(product.getId()));
 
-            if (cartStoreItem.getStore().getId().equals(productStore.getId())) {
-                List<OrderItem> items = cartStoreItem.getItems();
-                // check if the product already exists cart also
-                boolean alreadyExists = items.stream()
-                        .anyMatch(item -> item.getProduct().getId().equals(product.getId()));
-                if (alreadyExists) {
-                    items.removeIf(item -> item.getProduct().getId().equals(product.getId()));
-                    removed = true;
-                }
+        if (alreadyExists) {
+            items.removeIf(item -> item.getProduct().getId().equals(product.getId()));
+        } else {
+            throw new IllegalStateException("Product doesn't exist in the cart");
+
+        }
+//        Store productStore = product.getStore();
+//        boolean removed = false;
+//        for (int i = 0; i < stores.size(); i++) {
+//            CartStoreItem cartStoreItem = stores.get(i);
+//
+//            if (cartStoreItem.getStore().getId().equals(productStore.getId())) {
+//                List<OrderItem> items = cartStoreItem.getItems();
+//                // check if the product already exists cart also
+//                boolean alreadyExists = items.stream()
+//                        .anyMatch(item -> item.getProduct().getId().equals(product.getId()));
+//                if (alreadyExists) {
+//                    items.removeIf(item -> item.getProduct().getId().equals(product.getId()));
+//                    removed = true;
+//                }
+//            }
+//        }
+//
+//        if (!removed) {
+//            throw new IllegalStateException("Product doesn't exist in the cart");
+//        }
+
+    }
+
+    public List<CartStoreItem> getItems() {
+        // group the items by store
+        Map<StoreBriefInfo, List<OrderItem>> itemsByStore = new LinkedHashMap<>();
+        for (OrderItem item : items) {
+            StoreBriefInfo store = item.getProduct().getStore();
+            if (itemsByStore.containsKey(store)) {
+                itemsByStore.get(store).add(item);
+            } else {
+                List<OrderItem> storeItems = List.of(item);
+                itemsByStore.put(store, storeItems);
             }
         }
 
-        if (!removed) {
-            throw new IllegalStateException("Product doesn't exist in the cart");
-        }
 
+        return itemsByStore.entrySet().stream()
+                .map(entry -> CartStoreItem.builder()
+                        .store(entry.getKey())
+                        .items(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderItem> getOrderItemsPreview() {
+         Collections.reverse(items); // this will not be save to the database
+        return items;
     }
 }

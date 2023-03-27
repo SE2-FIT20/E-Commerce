@@ -79,6 +79,12 @@ public class CustomerController {
         return customerService.addToCart(currentCustomer,addToCartRequest);
     }
 
+    @GetMapping("/preview-cart")
+    public ResponseEntity<Response> previewCart() {
+        return customerService.previewCart(getCurrentCustomer());
+    }
+
+
     @PostMapping("/remove-from-cart")
     public ResponseEntity<Response> removeFromCart(@RequestBody RemoveFromCartRequest removeFromCartRequest) {
         User currentCustomer = getCurrentCustomer();
