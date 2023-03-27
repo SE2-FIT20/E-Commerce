@@ -25,6 +25,7 @@ public class Product {
     @ElementCollection
     private List<String> images;
     private Integer quantity;
+    private int sold;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore

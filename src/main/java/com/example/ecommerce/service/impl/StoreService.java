@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,9 @@ public class StoreService {
     public ResponseEntity<Response> storeService(Long storeId) {
         Store store = findStoreById(storeId);
         List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(store.getInventory());
+        // reverse the list so that the newest product will be at the top
+        Collections.reverse(productBriefInfos);
+
         Response response = Response.builder()
                 .status(200)
                 .message("Get Store information successfully")

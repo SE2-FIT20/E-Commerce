@@ -1,8 +1,9 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.*;
+import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
-import com.example.ecommerce.dto.request.order.CreateOrderRequest;
+import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.CustomerInformation;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
@@ -16,11 +17,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
-import static com.example.ecommerce.dto.request.order.CreateOrderRequest.*;
+import static com.example.ecommerce.dto.request.order.AddToCartRequest.*;
 
 @Service
 @AllArgsConstructor
@@ -74,31 +74,31 @@ public class CustomerService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Response> addToCart(User user, CreateOrderRequest orderRequest) {
+    public ResponseEntity<Response> addToCart(User user, AddToCartRequest orderRequest) {
         Customer customer = findCustomerById(user.getId());
         List<OrderItem> cart = customer.getCart();
-        for (OrderItemDTO orderItem : orderRequest.getItems()) {
-            Product product = productService.findProductById(orderItem.getProductId());
+        OrderItemDTO orderItem = orderRequest.getItem();
+        Product product = productService.findProductById(orderItem.getProductId());
 
-            // check if the product is already in the cart, if yes, update the quantity
-            boolean productInCartAlready = cart.stream().anyMatch(item -> item.getProduct().getId().equals(product.getId()));
-            if (productInCartAlready) {
-                 OrderItem oldItem = cart.stream()
-                        .filter(item -> item.getProduct().getId().equals(product.getId()))
-                        .findFirst().get();
+        // check if the product is already in the cart, if yes, update the quantity
+        boolean productInCartAlready = cart.stream().anyMatch(item -> item.getProduct().getId().equals(product.getId()));
+        if (productInCartAlready) {
+             OrderItem oldItem = cart.stream()
+                    .filter(item -> item.getProduct().getId().equals(product.getId()))
+                    .findFirst().get();
 
-                 oldItem.setQuantity(orderItem.getQuantity() + orderItem.getQuantity());
+             oldItem.setQuantity(oldItem.getQuantity() + orderItem.getQuantity());
 
-            } else {
-                // if not, add the product to the cart
-                OrderItem item = OrderItem.builder()
-                        .product(product)
-                        .quantity(orderItem.getQuantity())
-                        .build();
-                customer.getCart().add(item);
-            }
-
+        } else {
+            // if not, add the product to the cart
+            OrderItem item = OrderItem.builder()
+                    .product(product)
+                    .quantity(orderItem.getQuantity())
+                    .build();
+            customer.getCart().add(item);
         }
+
+
 
         customerRepository.save(customer);
 
@@ -152,5 +152,25 @@ public class CustomerService {
                 .message("Checkout successfully")
                 .data(null)
                 .build());
+    }
+
+    public ResponseEntity<Response> removeFromCart(User currentCustomer, RemoveFromCartRequest removeFromCartRequest) {
+        Customer customer = findCustomerById(currentCustomer.getId());
+        List<OrderItem> cart = customer.getCart();
+
+        boolean productInCart = cart.stream().anyMatch(item -> item.getProduct().getId().equals(removeFromCartRequest.getProductId()));
+        if (productInCart) {
+            cart.removeIf(item -> item.getProduct().getId().equals(removeFromCartRequest.getProductId()));
+            customerRepository.save(customer);
+            return ResponseEntity.ok(Response.builder()
+                    .status(200)
+                    .message("Remove from cart successfully")
+                    .data(null)
+                    .build()
+            );
+        } else {
+            throw new IllegalStateException("Product is not in the cart");
+        }
+
     }
 }
