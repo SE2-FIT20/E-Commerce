@@ -1,13 +1,10 @@
 package com.example.ecommerce.dto.request.order;
 
-import com.example.ecommerce.domain.OrderItem;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class CreateOrderRequest {
-    private List<OrderItemDTO> items;
+public class AddToCartRequest {
+    private OrderItemDTO item;
 
     @Data
     public static class OrderItemDTO {

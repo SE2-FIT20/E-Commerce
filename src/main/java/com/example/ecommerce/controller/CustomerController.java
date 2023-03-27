@@ -1,10 +1,10 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.domain.Customer;
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
-import com.example.ecommerce.dto.request.order.CreateOrderRequest;
+import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.impl.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,15 +74,21 @@ public class CustomerController {
             }
     )
     @PostMapping("/add-to-cart")
-    public ResponseEntity<Response> addToCart(@RequestBody CreateOrderRequest orderRequest) {
+    public ResponseEntity<Response> addToCart(@RequestBody AddToCartRequest addToCartRequest) {
         User currentCustomer = getCurrentCustomer();
-        return customerService.addToCart(currentCustomer,orderRequest);
+        return customerService.addToCart(currentCustomer,addToCartRequest);
     }
 
+    @PostMapping("/remove-from-cart")
+    public ResponseEntity<Response> removeFromCart(@RequestBody RemoveFromCartRequest removeFromCartRequest) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.removeFromCart(currentCustomer,removeFromCartRequest);
+    }
     @GetMapping("/cart")
     public ResponseEntity<Response> getCartItems() {
         return customerService.getCartItems(getCurrentCustomer());
     }
+
     @Operation(
             summary = "Checkout"
     )

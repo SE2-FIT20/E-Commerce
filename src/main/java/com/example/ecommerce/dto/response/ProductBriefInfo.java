@@ -18,6 +18,8 @@ public class ProductBriefInfo {
     private Double price;
     private List<String> images;
 
+    private int quantity;
+    private int sold;
     private StoreBriefInfo store;
 
     public ProductBriefInfo(Product product) {
@@ -26,6 +28,8 @@ public class ProductBriefInfo {
         this.description = product.getDescription();
         this.category = product.getCategory();
         this.price = product.getPrice();
+        this.quantity = product.getQuantity();
+        this.sold = product.getSold();
         this.images = product.getImages();
         this.store = new StoreBriefInfo(product.getStore());
 
