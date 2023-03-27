@@ -1,7 +1,6 @@
 package com.example.ecommerce.service.service;
 
 import com.example.ecommerce.domain.Order;
-import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;

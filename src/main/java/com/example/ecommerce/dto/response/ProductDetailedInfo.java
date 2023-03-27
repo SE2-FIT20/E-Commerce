@@ -28,6 +28,8 @@ public class ProductDetailedInfo {
 
     private List<Review> reviews;
 
+    private int quantity;
+    private int sold;
     private Double rating;
     private StoreBriefInfo store;
 
@@ -37,6 +39,8 @@ public class ProductDetailedInfo {
         this.description = product.getDescription();
         this.category = product.getCategory();
         this.price = product.getPrice();
+        this.quantity = product.getQuantity();
+        this.sold = product.getSold();
         this.images = product.getImages();
         this.reviews = product.getReviews();
         this.rating = product.getReviews().stream()

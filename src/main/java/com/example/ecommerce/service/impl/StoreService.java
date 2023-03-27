@@ -10,17 +10,15 @@ import com.example.ecommerce.dto.response.ProductBriefInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.StoreInformation;
 import com.example.ecommerce.exception.NotFoundException;
+import com.example.ecommerce.repository.PromotionRepository;
 import com.example.ecommerce.repository.StoreRepository;
 import com.example.ecommerce.service.service.ProductService;
-import com.example.ecommerce.service.service.PromotionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,7 +26,7 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final ProductService productService;
-    private final PromotionService promotionService;
+    private final PromotionRepository promotionRepository;
 
     public void  save(Store store) {
         storeRepository.save(store);
@@ -160,7 +158,7 @@ public class StoreService {
                 .store(store)
                 .build();
 
-        promotionService.save(promotion); // save promotion to database, since promotion is the owning side, the store will have this promotion in the promotions
+        promotionRepository.save(promotion); // save promotion to database, since promotion is the owning side, the store will have this promotion in the promotions
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)
@@ -183,7 +181,7 @@ public class StoreService {
                 promotion.setName(updatePromotionRequest.getName());
                 promotion.setDescription(updatePromotionRequest.getDescription());
                 promotion.setPercent(updatePromotionRequest.getPercent());
-                promotionService.save(promotion);
+                promotionRepository.save(promotion);
             }
         }
 
