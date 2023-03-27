@@ -76,28 +76,11 @@ public class CustomerService {
 
     public ResponseEntity<Response> addToCart(User user, AddToCartRequest orderRequest) {
         Customer customer = findCustomerById(user.getId());
-        List<OrderItem> cart = customer.getCart();
+        Cart cart = customer.getCart();
         OrderItemDTO orderItem = orderRequest.getItem();
         Product product = productService.findProductById(orderItem.getProductId());
 
-        // check if the product is already in the cart, if yes, update the quantity
-        boolean productInCartAlready = cart.stream().anyMatch(item -> item.getProduct().getId().equals(product.getId()));
-        if (productInCartAlready) {
-             OrderItem oldItem = cart.stream()
-                    .filter(item -> item.getProduct().getId().equals(product.getId()))
-                    .findFirst().get();
-
-             oldItem.setQuantity(oldItem.getQuantity() + orderItem.getQuantity());
-
-        } else {
-            // if not, add the product to the cart
-            OrderItem item = OrderItem.builder()
-                    .product(product)
-                    .quantity(orderItem.getQuantity())
-                    .build();
-            customer.getCart().add(item);
-        }
-
+        cart.addItem(product, orderItem.getQuantity());
 
 
         customerRepository.save(customer);
@@ -125,15 +108,13 @@ public class CustomerService {
 
     public ResponseEntity<Response> checkout(Long customerId) {
         Customer customer = findCustomerById(customerId);
-        List<OrderItem> cart = customer.getCart();
+        Cart cart = customer.getCart();
 
-        // items from a store will be grouped together
-        Map<Long, List<OrderItem>> groupByStoreId = cart.stream()
-                .collect(Collectors.groupingBy(item -> item.getProduct().getStore().getId()));
 
-        for (Map.Entry<Long, List<OrderItem>> entry : groupByStoreId.entrySet()) {
-            Store store = storeService.findStoreById(entry.getKey());
-            List<OrderItem> items = entry.getValue();
+
+        for (CartStoreItem cartStoreItem : cart.getStores()) {
+            Store store = storeService.findStoreById(cartStoreItem.getId());
+            List<OrderItem> items = cartStoreItem.getItems();
 
             Order order = Order.builder()
                     .customer(customer)
@@ -145,7 +126,7 @@ public class CustomerService {
             orderService.save(order);
         }
 
-        customer.setCart(new ArrayList<>()); // empty the cart of customer after checking out
+        cart.setStores(new ArrayList<>()); // empty the cart of customer after checking out
         customerRepository.save(customer);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
@@ -156,21 +137,15 @@ public class CustomerService {
 
     public ResponseEntity<Response> removeFromCart(User currentCustomer, RemoveFromCartRequest removeFromCartRequest) {
         Customer customer = findCustomerById(currentCustomer.getId());
-        List<OrderItem> cart = customer.getCart();
+        Cart cart = customer.getCart();
+        Product product = productService.findProductById(removeFromCartRequest.getProductId());
+        cart.removeItem(product);
 
-        boolean productInCart = cart.stream().anyMatch(item -> item.getProduct().getId().equals(removeFromCartRequest.getProductId()));
-        if (productInCart) {
-            cart.removeIf(item -> item.getProduct().getId().equals(removeFromCartRequest.getProductId()));
-            customerRepository.save(customer);
-            return ResponseEntity.ok(Response.builder()
-                    .status(200)
-                    .message("Remove from cart successfully")
-                    .data(null)
-                    .build()
-            );
-        } else {
-            throw new IllegalStateException("Product is not in the cart");
-        }
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Remove item from cart successfully")
+                .data(null)
+                .build());
 
     }
 }

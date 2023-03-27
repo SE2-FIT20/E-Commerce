@@ -1,8 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Order;
-import com.example.ecommerce.domain.OrderItem;
-import com.example.ecommerce.dto.request.order.AddToCartRequest;
+
 
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -22,7 +21,6 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final ProductService productService;
 
 //    @Override
 //    public ResponseEntity<Response> createOrder(AddToCartRequest request) {

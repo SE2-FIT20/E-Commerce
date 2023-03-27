@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Deque;
 import java.util.List;
 
 @Entity
@@ -22,7 +23,6 @@ public class Customer extends User{
     private List<String> addresses;
     private String phoneNumber;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<OrderItem> cart;
-
+    @OneToOne(cascade = CascadeType.ALL)
+    private Cart cart;
 }
