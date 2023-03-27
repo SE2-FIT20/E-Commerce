@@ -1,10 +1,13 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
+import com.example.ecommerce.dto.request.review.CreateReviewRequest;
+import com.example.ecommerce.dto.request.review.UpdateReviewRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.impl.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -217,6 +220,19 @@ public class CustomerController {
         return null;
     }
 */
+
+    @GetMapping("/order-history")
+    public ResponseEntity<Response> getOrderHistory() {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.getOrderHistory(currentCustomer.getId());
+    }
+
+    @GetMapping("/order-delivering")
+    public ResponseEntity<Response> getOrderDelivering() {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.getOrderDelivering(currentCustomer.getId());
+    }
+
     @Operation(
             summary = "Change information of account",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -351,6 +367,17 @@ public class CustomerController {
     public ResponseEntity<Response> getAccount() {
         User currentCustomer = getCurrentCustomer();
         return customerService.getCustomerInformationById(currentCustomer.getId());
+    }
+
+    @PostMapping("/review")
+    public ResponseEntity<Response> createReview(@RequestBody CreateReviewRequest request) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.createReview(currentCustomer.getId(), request);
+    }
+
+    @PutMapping("/review/{productId}")
+    public ResponseEntity<Response> updateReview(Long productId, @RequestBody UpdateReviewRequest updateReviewRequest) {
+        return customerService.updateReview(productId, updateReviewRequest);
     }
 
     public User getCurrentCustomer() {

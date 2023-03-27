@@ -25,4 +25,7 @@ public class Customer extends User{
 
     @OneToOne(cascade = CascadeType.ALL)
     private Cart cart;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Order> orders;
 }

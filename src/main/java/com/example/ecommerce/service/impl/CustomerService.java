@@ -4,12 +4,15 @@ import com.example.ecommerce.domain.*;
 import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
+import com.example.ecommerce.dto.request.review.CreateReviewRequest;
+import com.example.ecommerce.dto.request.review.UpdateReviewRequest;
 import com.example.ecommerce.dto.response.CustomerInformation;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
 import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.ProductService;
+import com.example.ecommerce.service.service.ReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +33,9 @@ public class CustomerService {
     private final ProductService productService;
     private final OrderService orderService;
 
+    private final ReviewService reviewService;
     private final StoreService storeService;
+
     public void save(Customer customer) {
         customerRepository.save(customer);
     }
@@ -111,7 +116,6 @@ public class CustomerService {
         Cart cart = customer.getCart();
 
 
-
         for (CartStoreItem cartStoreItem : cart.getStores()) {
             Store store = storeService.findStoreById(cartStoreItem.getId());
             List<OrderItem> items = cartStoreItem.getItems();
@@ -147,5 +151,48 @@ public class CustomerService {
                 .data(null)
                 .build());
 
+    }
+
+    public ResponseEntity<Response> getOrderDelivering(Long customerId) {
+        Customer customer = findCustomerById(customerId);
+        List<Order> orders = customer.getOrders();
+
+        List<Order> orderDelivering = orders.stream().filter(order -> order.getStatus() == Order.OrderStatus.DELIVERING
+        ).collect(Collectors.toList()
+        );
+
+        Response response = Response.builder()
+                .status(200)
+                .message("Get order delivering successfully")
+                .data(orderDelivering)
+                .build();
+
+        return ResponseEntity.ok(response);
+
+    }
+    public ResponseEntity<Response> getOrderHistory(Long customerId) {
+        Customer customer = findCustomerById(customerId);
+        List<Order> orders = customer.getOrders();
+
+        List<Order> orderHistory = orders.stream().filter(order -> order.getStatus() == Order.OrderStatus.DELIVERED
+        ).collect(Collectors.toList()
+        );
+
+        Response response = Response.builder()
+                .status(200)
+                .message("Get order history successfully")
+                .data(orderHistory)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    public ResponseEntity<Response> createReview(Long customerId, CreateReviewRequest request) {
+        return reviewService.createReview(customerId, request);
+    }
+
+    public ResponseEntity<Response> updateReview(Long productId, UpdateReviewRequest updateReviewRequest) {
+        return reviewService.updateReview(productId, updateReviewRequest);
     }
 }
