@@ -141,6 +141,7 @@ public class CustomerService {
         Product product = productService.findProductById(removeFromCartRequest.getProductId());
         cart.removeItem(product);
 
+        customerRepository.save(customer);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Remove item from cart successfully")
