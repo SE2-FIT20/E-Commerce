@@ -1,6 +1,12 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.Store;
+import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.dto.response.SearchByNameResult;
+import com.example.ecommerce.dto.response.StoreDetailedInfo;
+import com.example.ecommerce.service.impl.StoreService;
 import com.example.ecommerce.service.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(value = "*", maxAge = 3000)
@@ -21,6 +29,8 @@ public class AnonymousController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private StoreService storeService;
 
     @Operation(
             summary = "Get all products"
@@ -117,4 +127,24 @@ public class AnonymousController {
         return productService.getProductById(productId);
     }
 
+
+    @GetMapping("/search")
+    public ResponseEntity<Response> searchProduct(@RequestParam String keyword) {
+        List<Product> products =  productService.searchProduct(keyword);
+        List<Store> stores = storeService.searchStore(keyword);
+
+        List<ProductDetailedInfo> productDetailedInfos = ProductDetailedInfo.from(products);
+        List<StoreDetailedInfo> storeDetailedInfos = StoreDetailedInfo.from(stores);
+
+        SearchByNameResult searchByNameResult = SearchByNameResult.builder()
+                .products(productDetailedInfos)
+                .stores(storeDetailedInfos)
+                .build();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Search successfully!")
+                .data(searchByNameResult)
+                .build());
+    }
 }

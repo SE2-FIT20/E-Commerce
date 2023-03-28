@@ -51,6 +51,11 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
+    @Override
+    public List<Product> searchProduct(String keyword) {
+        return productRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
 
     @Override
     public ResponseEntity<Response> deleteProductByIdAndStoreId(Long storeId, Long productId) {

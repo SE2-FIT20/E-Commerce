@@ -220,4 +220,8 @@ public class StoreService {
                 .data(null)
                 .build());
     }
+
+    public List<Store> searchStore(String keyword) {
+        return storeRepository.findByNameContainingIgnoreCase(keyword);
+    }
 }

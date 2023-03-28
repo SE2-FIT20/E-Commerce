@@ -5,10 +5,7 @@ import com.example.ecommerce.dto.response.StoreBriefInfo;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -136,7 +133,8 @@ public class Cart {
             if (itemsByStore.containsKey(store)) {
                 itemsByStore.get(store).add(item);
             } else {
-                List<OrderItem> storeItems = List.of(item);
+                List<OrderItem> storeItems = new ArrayList<>();
+                storeItems.add(item);
                 itemsByStore.put(store, storeItems);
             }
         }

@@ -95,11 +95,11 @@ public class CustomerService {
 
     public ResponseEntity<Response> getCartItems(User currentCustomer) {
         Customer customer = findCustomerById(currentCustomer.getId());
-
+        Cart cart = customer.getCart();
         Response response = Response.builder()
                 .status(200)
                 .message("Get cart items successfully")
-                .data(customer.getCart().getItems())
+                .data(cart.getItems())
                 .build();
 
         return ResponseEntity.ok(response);

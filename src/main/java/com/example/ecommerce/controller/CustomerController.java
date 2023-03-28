@@ -85,6 +85,8 @@ public class CustomerController {
     }
 
 
+
+
     @PostMapping("/remove-from-cart")
     public ResponseEntity<Response> removeFromCart(@RequestBody RemoveFromCartRequest removeFromCartRequest) {
         User currentCustomer = getCurrentCustomer();

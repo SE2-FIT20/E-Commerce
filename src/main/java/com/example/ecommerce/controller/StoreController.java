@@ -125,7 +125,6 @@ public class StoreController {
         return storeService.createProduct(currentStore.getId(), request);
     }
 
-
     @Operation(summary = "Update product", description = "Update product by id", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateProductRequest.class), examples = @ExampleObject(value = """
             {
                 "id": 3,
