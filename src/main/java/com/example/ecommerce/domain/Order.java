@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -51,6 +52,9 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+
+    private LocalDateTime createdAt;
+
 
 //    public static Order createOrder(List<OrderItem> items) {
 //        return new Order(null, items, "CREATED");
