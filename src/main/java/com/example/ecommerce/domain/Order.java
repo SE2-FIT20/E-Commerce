@@ -1,5 +1,6 @@
 package com.example.ecommerce.domain;
 
+import com.example.ecommerce.dto.response.CustomerInformation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,7 +40,6 @@ public class Order {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,5 +55,9 @@ public class Order {
 //    public static Order createOrder(List<OrderItem> items) {
 //        return new Order(null, items, "CREATED");
 //    }
+
+    public CustomerInformation getCustomer() {
+        return new CustomerInformation(customer);
+    }
 
 }

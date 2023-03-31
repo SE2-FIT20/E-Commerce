@@ -14,6 +14,7 @@ import com.example.ecommerce.service.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,6 +106,7 @@ public class CustomerService {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     public ResponseEntity<Response> checkout(Long customerId) {
         Customer customer = findCustomerById(customerId);
         Cart cart = customer.getCart();
@@ -125,6 +127,7 @@ public class CustomerService {
             orderService.save(order);
         }
 
+//        customer.setCart(new Cart());
         cart.setItems(new ArrayList<>()); // empty the cart of customer after checking out
         customerRepository.save(customer);
         return ResponseEntity.ok(Response.builder()
