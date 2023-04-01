@@ -94,8 +94,8 @@ public class StoreService {
         if (!isExist) {
             throw new NotFoundException("Product not found for productId: " + productId);
         }
-
-        productService.deleteProductById(productId);;
+        inventory.removeIf(product -> product.getId().equals(productId));
+        storeRepository.save(store); // save store to database, since store is the owning side, the product will be removed from the inventory
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)
