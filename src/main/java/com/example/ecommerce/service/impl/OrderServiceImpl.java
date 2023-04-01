@@ -15,10 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
 public class OrderServiceImpl implements OrderService {
+    private static final String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
 
     private final OrderRepository orderRepository;
 
@@ -104,6 +108,27 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void save(Order order) {
+        String uuid = generateRandomString(6);
+        order.setOrderCode(uuid);
         orderRepository.save(order);
     }
+
+
+
+    private static String generateRandomString(int length) {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            char randomChar = CHARACTERS.charAt(randomIndex);
+            sb.append(randomChar);
+        }
+        return sb.toString();
+    }
+
+
+
+
+
+
 }

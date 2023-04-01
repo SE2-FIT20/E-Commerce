@@ -4,6 +4,7 @@ import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
+import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.ProductBriefInfo;
 import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.example.ecommerce.dto.response.Response;
@@ -12,6 +13,9 @@ import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.repository.StoreRepository;
 import com.example.ecommerce.service.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    private static final int PAGE_SIZE = 12;
     //TODO: continue here
 //    @Autowired
 //    private StoreService storeService;
@@ -52,7 +57,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> searchProduct(String keyword) {
+    public List<Product> searchProduct(String keyword, Integer pageNumber) {
+
         return productRepository.findByNameContainingIgnoreCase(keyword);
     }
 
@@ -115,14 +121,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<Response> getAllProducts() {
+    public ResponseEntity<Response> getAllProducts(Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
 
-        List<Product> products = productRepository.findAll();
-        List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(products);
+        Page<Product> page = productRepository.findAllByOrderByCreatedAt(pageable);
+        List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(page.getContent());
+
+        PageResponse pageResponse = PageResponse.builder()
+                .totalPages(page.getTotalPages())
+                .pageNumber(page.getNumber())
+                .content(productBriefInfos)
+                .build();
+
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get all product successfully")
-                .data(productBriefInfos)
+                .data(pageResponse)
                 .build());
     }
 

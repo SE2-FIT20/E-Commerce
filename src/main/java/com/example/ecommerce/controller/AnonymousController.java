@@ -95,8 +95,8 @@ public class AnonymousController {
             }
     )
     @GetMapping("/products")
-    public ResponseEntity<Response> getProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<Response> getProducts(@RequestParam(defaultValue = "0") Integer page) {
+        return productService.getAllProducts(page);
     }
 
     @Operation(summary = "Get product by id")
@@ -129,8 +129,8 @@ public class AnonymousController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<Response> searchProduct(@RequestParam String keyword) {
-        List<Product> products =  productService.searchProduct(keyword);
+    public ResponseEntity<Response> searchProduct(@RequestParam String keyword, @RequestParam(defaultValue = "0") Integer page) {
+        List<Product> products =  productService.searchProduct(keyword, page);
         List<Store> stores = storeService.searchStore(keyword);
 
         List<ProductDetailedInfo> productDetailedInfos = ProductDetailedInfo.from(products);

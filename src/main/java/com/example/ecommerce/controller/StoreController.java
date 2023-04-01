@@ -77,7 +77,7 @@ public class StoreController {
     @GetMapping("/products")
     public ResponseEntity<Response> getAllProducts() {
         User currentStore = getCurrentStore();
-        return storeService.storeService(currentStore.getId());
+        return storeService.getAllProducts(currentStore.getId());
     }
 
 
@@ -209,6 +209,11 @@ public class StoreController {
         return storeService.getAllOrder(currentStore.getId());
     }
 
+    @GetMapping("/orders/{orderId}")
+    public ResponseEntity<Response> getOrderById(@PathVariable Long orderId) {
+        User currentStore = getCurrentStore();
+        return storeService.getOrderById(currentStore.getId(), orderId);
+    }
 
     @Operation(summary = "update order ")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Update order successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """

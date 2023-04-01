@@ -9,6 +9,7 @@ import com.example.ecommerce.dto.response.CustomerInformation;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
+import com.example.ecommerce.service.service.DeliveryPartnerService;
 import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.ProductService;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final ProductService productService;
     private final OrderService orderService;
-
+    private final DeliveryPartnerService deliveryPartnerService;
     private final StoreService storeService;
     public void save(Customer customer) {
         customerRepository.save(customer);
@@ -113,6 +114,7 @@ public class CustomerService {
         Cart cart = customer.getCart();
 
 
+        DeliveryPartner deliveryPartner = deliveryPartnerService.findDeliveryPartnerById(1L);
 
         for (CartStoreItem cartStoreItem : cart.getItems()) {
             Store store = storeService.findStoreById(cartStoreItem.getStore().getId());
@@ -124,6 +126,7 @@ public class CustomerService {
                     .items(items)
                     .status(PENDING)
                     .createdAt(LocalDateTime.now())
+                    .deliveryPartner(deliveryPartner)
                     .build();
 
             orderService.save(order);

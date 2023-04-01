@@ -51,7 +51,7 @@ public class StoreService {
                 .orElseThrow(() -> new NotFoundException("Store not found for storeId: " + storeId));
     }
 
-    public ResponseEntity<Response> storeService(Long storeId) {
+        public ResponseEntity<Response> getAllProducts(Long storeId) {
         Store store = findStoreById(storeId);
         List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(store.getInventory());
         // reverse the list so that the newest product will be at the top
@@ -223,5 +223,23 @@ public class StoreService {
 
     public List<Store> searchStore(String keyword) {
         return storeRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
+    public ResponseEntity<Response> getOrderById(Long id, Long orderId) {
+        Store store = findStoreById(id);
+        List<Order> orders = store.getOrders();
+
+        boolean isExist = orders.stream().anyMatch(order -> order.getId().equals(orderId));
+        if (!isExist) {
+            throw new NotFoundException("Order not found for orderId: " + orderId);
+        }
+
+        Order order = orders.stream().filter(o -> o.getId().equals(orderId)).findFirst().get();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get order successfully")
+                .data(order)
+                .build());
     }
 }
