@@ -1,8 +1,12 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.Customer;
+import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.CreateReviewRequest;
 import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
+import com.example.ecommerce.dto.request.UpdateReviewRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -88,8 +92,6 @@ public class CustomerController {
     }
 
 
-
-
     @PostMapping("/remove-from-cart")
     public ResponseEntity<Response> removeFromCart(@RequestBody RemoveFromCartRequest removeFromCartRequest) {
         User currentCustomer = getCurrentCustomer();
@@ -156,6 +158,18 @@ public class CustomerController {
     public ResponseEntity<Response> checkout() {
         User currentCustomer = getCurrentCustomer();
         return customerService.checkout(currentCustomer.getId());
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<Response> getOrders() {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.getOrders(currentCustomer.getId());
+    }
+
+    @GetMapping("/old-orders")
+    public ResponseEntity<Response> getOldOrders() {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.getOldOrders(currentCustomer.getId());
     }
 
     /* This is optional as the result of team discussion
@@ -367,5 +381,18 @@ public class CustomerController {
     public User getCurrentCustomer() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
-    
+
+    @PostMapping("/review")
+    public ResponseEntity<Response> createReview(@RequestBody CreateReviewRequest reviewRequest){
+        User currentCustomer = getCurrentCustomer();
+        return customerService.createReview(currentCustomer, reviewRequest);
+    }
+
+    @PutMapping("/review/{reviewId}")
+    public ResponseEntity<Response> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest updateReviewRequest) {
+        //TODO: Vy - user must be the owner of the review to be able to update it
+        return customerService.updateReview(reviewId, updateReviewRequest);
+    }
+
+
 }

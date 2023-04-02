@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Review {
 
     @Id
@@ -17,9 +18,14 @@ public class Review {
     private Long id;
     private int rating;
     private String comment;
-    private LocalDateTime timestamp;
+    private LocalDateTime createdAt;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Customer customer;
 
 }

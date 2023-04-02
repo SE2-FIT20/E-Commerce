@@ -1,7 +1,10 @@
 package com.example.ecommerce.dto.response;
 
+import com.example.ecommerce.domain.Category;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Review;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +18,8 @@ public class ProductBriefInfo {
     private Long id;
     private String name;
     private String description;
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     private Double price;
     private List<String> images;
 

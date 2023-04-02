@@ -1,8 +1,6 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Product;
-import com.example.ecommerce.domain.Store;
-import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.ProductBriefInfo;
@@ -10,7 +8,6 @@ import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.ProductRepository;
-import com.example.ecommerce.repository.StoreRepository;
 import com.example.ecommerce.service.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,21 +25,9 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     private static final int PAGE_SIZE = 12;
-    //TODO: continue here
-//    @Autowired
-//    private StoreService storeService;
 
 
-    @Override
-    public ResponseEntity<Response> addProductToCart(Long productId, Integer quantity) {
-        Product product = findProductById(productId);
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Add product to cart successfully")
-                .data(product)
-                .data(quantity)
-                .build());
-    }
+
 
 
 
@@ -62,19 +47,18 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByNameContainingIgnoreCase(keyword);
     }
 
-
     @Override
-    public ResponseEntity<Response> deleteProductByIdAndStoreId(Long storeId, Long productId) {
-        //TODO: check if this product belongs to the store
-
+    public ResponseEntity<Response> getReviewByProductId(Long productId) {
         Product product = findProductById(productId);
-        productRepository.delete(product);
-
-        return ResponseEntity.ok(Response .builder()
+        return ResponseEntity.ok(Response.builder()
                 .status(200)
-                .message("Delete product successfully")
+                .message("Get review by product id successfully")
+                .data(product.getReviews())
                 .build());
     }
+
+
+
 
     @Override
     public ResponseEntity<Response> deleteProductById(Long productId) {
@@ -136,9 +120,9 @@ public class ProductServiceImpl implements ProductService {
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)
-                .message("Get all product successfully")
+                .message("Get all products successfully")
                 .data(pageResponse)
                 .build());
-    }
 
+    }
 }

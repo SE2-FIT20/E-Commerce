@@ -147,4 +147,14 @@ public class AnonymousController {
                 .data(searchByNameResult)
                 .build());
     }
+//
+//    @GetMapping("review")
+//    public ResponseEntity<Response> getAllReviewByProduct() {
+//
+//    }
+
+    @GetMapping("/review/{productId}")
+    public ResponseEntity<Response> getReviewByProduct(@PathVariable Long productId) {
+        return productService.getReviewByProductId(productId);
+    }
 }

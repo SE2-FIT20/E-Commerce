@@ -12,11 +12,7 @@ import java.util.List;
 
 public interface ProductService {
 
-//    ResponseEntity<Response> createProduct(Long storeId, CreateProductRequest request);
 
-    ResponseEntity<Response> addProductToCart(Long productId, Integer quantity);
-
-    ResponseEntity<Response> deleteProductByIdAndStoreId(Long storeId, Long productId);
     ResponseEntity<Response> deleteProductById(Long productId);
 
 
@@ -33,4 +29,5 @@ public interface ProductService {
     List<Product> searchProduct(String keyword, Integer pageNumber);
 
     void deleteById(Long productId);
+    ResponseEntity<Response> getReviewByProductId(Long productId);
 }

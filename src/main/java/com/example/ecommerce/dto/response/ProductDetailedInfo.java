@@ -1,9 +1,11 @@
 package com.example.ecommerce.dto.response;
 
+import com.example.ecommerce.domain.Category;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Review;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +25,8 @@ public class ProductDetailedInfo {
     private Long id;
     private String name;
     private String description;
-    private String category;
+    @Enumerated
+    private Category category;
     private Double price;
     private List<String> images;
 
