@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,8 @@ public class ProductDetailedInfo {
     private int sold;
     private Double rating;
     private StoreBriefInfo store;
+    private LocalDateTime createdAt;
+
 
     public ProductDetailedInfo(Product product) {
         this.id = product.getId();
@@ -48,6 +51,7 @@ public class ProductDetailedInfo {
                 .average()
                 .orElse(0.0);
         this.store = new StoreBriefInfo(product.getStore());
+        this.createdAt = product.getCreatedAt();
     }
 
     public static List<ProductDetailedInfo> from(List<Product> products) {

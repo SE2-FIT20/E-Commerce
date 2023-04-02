@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class StoreService {
                 .price(request.getPrice())
                 .quantity(request.getQuantity())
                 .images(request.getImages())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         productService.save(product); // save product to database, since product is the ownind sstoreIde, the store will have this product in the inventory
@@ -93,9 +95,11 @@ public class StoreService {
         boolean isExist = inventory.stream().anyMatch(product -> product.getId().equals(productId));
         if (!isExist) {
             throw new NotFoundException("Product not found for productId: " + productId);
+        } else {
+            inventory.removeIf(product -> product.getId().equals(productId));
         }
-        inventory.removeIf(product -> product.getId().equals(productId));
-        storeRepository.save(store); // save store to database, since store is the owning side, the product will be removed from the inventory
+        productService.deleteById(productId); // delete product from database (product is the owning side
+        storeRepository.save(store); // save store to database (store is the inverse side)
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)

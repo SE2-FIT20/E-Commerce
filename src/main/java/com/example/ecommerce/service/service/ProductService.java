@@ -32,5 +32,5 @@ public interface ProductService {
 
     List<Product> searchProduct(String keyword, Integer pageNumber);
 
-
+    void deleteById(Long productId);
 }

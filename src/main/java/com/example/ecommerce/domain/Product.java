@@ -4,6 +4,7 @@ package com.example.ecommerce.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,9 @@ public class Product {
     private String description;
     private String category;
     private Double price;
+
     @ElementCollection
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<String> images;
     private Integer quantity;
     private int sold;
@@ -36,6 +39,7 @@ public class Product {
     @ManyToOne
     @JsonIgnore
     private Store store;
+
 
 
 }

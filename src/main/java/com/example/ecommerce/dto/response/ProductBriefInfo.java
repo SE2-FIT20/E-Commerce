@@ -5,6 +5,7 @@ import com.example.ecommerce.domain.Review;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ public class ProductBriefInfo {
     private int quantity;
     private int sold;
     private StoreBriefInfo store;
+    private LocalDateTime createdAt;
 
     public ProductBriefInfo(Product product) {
         this.id = product.getId();
@@ -32,7 +34,7 @@ public class ProductBriefInfo {
         this.sold = product.getSold();
         this.images = product.getImages();
         this.store = new StoreBriefInfo(product.getStore());
-
+        this.createdAt = product.getCreatedAt();
     }
 
     public static List<ProductBriefInfo> from(List<Product> products) {

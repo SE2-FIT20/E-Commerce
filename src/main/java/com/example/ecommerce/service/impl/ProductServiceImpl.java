@@ -78,16 +78,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<Response> deleteProductById(Long productId) {
-        Product product = findProductById(productId);
-        productRepository.delete(product);
-
+        Product product = findProductById(productId); // check if this product exists
+        deleteById(productId);
         return ResponseEntity.ok(Response .builder()
                 .status(200)
                 .message("Delete product successfully")
                 .build());
     }
 
-
+    public void deleteById(Long productId) {
+        productRepository.deleteById(productId);
+    }
     @Override
     public ResponseEntity<Response> updateProduct(UpdateProductRequest request) {
         //TODO: check if this product belongs to the store
