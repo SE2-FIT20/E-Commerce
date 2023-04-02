@@ -80,9 +80,6 @@ public class StoreController {
         return storeService.storeService(currentStore.getId());
     }
 
-
-
-
     @Operation(summary = "Create product", description = "Create product", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateProductRequest.class), examples = @ExampleObject(value = """
             {
                 "name" : "t-shirt",
@@ -392,6 +389,26 @@ public class StoreController {
     public ResponseEntity<Response> getAccountInformation() {
         User currentStore = getCurrentStore();
         return storeService.getStoreInformationById(currentStore.getId());
+    }
+
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<Response> getProductByStoreId(@PathVariable("storeId") Long storeId) {
+        return storeService.getProductByStore(storeId);
+    }
+
+    @GetMapping("/store/{storeId}/filter-by-review")
+    public ResponseEntity<Response> getProductByStoreIdFilterByReview(@PathVariable("storeId") Long storeId) {
+        return storeService.getProductByStoreFilterByReview(storeId);
+    }
+
+    @GetMapping("store/{storeId}/asc")
+    public ResponseEntity<Response> getProductByStoreSortAscending(@PathVariable("storeId") Long storeId) {
+        return storeService.getProductByStoreSortByPriceAsc(storeId);
+    }
+
+    @GetMapping("store/{storeId}/desc")
+    public ResponseEntity<Response> getProductByStoreSortDescending(@PathVariable("storeId") Long storeId) {
+        return storeService.getProductByStoreSortByPriceDesc(storeId);
     }
 
     private User getCurrentStore() {

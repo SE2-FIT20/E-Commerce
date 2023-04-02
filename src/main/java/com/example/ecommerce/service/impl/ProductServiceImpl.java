@@ -116,7 +116,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<Response> getAllProducts() {
-
         List<Product> products = productRepository.findAll();
         List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(products);
         return ResponseEntity.ok(Response.builder()

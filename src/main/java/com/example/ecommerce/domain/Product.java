@@ -20,7 +20,8 @@ public class Product {
     private Long id;
     private String name;
     private String description;
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     private Double price;
     @ElementCollection
     private List<String> images;

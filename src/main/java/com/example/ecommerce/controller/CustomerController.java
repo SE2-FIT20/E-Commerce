@@ -364,5 +364,9 @@ public class CustomerController {
     public User getCurrentCustomer() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
-    
+
+    public ResponseEntity<Response> createReview(CreateReviewRequest reviewRequest){
+        User currentCustomer = getCurrentCustomer();
+        return customerService.postReview(currentCustomer.getId(), reviewRequest);
+    }
 }

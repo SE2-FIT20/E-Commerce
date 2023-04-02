@@ -18,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -224,4 +226,61 @@ public class StoreService {
     public List<Store> searchStore(String keyword) {
         return storeRepository.findByNameContainingIgnoreCase(keyword);
     }
+
+    public ResponseEntity<Response> getProductByStore(Long storeId) {
+        Store store = findStoreById(storeId);
+        List<Product> products = store.getInventory();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get all products successfully")
+                .data(products)
+                .build());
+    }
+
+    public ResponseEntity<Response> getProductByStoreFilterByReview(Long storeId) {
+        Store store = findStoreById(storeId);
+        List<Product> products = store.getInventory();
+
+        List<Product> productsFilterByReview = products.stream()
+                .filter(product -> product.getReviews().size() > 0)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get all products successfully")
+                .data(productsFilterByReview)
+                .build());
+    }
+
+    public ResponseEntity<Response> getProductByStoreSortByPriceAsc(Long storeId) {
+        Store store = findStoreById(storeId);
+        List<Product> products = store.getInventory();
+
+        List<Product> productsSortByPrice = products.stream()
+                .sorted(Comparator.comparing(Product::getPrice))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get all products successfully")
+                .data(productsSortByPrice)
+                .build());
+    }
+
+    public ResponseEntity<Response> getProductByStoreSortByPriceDesc(Long storeId) {
+        Store store = findStoreById(storeId);
+        List<Product> products = store.getInventory();
+
+        List<Product> productsSortByPrice = products.stream()
+                .sorted(Comparator.comparing(Product::getPrice).reversed())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get all products successfully")
+                .data(productsSortByPrice)
+                .build());
+    }
+
 }
