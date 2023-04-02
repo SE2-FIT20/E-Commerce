@@ -376,11 +376,9 @@ public class CustomerController {
 
     @PutMapping("/review/{reviewId}")
     public ResponseEntity<Response> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest updateReviewRequest) {
+        //TODO: Vy - user must be the owner of the review to be able to update it
         return customerService.updateReview(reviewId, updateReviewRequest);
     }
 
-    @GetMapping("/review")
-    public ResponseEntity<Response> getReviewByProduct(@RequestBody Product product) {
-        return customerService.getReviewByProduct(product);
-    }
+
 }

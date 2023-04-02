@@ -31,4 +31,5 @@ public interface ProductService {
 
     List<Product> searchProduct(String keyword);
 
+    ResponseEntity<Response> getReviewByProductId(Long productId);
 }

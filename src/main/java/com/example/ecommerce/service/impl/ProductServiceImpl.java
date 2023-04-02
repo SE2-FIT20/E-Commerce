@@ -56,6 +56,16 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByNameContainingIgnoreCase(keyword);
     }
 
+    @Override
+    public ResponseEntity<Response> getReviewByProductId(Long productId) {
+        Product product = findProductById(productId);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get review by product id successfully")
+                .data(product.getReviews())
+                .build());
+    }
+
 
     @Override
     public ResponseEntity<Response> deleteProductByIdAndStoreId(Long storeId, Long productId) {

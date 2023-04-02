@@ -10,6 +10,4 @@ public class UpdateReviewRequest {
 
     private int rating;
     private String comment;
-    private LocalDateTime timestamp = LocalDateTime.now();
-    private Product product;
 }

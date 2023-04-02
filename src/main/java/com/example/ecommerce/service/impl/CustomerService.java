@@ -132,28 +132,27 @@ public class CustomerService {
     }
 
     public ResponseEntity<Response> createReview(User currentCustomer, CreateReviewRequest reviewRequest) {
+        //TODO: Vy - check if the customer has bought the product, the order must be completed
         Customer customer = findCustomerById(currentCustomer.getId());
-        Review currentReview = new Review();
+        Product product = productService.findProductById(reviewRequest.getProductId());
+        Review review = Review.builder()
+                .customer(customer)
+                .product(product)
+                .rating(reviewRequest.getRating())
+                .comment(reviewRequest.getComment())
+                .createdAt(LocalDateTime.now())
+                .build();
 
-        if (customer != null) {
-            currentReview.setRating(reviewRequest.getRating());
-            currentReview.setComment(reviewRequest.getComment());
-            currentReview.setTimestamp(LocalDateTime.now());
-            currentReview.setProduct(reviewRequest.getProduct());
-        }
-
-        reviewService.save(currentReview);
+        reviewService.save(review);
         return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
     }
 
     public ResponseEntity<Response> updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest) {
         Review currentReview = reviewService.getReviewById(reviewId);
-        if (currentReview != null) {
-            currentReview.setRating(updateReviewRequest.getRating());
-            currentReview.setComment(updateReviewRequest.getComment());
-            currentReview.setTimestamp(updateReviewRequest.getTimestamp());
-            currentReview.setProduct(currentReview.getProduct());
-        }
+
+        currentReview.setRating(updateReviewRequest.getRating());
+        if (updateReviewRequest.getComment() != null) currentReview.setComment(updateReviewRequest.getComment());
+
         reviewService.save(currentReview);
 
         return ResponseEntity.ok(Response.builder().status(200).message("Update review successfully").data(null).build());
