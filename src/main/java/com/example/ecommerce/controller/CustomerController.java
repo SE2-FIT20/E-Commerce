@@ -1,8 +1,11 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.CreateReviewRequest;
 import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.UpdateAccountRequest;
+import com.example.ecommerce.dto.request.UpdateReviewRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -365,8 +368,19 @@ public class CustomerController {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public ResponseEntity<Response> createReview(CreateReviewRequest reviewRequest){
+    @PostMapping("/review")
+    public ResponseEntity<Response> createReview(@RequestBody CreateReviewRequest reviewRequest){
         User currentCustomer = getCurrentCustomer();
-        return customerService.postReview(currentCustomer.getId(), reviewRequest);
+        return customerService.createReview(currentCustomer, reviewRequest);
+    }
+
+    @PutMapping("/review/{reviewId}")
+    public ResponseEntity<Response> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest updateReviewRequest) {
+        return customerService.updateReview(reviewId, updateReviewRequest);
+    }
+
+    @GetMapping("/review")
+    public ResponseEntity<Response> getReviewByProduct(@RequestBody Product product) {
+        return customerService.getReviewByProduct(product);
     }
 }

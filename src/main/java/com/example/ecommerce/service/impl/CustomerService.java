@@ -1,7 +1,9 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.*;
+import com.example.ecommerce.dto.request.CreateReviewRequest;
 import com.example.ecommerce.dto.request.RemoveFromCartRequest;
+import com.example.ecommerce.dto.request.UpdateReviewRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.CartStoreItem;
@@ -11,10 +13,12 @@ import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
 import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.ProductService;
+import com.example.ecommerce.service.service.ReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +32,9 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final ProductService productService;
     private final OrderService orderService;
-
     private final StoreService storeService;
+    private final ReviewService reviewService;
+
     public void save(Customer customer) {
         customerRepository.save(customer);
     }
@@ -38,19 +43,13 @@ public class CustomerService {
         Customer customer = findCustomerById(customerId);
         CustomerInformation customerInformation = new CustomerInformation(customer);
 
-        Response response = Response.builder()
-                .status(200)
-                .message("Get customer information successfully")
-                .data(customerInformation)
-                .build();
+        Response response = Response.builder().status(200).message("Get customer information successfully").data(customerInformation).build();
 
         return ResponseEntity.ok(response);
     }
 
     public Customer findCustomerById(Long customerId) {
-        return customerRepository
-                .findById(customerId)
-                .orElseThrow(() -> new NotFoundException("Customer not found for id: " + customerId));
+        return customerRepository.findById(customerId).orElseThrow(() -> new NotFoundException("Customer not found for id: " + customerId));
     }
 
     public ResponseEntity<Response> updateAccount(Long id, UpdateCustomerRequest request) {
@@ -64,11 +63,7 @@ public class CustomerService {
         customerRepository.save(customer);
 
 
-        Response response = Response.builder()
-                .status(200)
-                .message("Update customer information successfully")
-                .data(null)
-                .build();
+        Response response = Response.builder().status(200).message("Update customer information successfully").data(null).build();
 
         return ResponseEntity.ok(response);
     }
@@ -84,11 +79,7 @@ public class CustomerService {
 
         customerRepository.save(customer);
 
-        Response response = Response.builder()
-                .status(200)
-                .message("Add to cart successfully")
-                .data(null)
-                .build();
+        Response response = Response.builder().status(200).message("Add to cart successfully").data(null).build();
 
         return ResponseEntity.ok(response);
     }
@@ -96,11 +87,7 @@ public class CustomerService {
     public ResponseEntity<Response> getCartItems(User currentCustomer) {
         Customer customer = findCustomerById(currentCustomer.getId());
         Cart cart = customer.getCart();
-        Response response = Response.builder()
-                .status(200)
-                .message("Get cart items successfully")
-                .data(cart.getItems())
-                .build();
+        Response response = Response.builder().status(200).message("Get cart items successfully").data(cart.getItems()).build();
 
         return ResponseEntity.ok(response);
     }
@@ -110,28 +97,18 @@ public class CustomerService {
         Cart cart = customer.getCart();
 
 
-
         for (CartStoreItem cartStoreItem : cart.getItems()) {
             Store store = storeService.findStoreById(cartStoreItem.getStore().getId());
             List<OrderItem> items = cartStoreItem.getItems();
 
-            Order order = Order.builder()
-                    .customer(customer)
-                    .store(store)
-                    .items(items)
-                    .status(PENDING)
-                    .build();
+            Order order = Order.builder().customer(customer).store(store).items(items).status(PENDING).build();
 
             orderService.save(order);
         }
 
         cart.setItems(new ArrayList<>()); // empty the cart of customer after checking out
         customerRepository.save(customer);
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Checkout successfully")
-                .data(null)
-                .build());
+        return ResponseEntity.ok(Response.builder().status(200).message("Checkout successfully").data(null).build());
     }
 
     public ResponseEntity<Response> removeFromCart(User currentCustomer, RemoveFromCartRequest removeFromCartRequest) {
@@ -141,11 +118,7 @@ public class CustomerService {
         cart.removeItem(product);
 
         customerRepository.save(customer);
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Remove item from cart successfully")
-                .data(null)
-                .build());
+        return ResponseEntity.ok(Response.builder().status(200).message("Remove item from cart successfully").data(null).build());
 
     }
 
@@ -155,10 +128,58 @@ public class CustomerService {
 
         List<OrderItem> previewList = cart.getOrderItemsPreview();
 
+        return ResponseEntity.ok(Response.builder().status(200).message("Get cart preview successfully").data(previewList).build());
+    }
+
+    public ResponseEntity<Response> createReview(User currentCustomer, CreateReviewRequest reviewRequest) {
+        Customer customer = findCustomerById(currentCustomer.getId());
+        Review currentReview = new Review();
+
+        if (customer != null) {
+            currentReview.setRating(reviewRequest.getRating());
+            currentReview.setComment(reviewRequest.getComment());
+            currentReview.setTimestamp(LocalDateTime.now());
+            currentReview.setProduct(reviewRequest.getProduct());
+        }
+
+        reviewService.save(currentReview);
+        return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
+    }
+
+    public ResponseEntity<Response> updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest) {
+        Review currentReview = reviewService.getReviewById(reviewId);
+        if (currentReview != null) {
+            currentReview.setRating(updateReviewRequest.getRating());
+            currentReview.setComment(updateReviewRequest.getComment());
+            currentReview.setTimestamp(updateReviewRequest.getTimestamp());
+            currentReview.setProduct(currentReview.getProduct());
+        }
+        reviewService.save(currentReview);
+
+        return ResponseEntity.ok(Response.builder().status(200).message("Update review successfully").data(null).build());
+    }
+
+    public ResponseEntity<Response> deleteReview(Long reviewId) {
+        reviewService.deleteByReviewId(reviewId);
+
+        return ResponseEntity.ok(Response.builder().status(200).message("Delete Review successfully").data(null).build());
+    }
+
+    public ResponseEntity<Response> getAllReview() {
+        List<Review> reviews = reviewService.getAllReview();
         return ResponseEntity.ok(Response.builder()
                 .status(200)
-                .message("Get cart preview successfully")
-                .data(previewList)
+                .message("Get all review successfully")
+                .data(reviews)
+                .build());
+    }
+
+    public ResponseEntity<Response> getReviewByProduct(Product product) {
+        List<Review> reviews = reviewService.getReviewByProduct(product);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get all review by product successfully")
+                .data(reviews)
                 .build());
     }
 }
