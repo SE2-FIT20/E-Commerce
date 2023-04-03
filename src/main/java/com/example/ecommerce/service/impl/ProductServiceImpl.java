@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.ProductBriefInfo;
@@ -25,11 +26,6 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     private static final int PAGE_SIZE = 12;
-
-
-
-
-
 
     public Product findProductById(Long productId) {
         return productRepository.findById(productId)
@@ -57,7 +53,11 @@ public class ProductServiceImpl implements ProductService {
                 .build());
     }
 
-
+    @Override
+    public Page<Product> getProductOfStore(Integer pageNumber, Store store) {
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        return productRepository.findAllByStore(store, pageable);
+    }
 
 
     @Override
@@ -109,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
     public ResponseEntity<Response> getAllProducts(Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
 
-        Page<Product> page = productRepository.findAllByOrderByCreatedAt(pageable);
+        Page<Product> page = productRepository.findAllByOrderByCreatedAtDesc(pageable);
         List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(page.getContent());
 
         PageResponse pageResponse = PageResponse.builder()

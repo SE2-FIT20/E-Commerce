@@ -6,6 +6,7 @@ import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
+import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.ProductBriefInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.StoreInformation;
@@ -14,6 +15,7 @@ import com.example.ecommerce.repository.PromotionRepository;
 import com.example.ecommerce.repository.StoreRepository;
 import com.example.ecommerce.service.service.ProductService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -248,14 +250,18 @@ public class StoreService {
                 .data(order)
                 .build());
     }
-    public ResponseEntity<Response> getProductByStore(Long storeId) {
+    public ResponseEntity<Response> getProductByStore(Integer pageNumber, Long storeId) {
         Store store = findStoreById(storeId);
-        List<Product> products = store.getInventory();
-
+        Page<Product> page = productService.getProductOfStore(pageNumber, store);
+        PageResponse pageResponse = PageResponse.builder()
+                .content(page.getContent())
+                .totalPages(page.getTotalPages())
+                .pageNumber(pageNumber)
+                .build();
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get all products successfully")
-                .data(products)
+                .data(pageResponse)
                 .build());
     }
 

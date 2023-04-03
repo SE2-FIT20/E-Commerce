@@ -95,10 +95,18 @@ public class AnonymousController {
             }
     )
     @GetMapping("/products")
-    public ResponseEntity<Response> getProducts(@RequestParam(defaultValue = "0") Integer page) {
+    public ResponseEntity<Response> getProducts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer elementsPerPage) {
         return productService.getAllProducts(page);
     }
 
+//    public ResponseEntity<Response> getProductsByCategory(@RequestParam String category, @RequestParam(defaultValue = "0") Integer page) {
+//        return productService.getProductsByCategory(category, page);
+//    }
+
+    @GetMapping("/products/{storeId}")
+    public ResponseEntity<Response> getProductsOfStore(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer elementsPerPage, @PathVariable Long storeId) {
+        return storeService.getProductByStore(page, storeId);
+    }
     @Operation(summary = "Get product by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get product by id successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
             {

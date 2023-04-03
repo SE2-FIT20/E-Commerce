@@ -397,8 +397,8 @@ public class StoreController {
     }
 
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<Response> getProductByStoreId(@PathVariable("storeId") Long storeId) {
-        return storeService.getProductByStore(storeId);
+    public ResponseEntity<Response> getProductByStoreId(@RequestParam(defaultValue = "0") Integer page,  @PathVariable("storeId") Long storeId) {
+        return storeService.getProductByStore(page, storeId);
     }
 
     @GetMapping("/store/{storeId}/filter-by-review")

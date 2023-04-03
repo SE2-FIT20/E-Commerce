@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/customer")
 @AllArgsConstructor
 @CrossOrigin(value = "*", maxAge = 3000)
-//TODO: get orders, order history,
 //TODO: add voucher, promotion,
 //TODO: get search history
 public class CustomerController {

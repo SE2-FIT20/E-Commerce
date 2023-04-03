@@ -5,11 +5,14 @@ import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.response.Response;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+
+//TODO: paging for the getting product
 public interface ProductService {
 
 
@@ -30,4 +33,6 @@ public interface ProductService {
 
     void deleteById(Long productId);
     ResponseEntity<Response> getReviewByProductId(Long productId);
+
+    Page<Product> getProductOfStore(Integer pageNumber, Store store);
 }
