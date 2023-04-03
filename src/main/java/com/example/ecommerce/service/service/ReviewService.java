@@ -2,6 +2,7 @@ package com.example.ecommerce.service.service;
 
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Review;
+import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 
@@ -15,4 +16,6 @@ public interface ReviewService {
     List<Review> getAllReview();
 
     List<Review> getReviewByProduct(Product product);
+
+    Review getReviewByCustomer(User customer);
 }

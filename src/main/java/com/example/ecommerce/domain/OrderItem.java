@@ -21,7 +21,7 @@ public class OrderItem {
     private Product product;
     private Integer quantity;
 
-    public ProductBriefInfo getProduct() {
+    public ProductBriefInfo getProductBreifInfo() {
         return new ProductBriefInfo(product);
     }
 }

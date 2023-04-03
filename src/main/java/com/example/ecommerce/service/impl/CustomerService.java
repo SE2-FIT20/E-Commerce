@@ -18,10 +18,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.ecommerce.domain.Order.OrderStatus.DELIVERED;
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.*;
 
@@ -135,26 +137,42 @@ public class CustomerService {
         //TODO: Vy - check if the customer has bought the product, the order must be completed
         Customer customer = findCustomerById(currentCustomer.getId());
         Product product = productService.findProductById(reviewRequest.getProductId());
-        Review review = Review.builder()
-                .customer(customer)
-                .product(product)
-                .rating(reviewRequest.getRating())
-                .comment(reviewRequest.getComment())
-                .createdAt(LocalDateTime.now())
-                .build();
+        List<Order> orders = customer.getOrders();
+        for (Order order: orders) {
+            if (order.getStatus().equals(DELIVERED)) {
+                List<OrderItem> orderItems = order.getItems();
+                for (OrderItem orderItem: orderItems) {
+                    if (orderItem.getProduct().equals(product)) {
+                        Review review = Review.builder()
+                                .customer(customer)
+                                .product(product)
+                                .rating(reviewRequest.getRating())
+                                .comment(reviewRequest.getComment())
+                                .createdAt(LocalDateTime.now())
+                                .build();
 
-        reviewService.save(review);
-        return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
+                        reviewService.save(review);
+                        return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
+                    }
+                }
+            }
+        }
+
+        return ResponseEntity.ok(Response.builder()
+                .status(400)
+                .message("Failed to create review for product")
+                .data(null)
+                .build());
+
     }
 
-    public ResponseEntity<Response> updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest) {
-        Review currentReview = reviewService.getReviewById(reviewId);
-
+    public ResponseEntity<Response> updateReview(Customer currentCustomer, UpdateReviewRequest updateReviewRequest) {
+        User customer = findCustomerById(currentCustomer.getId());
+        Review currentReview = reviewService.getReviewByCustomer(customer);
         currentReview.setRating(updateReviewRequest.getRating());
-        if (updateReviewRequest.getComment() != null) currentReview.setComment(updateReviewRequest.getComment());
-
+        currentReview.setComment(updateReviewRequest.getComment());
+        currentReview.setCreatedAt(LocalDateTime.now());
         reviewService.save(currentReview);
-
         return ResponseEntity.ok(Response.builder().status(200).message("Update review successfully").data(null).build());
     }
 
