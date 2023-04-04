@@ -55,7 +55,11 @@ public class ProductServiceImpl implements ProductService {
                 .build());
     }
 
-
+    @Override
+    public Page<Product> getProductOfStore(Integer page, Integer elementsPerPage, Store store) {
+        Pageable pageable = PageRequest.of(page, elementsPerPage);
+        return productRepository.findAllByStore(store, pageable);
+    }
 
 
     @Override
@@ -135,6 +139,7 @@ public class ProductServiceImpl implements ProductService {
         PageResponse pageResponse = PageResponse.builder()
                 .totalPages(page.getTotalPages())
                 .pageNumber(page.getNumber())
+                .size(page.getSize())
                 .content(productBriefInfos)
                 .build();
 

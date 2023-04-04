@@ -23,7 +23,6 @@ public class PromotionServiceImpl implements PromotionService {
 //    private final StoreService storeService;
     @Override
     public ResponseEntity<Response> createPromotion(CreatePromotionRequest request) {
-        //TODO: admin  use this method
         Promotion promotion = Promotion.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -50,7 +49,6 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> updatePromotion(UpdatePromotionRequest updatePromotionRequest) {
         Promotion promotion = findPromotionById(updatePromotionRequest.getPromotionId());
-        //TODO: admin  use this method
 
         promotion.setName(updatePromotionRequest.getName());
         promotion.setPercent(updatePromotionRequest.getPercent());

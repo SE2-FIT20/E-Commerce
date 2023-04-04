@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,5 +41,16 @@ public class Product {
     private Store store;
 
 
+    public enum Status {
+        AVAILABLE, SOLD_OUT;
 
+        public static Status fromString(String str) {
+            if (str.toUpperCase().equals("AVAILABLE")) {
+                return AVAILABLE;
+            } else if (str.toUpperCase().equals("SOLDOUT") || str.toUpperCase().equals("SOLD_OUT")) {
+                return SOLD_OUT;
+            }
+            return null;
+        }
+    }
 }

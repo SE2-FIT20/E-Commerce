@@ -33,4 +33,5 @@ public interface ProductService {
     ResponseEntity<Response> getReviewByProductId(Long productId);
 
 
+    Page<Product> getProductOfStore(Integer page, Integer elementsPerPage, Store store);
 }

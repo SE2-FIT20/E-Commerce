@@ -7,31 +7,38 @@ import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.response.PageResponse;
-import com.example.ecommerce.dto.response.ProductBriefInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.StoreInformation;
 import com.example.ecommerce.exception.NotFoundException;
+import com.example.ecommerce.repository.OrderRepository;
+import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.repository.PromotionRepository;
 import com.example.ecommerce.repository.StoreRepository;
-import com.example.ecommerce.service.service.ProductService;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class StoreService {
 
-    private final StoreRepository storeRepository;
-    private final ProductService productService;
-    private final PromotionRepository promotionRepository;
+    @Value("${default.elementPerPage}")
+    private String defaultElementPerPage;
+
+    @Autowired
+    private StoreRepository storeRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private PromotionRepository promotionRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     public void  save(Store store) {
         storeRepository.save(store);
@@ -70,7 +77,7 @@ public class StoreService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        productService.save(product); // save product to database, since product is the ownind sstoreIde, the store will have this product in the inventory
+        productRepository.save(product); // save product to database, since product is the ownind sstoreIde, the store will have this product in the inventory
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Create product successfully")
@@ -88,7 +95,7 @@ public class StoreService {
         } else {
             inventory.removeIf(product -> product.getId().equals(productId));
         }
-        productService.deleteById(productId); // delete product from database (product is the owning side
+        productRepository.deleteById(productId); // delete product from database (product is the owning side
         storeRepository.save(store); // save store to database (store is the inverse side)
 
         return ResponseEntity.ok(Response.builder()
@@ -99,13 +106,30 @@ public class StoreService {
 
     }
 
-    public ResponseEntity<Response> getAllOrder(Long storeId) {
+    public ResponseEntity<Response> getAllOrder(Long storeId, Integer pageNumber, Integer elementsPerPage, String status, String filter, String sortBy) {
         Store store = findStoreById(storeId);
-        List<Order> orders = store.getOrders();
+
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.by(Sort.Direction.valueOf(sortBy.toUpperCase()), filter));
+
+        Page<Order> page;
+        if (!status.equals("all")) {
+            Order.OrderStatus orderStatus = Order.OrderStatus.fromString(status.toUpperCase());
+            page = orderRepository.findAllByStoreAndStatus(store, orderStatus, pageable);
+        } else {
+            page = orderRepository.findAllByStore(store, pageable);
+        }
+
+        PageResponse pageResponse = PageResponse.builder()
+                .content(page.getContent())
+                .totalPages(page.getTotalPages())
+                .size(page.getSize())
+                .pageNumber(page.getNumber())
+                .build();
+
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get all orders successfully")
-                .data(orders)
+                .data(pageResponse)
                 .build()
         );
     }
@@ -204,7 +228,7 @@ public class StoreService {
                 product.setPrice(request.getPrice());
                 product.setQuantity(request.getQuantity());
                 product.setImages(request.getImages());
-                productService.save(product);
+                productRepository.save(product);
             }
         }
 
@@ -296,4 +320,31 @@ public class StoreService {
                 .build());
     }
 
+    public ResponseEntity<Response> getProductsByStatus(Long id, Integer pageNumber, Integer elementsPerPage, String status) {
+        Store store = findStoreById(id);
+        Page<Product> pageProduct;
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage);
+
+        if (status.toUpperCase().equals(Product.Status.AVAILABLE.name())){
+            pageProduct = productRepository.findAllByStoreAndQuantityGreaterThan(store, 0, pageable);
+        } else if (status.toUpperCase().equals(Product.Status.SOLD_OUT.name())){
+            pageProduct = productRepository.findAllByStoreAndQuantityEquals(store, 0, pageable);
+        } else {
+            pageProduct = productRepository.findAllByStore(store, pageable);
+        }
+
+
+        PageResponse pageResponse = PageResponse.builder()
+                .content(pageProduct.getContent())
+                .totalPages(pageProduct.getTotalPages())
+                .pageNumber(pageNumber)
+                .size(pageProduct.getSize())
+                .build();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get all products successfully")
+                .data(pageResponse)
+                .build());
+    }
 }

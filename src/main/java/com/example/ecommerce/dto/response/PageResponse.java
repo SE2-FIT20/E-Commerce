@@ -13,4 +13,5 @@ public class PageResponse {
     private Object content;
     private int pageNumber;
     private int totalPages;
+    private int size;
 }

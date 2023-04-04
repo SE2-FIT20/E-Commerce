@@ -2,6 +2,7 @@ package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Review;
+import com.example.ecommerce.domain.User;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.ReviewRepository;
 import com.example.ecommerce.service.service.ReviewService;
@@ -37,7 +38,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<Review> getReviewByProduct(Product product) {
-        return reviewRepository.findByProduct(product);
+        return reviewRepository.findAllByProduct(product);
+    }
+
+    @Override
+    public List<Review> getReviewByCustomer(User customer) {
+        return reviewRepository.findAllByCustomer(customer);
     }
 
 }

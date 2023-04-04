@@ -4,7 +4,7 @@ public enum Category {
     TOYS, ELECTRONICS, CLOTHES, BOOKS, HEALTH;
 
     private Category from(String val) {
-        switch (val) {
+        switch (val.toUpperCase()) {
             case ("TOYS"):
                 return TOYS;
             case ("ELECTRONICS"):

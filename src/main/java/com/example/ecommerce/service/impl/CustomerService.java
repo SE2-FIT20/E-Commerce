@@ -20,10 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.ecommerce.domain.Order.OrderStatus.DELIVERED;
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.OrderItemDTO;
 
@@ -139,10 +141,10 @@ public class CustomerService {
         customerRepository.save(customer);
         return ResponseEntity.ok(
                 Response.builder()
-                .status(200)
-                .message("Remove item from cart successfully")
-                .data(null)
-                .build()
+                        .status(200)
+                        .message("Remove item from cart successfully")
+                        .data(null)
+                        .build()
         );
 
     }
@@ -154,40 +156,55 @@ public class CustomerService {
         List<OrderItem> previewList = cart.getOrderItemsPreview();
 
         return ResponseEntity.ok(Response.builder()
-                        .status(200)
-                        .message("Get cart preview successfully")
-                        .data(previewList).build()
-                );
+                .status(200)
+                .message("Get cart preview successfully")
+                .data(previewList).build()
+        );
     }
 
     public ResponseEntity<Response> createReview(User currentCustomer, CreateReviewRequest reviewRequest) {
         //TODO: Vy - check if the customer has bought the product, the order must be completed
         Customer customer = findCustomerById(currentCustomer.getId());
         Product product = productService.findProductById(reviewRequest.getProductId());
-        Review review = Review.builder()
-                .customer(customer)
-                .product(product)
-                .rating(reviewRequest.getRating())
-                .comment(reviewRequest.getComment())
-                .createdAt(LocalDateTime.now())
-                .build();
+        List<Order> orders = customer.getOrders();
 
-        reviewService.save(review);
+        for (Order order : orders) {
+            //TODO: not checking delivered order now
+//            if (order.getStatus().equals(DELIVERED)) {
+            List<OrderItem> orderItems = order.getItems();
+            for (OrderItem orderItem : orderItems) {
+                if (orderItem.getProduct().equals(product)) {
+                    Review review = Review.builder()
+                            .customer(customer)
+                            .product(product)
+                            .rating(reviewRequest.getRating())
+                            .comment(reviewRequest.getComment())
+                            .createdAt(LocalDateTime.now())
+                            .build();
+
+                    reviewService.save(review);
+                    return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
+                }
+            }
+//            }
+        }
+
+
         return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Create review successfully")
+                .status(400)
+                .message("Failed to create review for product")
                 .data(null)
                 .build());
+
     }
 
-    public ResponseEntity<Response> updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest) {
-        Review currentReview = reviewService.getReviewById(reviewId);
-
-        currentReview.setRating(updateReviewRequest.getRating());
-        if (updateReviewRequest.getComment() != null) currentReview.setComment(updateReviewRequest.getComment());
-
-        reviewService.save(currentReview);
-
+    public ResponseEntity<Response> updateReview(Customer currentCustomer, UpdateReviewRequest updateReviewRequest) {
+        User customer = findCustomerById(currentCustomer.getId());
+        List<Review> currentReview = reviewService.getReviewByCustomer(customer);
+//        currentReview.setRating(updateReviewRequest.getRating());
+//        currentReview.setComment(updateReviewRequest.getComment());
+//        currentReview.setCreatedAt(LocalDateTime.now());
+//        reviewService.save(currentReview);
         return ResponseEntity.ok(Response.builder().status(200).message("Update review successfully").data(null).build());
     }
 

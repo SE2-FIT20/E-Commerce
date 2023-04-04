@@ -20,22 +20,17 @@ public class Order {
     public enum OrderStatus {
         PENDING, READY_FOR_DELIVERY, DELIVERING, DELIVERED, CANCELLED;
 
-        public static OrderStatus fromString(String status) {
-            switch (status) {
-                case "PENDING":
-                    return PENDING;
-                case "READY_FOR_DELIVERY":
-                    return READY_FOR_DELIVERY;
-                case "DELIVERING":
-                    return DELIVERING;
-                case "DELIVERED":
-                    return DELIVERED;
-                case "CANCELLED":
-                    return CANCELLED;
-                default:
-                    return null;
-            }
-        }
+         public static OrderStatus fromString(String status) {
+             return switch (status) {
+                 case "PENDING" -> PENDING;
+                 case "READY_FOR_DELIVERY" -> READY_FOR_DELIVERY;
+                 case "DELIVERING" -> DELIVERING;
+                 case "DELIVERED" -> DELIVERED;
+                 case "CANCELLED" -> CANCELLED;
+                 default -> null;
+             };
+         }
+
     }
 
     @Id
@@ -71,11 +66,14 @@ public class Order {
     }
 
     public CustomerInformation getCustomer() {
+        if (customer == null) return null;
         return new CustomerInformation(customer);
     }
 
 
     public DeliveryPartnerInformation getDeliveryPartner() {
+        if (deliveryPartner == null) return null;
+
         return new DeliveryPartnerInformation(deliveryPartner);
     }
 }

@@ -169,6 +169,11 @@ public class AnonymousController {
 //
 //    }
 
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<Response> getStoreInfoById(@PathVariable Long storeId) {
+        return storeService.getStoreInformationById(storeId);
+    }
+
     @GetMapping("/review/{productId}")
     public ResponseEntity<Response> getReviewByProduct(@PathVariable Long productId) {
         return productService.getReviewByProductId(productId);

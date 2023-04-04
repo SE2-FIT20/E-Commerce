@@ -19,19 +19,30 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/store")
-@AllArgsConstructor
 @CrossOrigin(value = "*", maxAge = 3000)
 public class StoreController {
-    private final StoreService storeService;
-    private final ProductService productService;
-    private final OrderService orderService;
-    private final PromotionService promotionService;
+    @Value("${default.elementPerPage}")
+    private String defaultElementPerPage;
+
+    @Autowired
+    private StoreService storeService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private PromotionService promotionService;
 
     @Operation(summary = "Create product", description = "Create product", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateProductRequest.class), examples = @ExampleObject(value = """
             {
@@ -43,20 +54,20 @@ public class StoreController {
             }
             """))))
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Create product successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-                                                {
-                                                    "status": 200,
-                                                    "message": "Create product by id successfully",
-                                                    "data":  {
-                                                        "id": 3,
-                                                        "name" : "t-shirt",
-                                                        "description" : "best shirt",
-                                                        "category": "fashion",
-                                                        "price" : 12,
-                                                        "image" : "https:link.com"
-                                                    }
-                                                    
-                                                }
-                                                """))), @ApiResponse(responseCode = "400", description = "Create product failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
+            {
+                "status": 200,
+                "message": "Create product by id successfully",
+                "data":  {
+                    "id": 3,
+                    "name" : "t-shirt",
+                    "description" : "best shirt",
+                    "category": "fashion",
+                    "price" : 12,
+                    "image" : "https:link.com"
+                }
+                
+            }
+            """))), @ApiResponse(responseCode = "400", description = "Create product failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
             {
                 "status": 400,
                 "message": "Create product failed",
@@ -154,9 +165,16 @@ public class StoreController {
             }
             """)))})
     @GetMapping("/orders")
-    public ResponseEntity<Response> getOrders() {
+    public ResponseEntity<Response> getOrders(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                              @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
+                                              @RequestParam(defaultValue = "all",  required = false)  String status,
+                                              @RequestParam(defaultValue = "createdAt",  required = false) String filter,
+                                              @RequestParam(defaultValue = "desc",  required = false) String sortBy) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
         User currentStore = getCurrentStore();
-        return storeService.getAllOrder(currentStore.getId());
+        return storeService.getAllOrder(currentStore.getId(), page, elementsPerPage, status, filter, sortBy);
     }
 
     @GetMapping("/orders/{orderId}")
@@ -349,10 +367,16 @@ public class StoreController {
         return storeService.getStoreInformationById(currentStore.getId());
     }
 
-//    @GetMapping("/store/{storeId}")
-//    public ResponseEntity<Response> getProductByStoreId(@RequestParam(defaultValue = "0") Integer page,  @PathVariable("storeId") Long storeId) {
-//        return storeService.getProductByStore(page, storeId);
-//    }
+    @GetMapping("/products-by-status")
+    public ResponseEntity<Response> getProductsByStatus(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                        @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                        @RequestParam(defaultValue = "all", required = false) String status) {
+        if (elementsPerPage == null) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        User currentStore = getCurrentStore();
+        return storeService.getProductsByStatus(currentStore.getId(),page, elementsPerPage, status);
+    }
 
     @GetMapping("/store/{storeId}/filter-by-review")
     public ResponseEntity<Response> getProductByStoreIdFilterByReview(@PathVariable("storeId") Long storeId) {

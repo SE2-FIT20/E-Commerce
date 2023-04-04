@@ -13,8 +13,11 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByNameContainingIgnoreCase(String name);
-    Page<Product> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     Page<Product> findAllByStore(Store store, Pageable pageable);
+
+    Page<Product> findAllByStoreAndQuantityEquals(Store store, Integer quantity, Pageable pageable);
+
+    Page<Product> findAllByStoreAndQuantityGreaterThan(Store store, Integer quantity, Pageable pageable);
 
 }
