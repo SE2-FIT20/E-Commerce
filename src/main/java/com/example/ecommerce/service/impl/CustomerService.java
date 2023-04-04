@@ -104,6 +104,7 @@ public class CustomerService {
 
         DeliveryPartner deliveryPartner = deliveryPartnerService.findDeliveryPartnerById(1L);
 
+        // items in the cart are grouped into group by store
         for (CartStoreItem cartStoreItem : cart.getItems()) {
             Store store = storeService.findStoreById(cartStoreItem.getStore().getId());
             List<OrderItem> items = cartStoreItem.getItems();
@@ -117,6 +118,8 @@ public class CustomerService {
                     .deliveryPartner(deliveryPartner)
                     .build();
 
+            System.out.println("id: ");
+            System.out.println(order.getId());
             // order is the pwning side of the relationship,
             // and it has the customer field, save it to db will make it appear to the customer's order list
             orderService.save(order);
