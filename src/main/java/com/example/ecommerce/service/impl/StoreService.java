@@ -56,20 +56,6 @@ public class StoreService {
                 .orElseThrow(() -> new NotFoundException("Store not found for storeId: " + storeId));
     }
 
-        public ResponseEntity<Response> getAllProducts(Long storeId) {
-        Store store = findStoreById(storeId);
-        List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(store.getInventory());
-        // reverse the list so that the newest product will be at the top
-        Collections.reverse(productBriefInfos);
-
-        Response response = Response.builder()
-                .status(200)
-                .message("Get Store information successfully")
-                .data(productBriefInfos)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
     public ResponseEntity<Response> createProduct(Long storeId, CreateProductRequest request) {
 
         Store store = findStoreById(storeId);
@@ -250,20 +236,20 @@ public class StoreService {
                 .data(order)
                 .build());
     }
-    public ResponseEntity<Response> getProductByStore(Integer pageNumber, Long storeId) {
-        Store store = findStoreById(storeId);
-        Page<Product> page = productService.getProductOfStore(pageNumber, store);
-        PageResponse pageResponse = PageResponse.builder()
-                .content(page.getContent())
-                .totalPages(page.getTotalPages())
-                .pageNumber(pageNumber)
-                .build();
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Get all products successfully")
-                .data(pageResponse)
-                .build());
-    }
+//    public ResponseEntity<Response> getProductByStore(Integer pageNumber, Long storeId) {
+//        Store store = findStoreById(storeId);
+//        Page<Product> page = productService.getProductOfStore(pageNumber, store);
+//        PageResponse pageResponse = PageResponse.builder()
+//                .content(page.getContent())
+//                .totalPages(page.getTotalPages())
+//                .pageNumber(pageNumber)
+//                .build();
+//        return ResponseEntity.ok(Response.builder()
+//                .status(200)
+//                .message("Get all products successfully")
+//                .data(pageResponse)
+//                .build());
+//    }
 
     public ResponseEntity<Response> getProductByStoreFilterByReview(Long storeId) {
         Store store = findStoreById(storeId);

@@ -66,7 +66,8 @@ public class Order {
     private Long totalPrice;
 
     public Long getTotalPrice() {
-        return items.stream().mapToLong(item -> (long) (item.getProduct().getPrice() * item.getQuantity())).sum();
+        return items.stream()
+                .mapToLong(item -> (long) (item.getProduct().getPrice() * item.getQuantity())).sum();
     }
 
     public CustomerInformation getCustomer() {

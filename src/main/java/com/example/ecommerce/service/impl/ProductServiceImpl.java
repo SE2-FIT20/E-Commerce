@@ -1,5 +1,6 @@
 package com.example.ecommerce.service.impl;
 
+import com.example.ecommerce.domain.Category;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
@@ -9,11 +10,11 @@ import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.ProductRepository;
+import com.example.ecommerce.repository.StoreRepository;
 import com.example.ecommerce.service.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,8 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    private static final int PAGE_SIZE = 12;
+    @Autowired
+    private StoreRepository storeRepository;
 
     public Product findProductById(Long productId) {
         return productRepository.findById(productId)
@@ -53,11 +55,7 @@ public class ProductServiceImpl implements ProductService {
                 .build());
     }
 
-    @Override
-    public Page<Product> getProductOfStore(Integer pageNumber, Store store) {
-        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
-        return productRepository.findAllByStore(store, pageable);
-    }
+
 
 
     @Override
@@ -106,10 +104,32 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<Response> getAllProducts(Integer pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+    public ResponseEntity<Response> getAllProducts(Integer pageNumber, Integer elementsPerPage, String category, Long storeId, String filter, String sortBy) {
 
-        Page<Product> page = productRepository.findAllByOrderByCreatedAtDesc(pageable);
+        // Build the pageable
+        // Build the specification to filter by category and store
+
+
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.by(Sort.Direction.valueOf(sortBy.toUpperCase()), filter));
+//        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage);
+        boolean isCategory = category != null && !category.equals("all");
+        boolean isStore = storeId != null && storeId != 0;
+        Product product = new Product();
+        if (isCategory) {
+            product.setCategory(Category.valueOf(category.toUpperCase()));
+        }
+
+        if (isStore) {
+            //TODO: custom exception
+            Store store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Store not found"));
+            product.setStore(store);
+        }
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<Product> example = Example.of(product, matcher);
+        Page<Product> page = productRepository.findAll(example, pageable);
         List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(page.getContent());
 
         PageResponse pageResponse = PageResponse.builder()
@@ -124,5 +144,16 @@ public class ProductServiceImpl implements ProductService {
                 .data(pageResponse)
                 .build());
 
+    }
+
+    //TODO: config the category
+    private static class ProductSpecifications {
+        public static Specification<Product> categoryEqual(String category) {
+            return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("category"), category.toUpperCase());
+        }
+
+        public static Specification<Product> storeEqual(Long storeId) {
+            return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("store").get("id"), storeId);
+        }
     }
 }

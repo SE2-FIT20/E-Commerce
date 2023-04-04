@@ -33,53 +33,6 @@ public class StoreController {
     private final OrderService orderService;
     private final PromotionService promotionService;
 
-    @Operation(summary = "Get all products")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get all products successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 200,
-                "message": "Get all products successfully",
-                "data": [
-                    {
-                                "id": 1,
-                                "name" : "iphone15",
-                                "description" : "best iphone",
-                                "category": "electronic",
-                                "price" : 999.99,
-                                "image" : "https:link.com"
-                            },
-                            {
-                                "id": 2,
-                                "name" : "apple",
-                                "description" : "best fruit",
-                                "category": "food",
-                                "price" : 90,
-                                "image" : "https:link.com"
-                            },
-                            {
-                                "id": 3,
-                                "name" : "t-shirt",
-                                "description" : "best shirt",
-                                "category": "fashion",
-                                "price" : 12,
-                                "image" : "https:link.com"
-                            }
-                ]
-            }
-            """))), @ApiResponse(responseCode = "400", description = "Get all products failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 400,
-                "message": "Get all products failed",
-                "data": null
-            }
-            """)))
-
-    })
-    @GetMapping("/products")
-    public ResponseEntity<Response> getAllProducts() {
-        User currentStore = getCurrentStore();
-        return storeService.getAllProducts(currentStore.getId());
-    }
-
     @Operation(summary = "Create product", description = "Create product", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateProductRequest.class), examples = @ExampleObject(value = """
             {
                 "name" : "t-shirt",
@@ -396,10 +349,10 @@ public class StoreController {
         return storeService.getStoreInformationById(currentStore.getId());
     }
 
-    @GetMapping("/store/{storeId}")
-    public ResponseEntity<Response> getProductByStoreId(@RequestParam(defaultValue = "0") Integer page,  @PathVariable("storeId") Long storeId) {
-        return storeService.getProductByStore(page, storeId);
-    }
+//    @GetMapping("/store/{storeId}")
+//    public ResponseEntity<Response> getProductByStoreId(@RequestParam(defaultValue = "0") Integer page,  @PathVariable("storeId") Long storeId) {
+//        return storeService.getProductByStore(page, storeId);
+//    }
 
     @GetMapping("/store/{storeId}/filter-by-review")
     public ResponseEntity<Response> getProductByStoreIdFilterByReview(@PathVariable("storeId") Long storeId) {

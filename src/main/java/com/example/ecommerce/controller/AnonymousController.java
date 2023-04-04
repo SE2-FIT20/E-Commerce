@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,8 @@ import java.util.List;
 //TODO: product with categories
 public class AnonymousController {
 
+    @Value("${default.elementPerPage}")
+    private String defaultElementPerPage;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -95,18 +98,23 @@ public class AnonymousController {
             }
     )
     @GetMapping("/products")
-    public ResponseEntity<Response> getProducts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer elementsPerPage) {
-        return productService.getAllProducts(page);
+    public ResponseEntity<Response> getProducts(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
+                                                @RequestParam(defaultValue = "all",  required = false)  String category,
+                                                @RequestParam(defaultValue = "0",  required = false) Long storeId,
+                                                @RequestParam(defaultValue = "name",  required = false) String filter,
+                                                @RequestParam(defaultValue = "asc",  required = false) String sortBy
+                                                ) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        return productService.getAllProducts(page, elementsPerPage, category, storeId, filter, sortBy);
     }
 
-//    public ResponseEntity<Response> getProductsByCategory(@RequestParam String category, @RequestParam(defaultValue = "0") Integer page) {
-//        return productService.getProductsByCategory(category, page);
+//    @GetMapping("/products/{storeId}")
+//    public ResponseEntity<Response> getProductsOfStore(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer elementsPerPage, @PathVariable Long storeId) {
+//        return storeService.getProductByStore(page, storeId);
 //    }
-
-    @GetMapping("/products/{storeId}")
-    public ResponseEntity<Response> getProductsOfStore(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer elementsPerPage, @PathVariable Long storeId) {
-        return storeService.getProductByStore(page, storeId);
-    }
     @Operation(summary = "Get product by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get product by id successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
             {
