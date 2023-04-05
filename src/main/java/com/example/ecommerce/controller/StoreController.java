@@ -383,12 +383,13 @@ public class StoreController {
     public ResponseEntity<Response> getProductsByStatus(@RequestParam(defaultValue = "0", required = false) Integer page,
                                                         @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
                                                         @RequestParam(defaultValue = "all", required = false) String status,
+                                                        @RequestParam(defaultValue = "name", required = false) String filter,
                                                         @RequestParam(defaultValue = "asc", required = false) String sortBy) {
         if (elementsPerPage == null) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
         User currentStore = getCurrentStore();
-        return storeService.getProductsByStatus(currentStore.getId(),page, elementsPerPage, status, sortBy);
+        return storeService.getProductsByStatus(currentStore.getId(),page, elementsPerPage, status, filter , sortBy);
     }
 
     @GetMapping("/store/{storeId}/filter-by-review")

@@ -2,6 +2,8 @@ package com.example.ecommerce.dto.request.promotion;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class CreatePromotionRequest {
 
@@ -9,6 +11,6 @@ public class CreatePromotionRequest {
     private double percent;
     private String description;
     private Long storeId;
-    private boolean isGlobal;
-
+    private int quantity;
+    private LocalDateTime expiredAt;
 }

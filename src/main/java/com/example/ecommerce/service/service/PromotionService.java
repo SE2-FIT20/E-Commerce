@@ -12,7 +12,8 @@ public interface PromotionService {
     ResponseEntity<Response> deletePromotion(Long promotionId);
     ResponseEntity<Response> updatePromotion(UpdatePromotionRequest updatePromotionRequest);
     ResponseEntity<Response> getPromotionById(Long promotionId);
-    ResponseEntity<Response> getAllPromotions();
+    ResponseEntity<Response> getAllPromotions(Integer page, Integer elementsPerPage, String status, String filter, String sortBy);
+    ResponseEntity<Response> getPromotionByCode(String code);
 
     void save(Promotion promotion);
 

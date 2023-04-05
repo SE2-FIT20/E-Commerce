@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class CreateDeliveryPartnerRequest {
     private String name;
-    //TODO: deliveringFee
+    private Double deliveringFee;
 }

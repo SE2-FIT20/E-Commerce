@@ -87,7 +87,6 @@ public class ProductServiceImpl implements ProductService {
     }
     @Override
     public ResponseEntity<Response> updateProduct(UpdateProductRequest request) {
-        //TODO: check if this product belongs to the store
         Product product = findProductById(request.getProductId());
 
 

@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
+import static com.example.ecommerce.utils.Utils.generateAvatarLink;
+
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -34,8 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final StoreService storeService;
     private final PasswordEncoder passwordEncoder;
 
-    private static final String HEX_CHARS = "0123456789ABCDEF";
-    private static final int HEX_LENGTH = 6;
+
     @Override
     public ResponseEntity<Response> register(RegistrationRequest registrationRequest) {
 
@@ -78,19 +79,9 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    private String generateAvatarLink(String name) {
-        String color = getRandomHexColor();
-        return String.format("https://ui-avatars.com/api/?name=%s&background=%s", name, color);
-    }
 
-    public String getRandomHexColor() {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder(HEX_LENGTH);
-        for (int i = 0; i < HEX_LENGTH; i++) {
-            sb.append(HEX_CHARS.charAt(random.nextInt(HEX_CHARS.length())));
-        }
-        return sb.toString();
-    }
+
+
     @Override
     public ResponseEntity<Response> login(LoginRequest loginRequest) {
 

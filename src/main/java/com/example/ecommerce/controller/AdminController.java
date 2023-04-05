@@ -21,9 +21,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 
 @RestController
@@ -31,6 +31,10 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(value = "*", maxAge = 3000)
 //TODO: start working on this
 public class AdminController {
+
+
+    @Value("${default.elementPerPage}")
+    private String defaultElementPerPage;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -209,65 +213,6 @@ public class AdminController {
         return userService.changeAccess(request);
     }
 
-    @Operation(
-            summary = "Delete user by id",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Delete account successfully!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Delete account successfully!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(
-                        ),@ApiResponse(
-                    responseCode = "400",
-                    description = "Delete account failed!",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = Response.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                        "status": 400,
-                                        "message": "Delete account failed!",
-                                        "data": null
-                                    }
-                                    """)
-                    )),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Account not found!",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 404,
-                                                "message": "Account not found!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-
-            }
-    )
-    @DeleteMapping("/delete-accounts/{id}")
-    public ResponseEntity<Response> deleteAccountById(@PathVariable @Schema(description = "id of user") Long id) {
-        return userService.deleteUserById(id);
-    }
-
 
     @Operation(
             summary = "Update product",
@@ -288,7 +233,7 @@ public class AdminController {
                                     """)
                     )
 
-    )
+            )
 
 
     )
@@ -356,7 +301,7 @@ public class AdminController {
                     @ApiResponse(
                             responseCode = "404",
                             description = "Not found the account",
-                            content = @Content (
+                            content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Response.class),
                                     examples = @ExampleObject(value = """
@@ -666,14 +611,23 @@ public class AdminController {
             }
     )
     @GetMapping("/promotions")
-    public ResponseEntity<Response> getAllPromotion() {
-        return promotionService.getAllPromotions();
+    public ResponseEntity<Response> getAllPromotion(
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+            @RequestParam(defaultValue = "all", required = false) String status,
+            @RequestParam(defaultValue = "createdAt", required = false) String filter,
+            @RequestParam(defaultValue = "desc", required = false) String sortBy) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+
+        return promotionService.getAllPromotions(page, elementsPerPage, status, filter, sortBy);
     }
 
     @Operation(
             summary = "Create promotion",
             security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CreatePromotionRequest.class),
@@ -725,7 +679,7 @@ public class AdminController {
     @Operation(
             summary = "Update promotion",
             security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = UpdatePromotionRequest.class),
@@ -841,7 +795,7 @@ public class AdminController {
     @Operation(
             summary = "Create payment option",
             security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CreatePaymentOption.class),
@@ -890,7 +844,7 @@ public class AdminController {
     @Operation(
             summary = "Update payment option by id",
             security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = UpdatePaymentOption.class),
@@ -1064,7 +1018,7 @@ public class AdminController {
     @Operation(
             summary = "Create payment option",
             security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CreateDeliveryPartnerRequest.class),
@@ -1113,7 +1067,7 @@ public class AdminController {
     @Operation(
             summary = "Update delivery partner",
             security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = UpdateDeliveryPartnerRequest.class),

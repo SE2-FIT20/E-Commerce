@@ -32,6 +32,7 @@ public class Product {
     private int sold;
 
     private LocalDateTime createdAt;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Review> reviews;

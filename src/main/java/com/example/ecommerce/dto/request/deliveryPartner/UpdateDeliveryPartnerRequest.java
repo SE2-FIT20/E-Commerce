@@ -6,6 +6,5 @@ import lombok.Data;
 public class UpdateDeliveryPartnerRequest {
     private Long deliveryPartnerId;
     private String name;
-    //TODO: deliveringFee
-
+    private Double deliveringFee;
 }

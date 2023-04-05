@@ -8,6 +8,7 @@ import com.example.ecommerce.dto.response.SearchByNameResult;
 import com.example.ecommerce.dto.response.StoreDetailedInfo;
 import com.example.ecommerce.service.impl.StoreService;
 import com.example.ecommerce.service.service.ProductService;
+import com.example.ecommerce.service.service.PromotionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -26,12 +27,14 @@ import java.util.List;
 @CrossOrigin(value = "*", maxAge = 3000)
 public class AnonymousController {
 
-    @Value("${default.elementPerPage}")
-    private String defaultElementPerPage;
+        @Value("${default.elementPerPage}")
+        private String defaultElementPerPage;
     @Autowired
     private ProductService productService;
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private PromotionService promotionService;
 
     @Operation(
             summary = "Get all products"
@@ -168,6 +171,12 @@ public class AnonymousController {
 //    public ResponseEntity<Response> getAllReviewByProduct() {
 //
 //    }
+
+    @GetMapping("/promotions/{code}")
+    public ResponseEntity<Response> getPromotionByCode(@PathVariable String code) {
+        return promotionService.getPromotionByCode(code);
+    }
+
 
     @GetMapping("/store-information/{storeId}")
     public ResponseEntity<Response> getStoreInfoById(@PathVariable Long storeId) {

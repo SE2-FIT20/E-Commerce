@@ -26,8 +26,6 @@ public class Customer extends User{
     @OneToOne(cascade = CascadeType.ALL)
     private Cart cart;
 
-    //TODO: ask ChatGPT
-    // one order can only exist in one of the two lists
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Order> orders;
 

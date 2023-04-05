@@ -5,6 +5,7 @@ import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @NoArgsConstructor
@@ -17,6 +18,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @ManyToOne
     private Product product;
     private Integer quantity;
