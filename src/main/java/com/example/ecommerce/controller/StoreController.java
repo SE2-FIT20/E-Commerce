@@ -18,12 +18,13 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/store")
@@ -167,14 +168,24 @@ public class StoreController {
     @GetMapping("/orders")
     public ResponseEntity<Response> getOrders(@RequestParam(defaultValue = "0", required = false) Integer page,
                                               @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
-                                              @RequestParam(defaultValue = "all",  required = false)  String status,
+                                              @RequestParam(defaultValue = "ALL",  required = false)  String status,
                                               @RequestParam(defaultValue = "createdAt",  required = false) String filter,
-                                              @RequestParam(defaultValue = "desc",  required = false) String sortBy) {
+                                              @RequestParam(defaultValue = "desc",  required = false) String sortBy,
+                                              @RequestParam(required = false) LocalDateTime from,
+                                              @RequestParam(required = false) LocalDateTime to) {
+
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
+
+        // the default value for to is now, the default value for from is null
+        if (to == null) {
+            to = LocalDateTime.now();
+        }
+
+
         User currentStore = getCurrentStore();
-        return storeService.getAllOrder(currentStore.getId(), page, elementsPerPage, status, filter, sortBy);
+        return storeService.getAllOrders(currentStore.getId(), page, elementsPerPage, status, filter, sortBy, from, to);
     }
 
     @GetMapping("/orders/{orderId}")
@@ -182,6 +193,7 @@ public class StoreController {
         User currentStore = getCurrentStore();
         return storeService.getOrderById(currentStore.getId(), orderId);
     }
+
 
     @Operation(summary = "update order ")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Update order successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
@@ -370,12 +382,13 @@ public class StoreController {
     @GetMapping("/products-by-status")
     public ResponseEntity<Response> getProductsByStatus(@RequestParam(defaultValue = "0", required = false) Integer page,
                                                         @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
-                                                        @RequestParam(defaultValue = "all", required = false) String status) {
+                                                        @RequestParam(defaultValue = "all", required = false) String status,
+                                                        @RequestParam(defaultValue = "asc", required = false) String sortBy) {
         if (elementsPerPage == null) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
         User currentStore = getCurrentStore();
-        return storeService.getProductsByStatus(currentStore.getId(),page, elementsPerPage, status);
+        return storeService.getProductsByStatus(currentStore.getId(),page, elementsPerPage, status, sortBy);
     }
 
     @GetMapping("/store/{storeId}/filter-by-review")

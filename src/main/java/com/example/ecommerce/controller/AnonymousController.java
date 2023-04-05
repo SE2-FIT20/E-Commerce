@@ -160,6 +160,8 @@ public class AnonymousController {
                 .message("Search successfully!")
                 .data(searchByNameResult)
                 .build());
+
+        // save the search history
     }
 //
 //    @GetMapping("review")

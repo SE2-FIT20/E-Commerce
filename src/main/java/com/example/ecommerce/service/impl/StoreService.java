@@ -106,17 +106,17 @@ public class StoreService {
 
     }
 
-    public ResponseEntity<Response> getAllOrder(Long storeId, Integer pageNumber, Integer elementsPerPage, String status, String filter, String sortBy) {
+    public ResponseEntity<Response> getAllOrders(Long storeId, Integer pageNumber, Integer elementsPerPage, String status, String filter, String sortBy, LocalDateTime from, LocalDateTime to) {
         Store store = findStoreById(storeId);
 
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.by(Sort.Direction.valueOf(sortBy.toUpperCase()), filter));
-
+    //TODO; check this one
         Page<Order> page;
-        if (!status.equals("all")) {
-            Order.OrderStatus orderStatus = Order.OrderStatus.fromString(status.toUpperCase());
-            page = orderRepository.findAllByStoreAndStatus(store, orderStatus, pageable);
+        if (status.equals("ALL")) {
+            page = orderRepository.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
         } else {
-            page = orderRepository.findAllByStore(store, pageable);
+            Order.OrderStatus orderStatus = Order.OrderStatus.fromString(status.toUpperCase());
+            page = orderRepository.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
         }
 
         PageResponse pageResponse = PageResponse.builder()
@@ -320,12 +320,13 @@ public class StoreService {
                 .build());
     }
 
-    public ResponseEntity<Response> getProductsByStatus(Long id, Integer pageNumber, Integer elementsPerPage, String status) {
+    public ResponseEntity<Response> getProductsByStatus(Long id, Integer pageNumber, Integer elementsPerPage, String status, String sortBy) {
         Store store = findStoreById(id);
         Page<Product> pageProduct;
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage);
 
         if (status.toUpperCase().equals(Product.Status.AVAILABLE.name())){
+             pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), "price");
             pageProduct = productRepository.findAllByStoreAndQuantityGreaterThan(store, 0, pageable);
         } else if (status.toUpperCase().equals(Product.Status.SOLD_OUT.name())){
             pageProduct = productRepository.findAllByStoreAndQuantityEquals(store, 0, pageable);
