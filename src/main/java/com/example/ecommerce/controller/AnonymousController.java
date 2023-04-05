@@ -24,8 +24,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(value = "*", maxAge = 3000)
-//TODO: get detailed information of product
-//TODO: product with categories
 public class AnonymousController {
 
     @Value("${default.elementPerPage}")
@@ -169,13 +167,18 @@ public class AnonymousController {
 //
 //    }
 
-    @GetMapping("/store/{storeId}")
+    @GetMapping("/store-information/{storeId}")
     public ResponseEntity<Response> getStoreInfoById(@PathVariable Long storeId) {
         return storeService.getStoreInformationById(storeId);
     }
 
-    @GetMapping("/review/{productId}")
+    @GetMapping("/reviews{productId}")
     public ResponseEntity<Response> getReviewByProduct(@PathVariable Long productId) {
         return productService.getReviewByProductId(productId);
+    }
+
+    @GetMapping("/product-categories")
+    public ResponseEntity<Response> getALlProductCategories() {
+        return productService.getAllProductCategories();
     }
 }

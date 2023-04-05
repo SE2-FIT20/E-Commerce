@@ -1,20 +1,29 @@
 package com.example.ecommerce.domain;
-
 public enum Category {
-    TOYS, ELECTRONICS, CLOTHES, BOOKS, HEALTH;
+    BEAUTY, BOOKS, CLOTHING, ELECTRONICS, FOOD, FURNITURE, HEALTH, HOME, JEWELRY, SPORTS;
 
-    private Category from(String val) {
+    public static Category fromString(String val) {
         switch (val.toUpperCase()) {
-            case ("TOYS"):
-                return TOYS;
-            case ("ELECTRONICS"):
-                return ELECTRONICS;
-            case ("CLOTHES"):
-                return CLOTHES;
-            case ("BOOKS"):
+            case "BEAUTY":
+                return BEAUTY;
+            case "BOOKS":
                 return BOOKS;
-            case ("HEALTH"):
+            case "CLOTHING":
+                return CLOTHING;
+            case "ELECTRONICS":
+                return ELECTRONICS;
+            case "FOOD":
+                return FOOD;
+            case "FURNITURE":
+                return FURNITURE;
+            case "HEALTH":
                 return HEALTH;
+            case "HOME":
+                return HOME;
+            case "JEWELRY":
+                return JEWELRY;
+            case "SPORTS":
+                return SPORTS;
             default:
                 return null;
         }

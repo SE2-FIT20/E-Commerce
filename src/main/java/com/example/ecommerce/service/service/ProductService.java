@@ -34,4 +34,7 @@ public interface ProductService {
 
 
     Page<Product> getProductOfStore(Integer page, Integer elementsPerPage, Store store);
+
+    ResponseEntity<Response> getAllProductCategories();
+
 }

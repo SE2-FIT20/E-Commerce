@@ -61,6 +61,16 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllByStore(store, pageable);
     }
 
+    @Override
+    public ResponseEntity<Response> getAllProductCategories() {
+        Category[] categories = Category.values();
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get all product categories successfully")
+                .data(categories)
+                .build());
+    }
+
 
     @Override
     public ResponseEntity<Response> deleteProductById(Long productId) {
