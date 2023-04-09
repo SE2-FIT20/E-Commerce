@@ -75,8 +75,11 @@ public class UserServiceImpl implements UserService {
         User user = findUserById(request.getUserId());
         //TODO: throw exception for illegal state
         if (request.getOperation().equals("LOCK")) {
+            if (user.isLocked()) throw new IllegalStateException("User is already locked");
+            if (user.getRole().equals("ADMIN")) throw new IllegalStateException("Admin can not be locked");
             user.setLocked(true);
         } else {
+            if (!user.isLocked()) throw new IllegalStateException("User is already unlocked");
             user.setLocked(false);
         }
         userRepository.save(user);

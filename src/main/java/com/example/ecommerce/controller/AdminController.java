@@ -1,5 +1,6 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.Feedback;
 import com.example.ecommerce.domain.Promotion;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
@@ -8,8 +9,10 @@ import com.example.ecommerce.dto.request.paymentOption.CreatePaymentOption;
 import com.example.ecommerce.dto.request.paymentOption.UpdatePaymentOption;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
+import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
+import com.example.ecommerce.service.service.FeedbackService;
 import com.example.ecommerce.service.service.ProductService;
 import com.example.ecommerce.service.service.UserService;
 import com.example.ecommerce.service.service.PromotionService;
@@ -22,6 +25,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,12 +40,18 @@ public class AdminController {
 
     @Value("${default.elementPerPage}")
     private String defaultElementPerPage;
+
     @Autowired
     private ProductService productService;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private PromotionService promotionService;
+
+    @Autowired
+    private FeedbackService feedbackService;
 
     @Operation(
             summary = "Get all users",
@@ -393,8 +404,13 @@ public class AdminController {
             }
     )
     @GetMapping("/feedbacks")
-    public ResponseEntity<Response> getFeedbacks() {
-        return null;
+    public ResponseEntity<Response> getFeedbacks(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                 @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                 @RequestParam(defaultValue = "all", required = false) String status) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        return feedbackService.getFeedbacks(page, elementsPerPage, status);
     }
 
     @Operation(
@@ -458,7 +474,7 @@ public class AdminController {
     )
     @GetMapping("/feedbacks/{id}")
     public ResponseEntity<Response> getFeedbacksById(@PathVariable @Schema(description = "id of feedback") Long id) {
-        return null;
+        return feedbackService.findById(id);
     }
 
     @Operation(
@@ -502,7 +518,7 @@ public class AdminController {
     )
     @PutMapping("/feedbacks/{id}")
     public ResponseEntity<Response> markFeedbackAsRead(@PathVariable @Schema(description = "id of feedback") Long id) {
-        return null;
+        return feedbackService.resolveFeedback(id);
     }
 
     @Operation(
@@ -560,8 +576,8 @@ public class AdminController {
             }
     )
     @DeleteMapping("/feedbacks/{id}")
-    public ResponseEntity<Response> deleteFeedback(@PathVariable @Schema(description = "id of feedback") int id) {
-        return null;
+    public ResponseEntity<Response> deleteFeedback(@PathVariable @Schema(description = "id of feedback") Long id) {
+        return feedbackService.deleteById(id);
     }
 
     @Operation(
@@ -792,228 +808,6 @@ public class AdminController {
         return promotionService.deletePromotion(id);
     }
 
-    @Operation(
-            summary = "Create payment option",
-            security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = CreatePaymentOption.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                        "name": "Credit card / Debit card"
-                                    }
-                                    """)
-                    )
-            )
-
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Create payment gateway successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Create payment gateway successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Create payment gateway failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Create payment gateway failed!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @PostMapping("app-setting/payment-gateway")
-    public ResponseEntity<Response> createPaymentOption(@RequestBody CreatePaymentOption paymentGatewayRequest) {
-        return null;
-    }
-
-    @Operation(
-            summary = "Update payment option by id",
-            security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UpdatePaymentOption.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                        "id": 1,
-                                        "name": "Master / Visa"
-                                    }
-                                    """)
-                    )
-            )
-
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Update payment gateway successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Update payment gateway successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Update payment gateway failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Wrong information of payment gateway!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @PutMapping("app-setting/payment-gateway/")
-    public ResponseEntity<Response> updatePaymentOptionById(@RequestBody UpdatePaymentOption paymentGatewayRequest) {
-        return null;
-    }
-
-
-    @Operation(
-            summary = "Delete payment option by id",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Delete payment gateway successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Delete payment gateway successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Delete payment gateway failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Delete payment gateway failed!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Not found the payment gateway!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Not found the payment gateway!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @DeleteMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> deletePaymentOption(@PathVariable @Schema(description = "Id of payment option") int id) {
-        return null;
-    }
-
-    @Operation(
-            summary = "Get payment option by id",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Get payment gateway successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Get payment gateway successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Get payment gateway failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Wrong id of payment gateway!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @GetMapping("app-setting/payment-gateway/{id}")
-    public ResponseEntity<Response> getPaymentOptionById(@PathVariable @Schema(description = "Id of payment option") int id) {
-        return null;
-    }
-
-    @Operation(
-            summary = "Get all payment options",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Get all payment gateway successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Get all payment gateway successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Get all payment gateway failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Can't get all payment gateway!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @GetMapping("app-setting/payment-gateway")
-    public ResponseEntity<Response> getAllPaymentOption() {
-        return null;
-    }
 
     @Operation(
             summary = "Create payment option",
@@ -1176,7 +970,6 @@ public class AdminController {
         return null;
     }
 
-
     @Operation(
             summary = "Get delivery partner by id",
             security = @SecurityRequirement(name = "bearerAuth")
@@ -1229,52 +1022,4 @@ public class AdminController {
         return null;
     }
 
-    @Operation(
-            summary = "Delete delivery partner by id",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Delete delivery partner successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Delete delivery partner successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Delete delivery partner failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Wrong id of delivery partner!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Not found delivery partner!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 404,
-                                                "message": "Not found delivery partner!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @DeleteMapping("app-setting/delivery-partner/{id}")
-    public ResponseEntity<Response> deleteDeliveryPartnerById(@PathVariable @Schema(description = "id of delivery partner") int id) {
-        return null;
-    }
 }

@@ -8,6 +8,7 @@ import com.example.ecommerce.dto.response.LoginResponse;
 import com.example.ecommerce.dto.request.auth.LoginRequest;
 import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.exception.LoginFailedException;
 import com.example.ecommerce.exception.RegistrationException;
 import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.service.impl.CustomerService;
@@ -95,6 +96,9 @@ public class AuthServiceImpl implements AuthService {
             // if username or password is wrong, the BadCredentialsException will be thrown
 
             User user = userRepository.findByEmailIgnoreCase(loginRequest.getEmail()).get();
+            if (user.isLocked()) {
+                throw new LoginFailedException("Your account is locked! Please contact admin to unlock your account!");
+            }
             String jwtToken = jwtService.generateToken(user);
 
             LoginResponse token = LoginResponse.builder()

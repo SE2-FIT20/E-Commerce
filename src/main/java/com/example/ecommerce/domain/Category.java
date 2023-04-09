@@ -10,7 +10,7 @@ public enum Category {
     HOME,
     JEWELRY,
     SPORTS,
-    TOYs,
+    TOYS,
     TRAVEL,
     SHOES,
     BAGS;
@@ -39,7 +39,7 @@ public enum Category {
             case "SPORTS":
                 return SPORTS;
             case "TOYS":
-                return TOYs;
+                return TOYS;
             case "TRAVEL":
                 return TRAVEL;
             case "SHOES":

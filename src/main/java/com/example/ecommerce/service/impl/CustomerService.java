@@ -12,16 +12,12 @@ import com.example.ecommerce.dto.response.ProductBriefInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
-import com.example.ecommerce.service.service.DeliveryPartnerService;
-import com.example.ecommerce.service.service.OrderService;
-import com.example.ecommerce.service.service.ProductService;
-import com.example.ecommerce.service.service.ReviewService;
+import com.example.ecommerce.service.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -262,4 +258,5 @@ public class CustomerService {
                 .data(orders)
                 .build());
     }
+
 }
