@@ -20,6 +20,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Lob
     private String description;
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -31,6 +32,9 @@ public class Product {
     private Integer quantity;
     private int sold;
 
+    @Transient
+    @JsonIgnore
+    private Status status;
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
@@ -41,6 +45,13 @@ public class Product {
     @JsonIgnore
     private Store store;
 
+    public Status getStatus() {
+        if (quantity > 0) {
+            return Status.AVAILABLE;
+        } else {
+            return Status.SOLD_OUT;
+        }
+    }
 
     public enum Status {
         AVAILABLE, SOLD_OUT;

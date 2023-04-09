@@ -21,13 +21,13 @@ public interface ProductService {
 
     ResponseEntity<Response> getProductById(Long productId);
 
-    ResponseEntity<Response> getAllProducts(Integer pageNumber, Integer elementsPerPage, String category, Long storeId, String filter, String sortBy);
+    ResponseEntity<Response> getAllProducts(Integer pageNumber, Integer elementsPerPage, String category, Long storeId, String filter, String sortBy, String status);
 
     Product findProductById(Long productId);
 
     void save(Product product);
 
-    List<Product> searchProduct(String keyword, Integer pageNumber);
+    ResponseEntity<Response> searchProduct(String keyword, Integer pageNumber, Integer elementsPerPage);
 
     void deleteById(Long productId);
     ResponseEntity<Response> getReviewByProductId(Long productId);

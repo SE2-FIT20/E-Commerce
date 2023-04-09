@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/store")
@@ -171,21 +172,33 @@ public class StoreController {
                                               @RequestParam(defaultValue = "ALL",  required = false)  String status,
                                               @RequestParam(defaultValue = "createdAt",  required = false) String filter,
                                               @RequestParam(defaultValue = "desc",  required = false) String sortBy,
-                                              @RequestParam(required = false) LocalDateTime from,
-                                              @RequestParam(required = false) LocalDateTime to) {
+                                              @RequestParam(required = false) String from,
+                                              @RequestParam(required = false) String to) {
 
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
+        LocalDateTime fromDateTime = null;
+        LocalDateTime toDateTime = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        if (from == null) {
+            fromDateTime = LocalDateTime.of(1970, 1, 1, 0, 0); // the default value for from is 1970, it means that we will get all orders
+        } else {
+            fromDateTime = LocalDateTime.parse(from, formatter);
+        }
 
         // the default value for to is now, the default value for from is null
         if (to == null) {
-            to = LocalDateTime.now();
+            toDateTime = LocalDateTime.now();
+        } else {
+            toDateTime = LocalDateTime.parse(to, formatter);
         }
 
 
+
         User currentStore = getCurrentStore();
-        return storeService.getAllOrders(currentStore.getId(), page, elementsPerPage, status, filter, sortBy, from, to);
+        return storeService.getAllOrders(currentStore.getId(), page, elementsPerPage, status, filter, sortBy, fromDateTime, toDateTime);
     }
 
     @GetMapping("/orders/{orderId}")

@@ -14,7 +14,6 @@ import com.example.ecommerce.repository.StoreRepository;
 import com.example.ecommerce.service.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -40,9 +39,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> searchProduct(String keyword, Integer pageNumber) {
+    public ResponseEntity<Response> searchProduct(String keyword, Integer pageNumber, Integer elementsPerPage) {
 
-        return productRepository.findByNameContainingIgnoreCase(keyword);
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage);
+        Page<Product> products = productRepository.findByNameContainingIgnoreCase(keyword, pageable);
+
+        PageResponse pageResponse = PageResponse.builder()
+                .content(ProductBriefInfo.from(products.getContent()))
+                .totalPages(products.getTotalPages())
+                .size(products.getSize())
+                .build();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Search product successfully")
+                .data(pageResponse)
+                .build());
     }
 
     @Override
@@ -117,34 +129,60 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<Response> getAllProducts(Integer pageNumber, Integer elementsPerPage, String category, Long storeId, String filter, String sortBy) {
-
-        // Build the pageable
-        // Build the specification to filter by category and store
-
-
+    public ResponseEntity<Response> getAllProducts(Integer pageNumber, Integer elementsPerPage, String category, Long storeId, String filter, String sortBy, String status) {
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.by(Sort.Direction.valueOf(sortBy.toUpperCase()), filter));
-//        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage);
-        boolean isCategory = category != null && !category.equals("all");
-        boolean isStore = storeId != null && storeId != 0;
-        Product product = new Product();
-        if (isCategory) {
-            product.setCategory(Category.valueOf(category.toUpperCase()));
+
+        Store store = null;
+        Category categoryEnum = null;
+        if (storeId != null && storeId != 0) {
+            store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Store not found"));
         }
 
-        if (isStore) {
-            //TODO: custom exception
-            Store store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Store not found"));
-            product.setStore(store);
+        if (category != null && !category.equals("all")) {
+            categoryEnum = Category.valueOf(category.toUpperCase());;
         }
 
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Page<Product> page;
 
-        Example<Product> example = Example.of(product, matcher);
-        Page<Product> page = productRepository.findAll(example, pageable);
+        if (status.toUpperCase().equals("ALL")
+            || status.toUpperCase().equals("SOLD_OUT")
+        ) {
+            Product product = new Product();
+
+            if (categoryEnum != null) {
+                product.setCategory(categoryEnum);
+            }
+
+            if (store != null) {
+                product.setStore(store);
+            }
+
+            if (status.toUpperCase().equals("SOLD_OUT")){
+                product.setQuantity(0);
+            }
+
+            ExampleMatcher matcher = ExampleMatcher
+                    .matching()
+                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+            Example<Product> example = Example.of(product, matcher);
+            page = productRepository.findAll(example, pageable);
+
+        } else {
+            // when finding all product that have quantity > 0
+            if (categoryEnum != null && store != null) {
+                page = productRepository.findAllByStoreAndCategoryAndQuantityGreaterThan(store, categoryEnum, 0, pageable);
+            } else if (categoryEnum != null ) {
+                page = productRepository.findAllByCategoryAndQuantityGreaterThan(categoryEnum, 0, pageable);
+            } else if (store != null) {
+                page = productRepository.findAllByStoreAndQuantityGreaterThan(store, 0, pageable);
+            } else {
+                page = productRepository.findAllByQuantityGreaterThan(0, pageable);
+            }
+        }
+
+
         List<ProductBriefInfo> productBriefInfos = ProductBriefInfo.from(page.getContent());
-
         PageResponse pageResponse = PageResponse.builder()
                 .totalPages(page.getTotalPages())
                 .pageNumber(page.getNumber())
@@ -160,14 +198,4 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
-    //TODO: config the category
-    private static class ProductSpecifications {
-        public static Specification<Product> categoryEqual(String category) {
-            return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("category"), category.toUpperCase());
-        }
-
-        public static Specification<Product> storeEqual(Long storeId) {
-            return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("store").get("id"), storeId);
-        }
-    }
 }

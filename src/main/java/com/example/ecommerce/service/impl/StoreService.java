@@ -8,6 +8,7 @@ import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.dto.response.StoreDetailedInfo;
 import com.example.ecommerce.dto.response.StoreInformation;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.OrderRepository;
@@ -238,8 +239,22 @@ public class StoreService {
                 .build());
     }
 
-    public List<Store> searchStore(String keyword) {
-        return storeRepository.findByNameContainingIgnoreCase(keyword);
+    public ResponseEntity<Response> searchStore(String keyword, Integer page, Integer elementsPerPage) {
+        Pageable pageable = PageRequest.of(page, elementsPerPage);
+        Page<Store> pageStore = storeRepository.findByNameContainingIgnoreCase(keyword, pageable);
+
+        PageResponse pageResponse = PageResponse.builder()
+                .content(StoreDetailedInfo.from(pageStore.getContent()))
+                .totalPages(pageStore.getTotalPages())
+                .size(pageStore.getSize())
+                .pageNumber(pageStore.getNumber())
+                .build();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Search store successfully")
+                .data(pageResponse)
+                .build());
     }
 
     public ResponseEntity<Response> getOrderById(Long id, Long orderId) {

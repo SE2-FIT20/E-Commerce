@@ -18,6 +18,7 @@ public class Promotion {
     private Long id;
     private String name;
     private double percent;
+    @Lob
     private String description;
     private String code;
     private String image;

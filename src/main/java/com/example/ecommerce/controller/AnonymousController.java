@@ -104,12 +104,13 @@ public class AnonymousController {
                                                 @RequestParam(defaultValue = "all",  required = false)  String category,
                                                 @RequestParam(defaultValue = "0",  required = false) Long storeId,
                                                 @RequestParam(defaultValue = "name",  required = false) String filter,
-                                                @RequestParam(defaultValue = "asc",  required = false) String sortBy
+                                                @RequestParam(defaultValue = "asc",  required = false) String sortBy,
+                                                @RequestParam(defaultValue = "all", required = false) String status
                                                 ) {
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
-        return productService.getAllProducts(page, elementsPerPage, category, storeId, filter, sortBy);
+        return productService.getAllProducts(page, elementsPerPage, category, storeId, filter, sortBy, status);
     }
 
 //    @GetMapping("/products/{storeId}")
@@ -145,32 +146,33 @@ public class AnonymousController {
     }
 
 
-    @GetMapping("/search")
-    public ResponseEntity<Response> searchProduct(@RequestParam String keyword, @RequestParam(defaultValue = "0") Integer page) {
-        List<Product> products =  productService.searchProduct(keyword, page);
-        List<Store> stores = storeService.searchStore(keyword);
+    @GetMapping("/search-products")
+    public ResponseEntity<Response> searchProduct(@RequestParam String keyword,
+                                                  @RequestParam(defaultValue = "0") Integer page,
+                                                  @RequestParam(defaultValue = "0") Integer elementsPerPage) {
 
-        List<ProductDetailedInfo> productDetailedInfos = ProductDetailedInfo.from(products);
-        List<StoreDetailedInfo> storeDetailedInfos = StoreDetailedInfo.from(stores);
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        return productService.searchProduct(keyword, page, elementsPerPage);
 
-        SearchByNameResult searchByNameResult = SearchByNameResult.builder()
-                .products(productDetailedInfos)
-                .stores(storeDetailedInfos)
-                .build();
+    }
 
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Search successfully!")
-                .data(searchByNameResult)
-                .build());
+    @GetMapping("/search-stores")
+    public ResponseEntity<Response> searchStores(@RequestParam String keyword,
+                                                 @RequestParam(defaultValue = "0") Integer page,
+                                                 @RequestParam(defaultValue = "0") Integer elementsPerPage) {
+
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+       return storeService.searchStore(keyword, page, elementsPerPage);
+
 
         // save the search history
     }
-//
-//    @GetMapping("review")
-//    public ResponseEntity<Response> getAllReviewByProduct() {
-//
-//    }
+
+
 
     @GetMapping("/promotions/{code}")
     public ResponseEntity<Response> getPromotionByCode(@PathVariable String code) {

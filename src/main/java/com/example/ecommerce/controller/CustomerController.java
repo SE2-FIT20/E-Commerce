@@ -101,6 +101,7 @@ public class CustomerController {
         return customerService.getCartItems(getCurrentCustomer());
     }
 
+    //TODO: checkout with promotion code_
     @Operation(
             summary = "Checkout"
     )
@@ -170,6 +171,8 @@ public class CustomerController {
         User currentCustomer = getCurrentCustomer();
         return customerService.getOldOrders(currentCustomer.getId());
     }
+
+    //TODO: endpoint to check the eligibility of the promotion code
 
     /* This is optional as the result of team discussion
     @ApiResponses(
