@@ -21,6 +21,7 @@ public class Customer extends User{
     private Long id;
     @ElementCollection
     private List<String> addresses;
+
     private String phoneNumber;
 
     @OneToOne(cascade = CascadeType.ALL)

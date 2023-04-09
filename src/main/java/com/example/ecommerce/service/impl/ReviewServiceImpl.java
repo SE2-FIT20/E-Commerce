@@ -46,4 +46,10 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.findAllByCustomer(customer);
     }
 
+    @Override
+    public Review findReviewById(Long reviewId) {
+
+        return reviewRepository.findById(reviewId).orElseThrow(() -> new NotFoundException("Review not found for id: " + reviewId));
+    }
+
 }

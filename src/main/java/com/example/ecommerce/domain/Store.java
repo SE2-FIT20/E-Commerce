@@ -21,6 +21,7 @@ public class Store extends User{
     @Lob
     private String description;
     private String address;
+    private String city;
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> inventory;
 

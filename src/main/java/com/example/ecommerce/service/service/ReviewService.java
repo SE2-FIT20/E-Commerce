@@ -18,4 +18,6 @@ public interface ReviewService {
     List<Review> getReviewByProduct(Product product);
 
     List<Review>  getReviewByCustomer(User customer);
+
+    Review findReviewById(Long reviewId);
 }

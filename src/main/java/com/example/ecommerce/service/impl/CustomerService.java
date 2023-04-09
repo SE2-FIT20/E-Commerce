@@ -172,6 +172,7 @@ public class CustomerService {
         Product product = productService.findProductById(reviewRequest.getProductId());
         List<Order> orders = customer.getOrders();
 
+        // TODO: temporary solution, need to be improved
         for (Order order : orders) {
             if (order.getStatus().equals(PENDING)) {
                 List<OrderItem> orderItems = order.getItems();
@@ -199,13 +200,22 @@ public class CustomerService {
 
     }
 
-    public ResponseEntity<Response> updateReview(Customer currentCustomer, UpdateReviewRequest updateReviewRequest) {
-        User customer = findCustomerById(currentCustomer.getId());
-        List<Review> currentReview = reviewService.getReviewByCustomer(customer);
-//        currentReview.setRating(updateReviewRequest.getRating());
-//        currentReview.setComment(updateReviewRequest.getComment());
-//        currentReview.setCreatedAt(LocalDateTime.now());
-//        reviewService.save(currentReview);
+    public ResponseEntity<Response> updateReview(Long customerId, UpdateReviewRequest updateReviewRequest, Long reviewId) {
+        User customer = findCustomerById(customerId);
+        Review currentReview = reviewService.findReviewById(reviewId);
+
+        if (!currentReview.getCustomer().equals(customer)) {
+            return ResponseEntity.ok(Response.builder()
+                    .status(400)
+                    .message("You are not the owner of this review")
+                    .data(null)
+                    .build());
+        }
+
+        currentReview.setRating(updateReviewRequest.getRating());
+        currentReview.setComment(updateReviewRequest.getComment());
+
+        reviewService.save(currentReview);
         return ResponseEntity.ok(Response.builder().status(200).message("Update review successfully").data(null).build());
     }
 

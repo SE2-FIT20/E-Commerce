@@ -45,6 +45,20 @@ public class Product {
     @JsonIgnore
     private Store store;
 
+    @Transient
+    private Double rating;
+
+    public Double getRating() {
+        if (reviews == null || reviews.isEmpty()) {
+            return 0.0;
+        }
+        double sum = 0;
+        for (Review review : reviews) {
+            sum += review.getRating();
+        }
+        return sum / reviews.size();
+    }
+
     public Status getStatus() {
         if (quantity > 0) {
             return Status.AVAILABLE;

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
+//TODO: considering remove this dto
 public class ProductBriefInfo {
     private Long id;
     private String name;
@@ -27,6 +28,7 @@ public class ProductBriefInfo {
     private int sold;
     private StoreBriefInfo store;
     private LocalDateTime createdAt;
+    private Double rating;
 
     public ProductBriefInfo(Product product) {
         this.id = product.getId();
@@ -39,6 +41,7 @@ public class ProductBriefInfo {
         this.images = product.getImages();
         this.store = new StoreBriefInfo(product.getStore());
         this.createdAt = product.getCreatedAt();
+        this.rating = product.getRating();
     }
 
     public static List<ProductBriefInfo> from(List<Product> products) {
