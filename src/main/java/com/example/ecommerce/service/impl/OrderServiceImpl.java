@@ -1,8 +1,10 @@
 package com.example.ecommerce.service.impl;
 
+import com.example.ecommerce.domain.Customer;
 import com.example.ecommerce.domain.Order;
 
 
+import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
@@ -10,9 +12,14 @@ import com.example.ecommerce.repository.OrderRepository;
 import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.ProductService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -113,6 +120,17 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
     }
 
+    @Override
+    public Page<Order> getAllOrdersOfCustomer(Integer pageNumber, Integer elementsPerPage, Customer customer, String status, String filter, String sortBy, LocalDateTime from, LocalDateTime to) {
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
+
+        if (status.equals("ALL")) {
+            return orderRepository.findAllByCustomerAndCreatedAtBetween(customer, from, to, pageable);
+        } else {
+            Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(status.toUpperCase());
+            return orderRepository.findAllByCustomerAndStatusAndCreatedAtBetween(customer, orderStatus, from, to, pageable);
+        }
+    }
 
 
     private static String generateRandomString(int length) {

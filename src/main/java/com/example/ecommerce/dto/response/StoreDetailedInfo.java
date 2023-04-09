@@ -16,6 +16,7 @@ public class StoreDetailedInfo {
     private String description;
     private String address;
     private String city;
+
     public StoreDetailedInfo(Store store) {
         this.id = store.getId();
         this.name = store.getName();

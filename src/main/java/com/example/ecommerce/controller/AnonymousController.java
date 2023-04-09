@@ -2,6 +2,7 @@ package com.example.ecommerce.controller;
 
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Store;
+import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.SearchByNameResult;
@@ -20,6 +21,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -155,6 +158,7 @@ public class AnonymousController {
                                                   @RequestParam(defaultValue = "0") Integer page,
                                                   @RequestParam(defaultValue = "0") Integer elementsPerPage) {
 
+        //TODO: save the search history
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
@@ -166,12 +170,11 @@ public class AnonymousController {
     public ResponseEntity<Response> searchStores(@RequestParam String keyword,
                                                  @RequestParam(defaultValue = "0") Integer page,
                                                  @RequestParam(defaultValue = "0") Integer elementsPerPage) {
-
+        //TODO: save the search history
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
-       return storeService.searchStore(keyword, page, elementsPerPage);
-
+        return storeService.searchStore(keyword, page, elementsPerPage);
 
         // save the search history
     }
@@ -198,6 +201,7 @@ public class AnonymousController {
     public ResponseEntity<Response> getALlProductCategories() {
         return productService.getAllProductCategories();
     }
+
     @Operation(
             summary = "Get all delivery partners",
             security = @SecurityRequirement(name = "bearerAuth")
@@ -304,4 +308,12 @@ public class AnonymousController {
         return deliveryPartnerService.getDeliveryPartnerById(id);
     }
 
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            return (User) authentication.getPrincipal();
+        }
+        return null;
+    }
 }

@@ -18,18 +18,27 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/customer")
-@AllArgsConstructor
 @CrossOrigin(value = "*", maxAge = 3000)
 //TODO: add voucher, promotion,
 //TODO: get search history
 public class CustomerController {
-    private final CustomerService customerService;
+
+    @Value("${default.elementPerPage}")
+    private String defaultElementPerPage;
+
+    @Autowired
+    private  CustomerService customerService;
+
     @ApiResponses(
             value = {
                     @ApiResponse(
@@ -101,7 +110,7 @@ public class CustomerController {
         return customerService.getCartItems(getCurrentCustomer());
     }
 
-    //TODO: checkout with promotion code_
+    //TODO: checkout with promotion code
     @Operation(
             summary = "Checkout"
     )
@@ -161,16 +170,40 @@ public class CustomerController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<Response> getOrders() {
+    public ResponseEntity<Response> getOrders(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                              @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
+                                              @RequestParam(defaultValue = "ALL",  required = false)  String status,
+                                              @RequestParam(defaultValue = "createdAt",  required = false) String filter,
+                                              @RequestParam(defaultValue = "desc",  required = false) String sortBy,
+                                              @RequestParam(required = false) String from,
+                                              @RequestParam(required = false) String to) {
+
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+
+        LocalDateTime fromDateTime = null;
+        LocalDateTime toDateTime = null;
+
+        // the default value for from is 1970, it means that we will get all orders from the beginning
+        if (from == null) {
+            fromDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
+        } else {
+            fromDateTime = LocalDateTime.parse(from + "T00:00:00"); // start of the day
+        }
+
+        // the default value for to is now, the default value for from is null
+        if (to == null) {
+            toDateTime = LocalDateTime.now();
+        } else {
+            toDateTime = LocalDateTime.parse(to + "T23:59:59"); // end of the day
+        }
+
         User currentCustomer = getCurrentCustomer();
-        return customerService.getOrders(currentCustomer.getId());
+        return customerService.getOrders(currentCustomer.getId(), page, elementsPerPage, status, filter, sortBy, fromDateTime, toDateTime);
     }
 
-    @GetMapping("/old-orders")
-    public ResponseEntity<Response> getOldOrders() {
-        User currentCustomer = getCurrentCustomer();
-        return customerService.getOldOrders(currentCustomer.getId());
-    }
+
 
     //TODO: endpoint to check the eligibility of the promotion code
 
@@ -392,10 +425,7 @@ public class CustomerController {
 
     @PutMapping("/review/{reviewId}")
     public ResponseEntity<Response> updateReview(@RequestBody UpdateReviewRequest updateReviewRequest, @PathVariable Long reviewId) {
-        //TODO: Vy - user must be the owner of the review to be able to update it
         User currentCustomer = getCurrentCustomer();
         return customerService.updateReview(currentCustomer.getId(), updateReviewRequest, reviewId);
     }
-
-
 }

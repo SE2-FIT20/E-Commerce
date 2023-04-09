@@ -6,14 +6,12 @@ import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.UpdateReviewRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
-import com.example.ecommerce.dto.response.CartStoreItem;
-import com.example.ecommerce.dto.response.CustomerInformation;
-import com.example.ecommerce.dto.response.ProductBriefInfo;
-import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
 import com.example.ecommerce.service.service.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -215,11 +213,7 @@ public class CustomerService {
         return ResponseEntity.ok(Response.builder().status(200).message("Update review successfully").data(null).build());
     }
 
-    public ResponseEntity<Response> deleteReview(Long reviewId) {
-        reviewService.deleteByReviewId(reviewId);
 
-        return ResponseEntity.ok(Response.builder().status(200).message("Delete Review successfully").data(null).build());
-    }
 
     public ResponseEntity<Response> getAllReview() {
         List<Review> reviews = reviewService.getAllReview();
@@ -230,33 +224,25 @@ public class CustomerService {
                 .build());
     }
 
-    public ResponseEntity<Response> getReviewByProduct(Product product) {
-        List<Review> reviews = reviewService.getReviewByProduct(product);
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Get all review by product successfully")
-                .data(reviews)
-                .build());
-    }
 
-    public ResponseEntity<Response> getOrders(Long id) {
+
+    public ResponseEntity<Response> getOrders(Long id, Integer pageNumber, Integer elementsPerPage, String status, String filter, String sortBy, LocalDateTime from, LocalDateTime to) {
         Customer customer = findCustomerById(id);
-        List<Order> orders = customer.getOrders();
+
+        Page<Order> page = orderService.getAllOrdersOfCustomer(pageNumber, elementsPerPage, customer, status,  filter, sortBy, from, to);
+        PageResponse pageResponse = PageResponse.builder()
+                .totalPages(page.getTotalPages())
+                .content(page.getContent())
+                .size(page.getSize())
+                .build();
+
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get all orders successfully")
-                .data(orders)
+                .data(pageResponse)
                 .build());
     }
 
-    public ResponseEntity<Response> getOldOrders(Long id) {
-        Customer customer = findCustomerById(id);
-        List<Order> orders = customer.getOldOrders();
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Get all old orders successfully")
-                .data(orders)
-                .build());
-    }
+
 
 }

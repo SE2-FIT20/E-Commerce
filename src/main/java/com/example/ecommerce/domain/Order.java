@@ -2,6 +2,7 @@ package com.example.ecommerce.domain;
 
 import com.example.ecommerce.dto.response.CustomerInformation;
 import com.example.ecommerce.dto.response.DeliveryPartnerInformation;
+import com.example.ecommerce.dto.response.StoreDetailedInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -68,6 +69,11 @@ public class Order {
     public CustomerInformation getCustomer() {
         if (customer == null) return null;
         return new CustomerInformation(customer);
+    }
+
+    public StoreDetailedInfo getStore() {
+        if (store == null) return null;
+        return new StoreDetailedInfo(store);
     }
 
 

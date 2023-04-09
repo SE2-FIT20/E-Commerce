@@ -1,5 +1,6 @@
 package com.example.ecommerce.service.impl;
 
+import ch.qos.logback.core.status.Status;
 import com.example.ecommerce.domain.Category;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Store;
@@ -134,6 +135,7 @@ public class ProductServiceImpl implements ProductService {
 
         Store store = null;
         Category categoryEnum = null;
+
         if (storeId != null && storeId != 0) {
             store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Store not found"));
         }

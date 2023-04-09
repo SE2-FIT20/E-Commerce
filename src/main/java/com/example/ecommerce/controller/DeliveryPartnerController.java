@@ -1,5 +1,6 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -12,12 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/delivery-partner")
 @CrossOrigin(value = "*", maxAge = 3000)
-//TODO: start working on this
+//TODO: update account endpoint
 public class DeliveryPartnerController {
 
     @Autowired
@@ -235,5 +237,9 @@ public class DeliveryPartnerController {
     @PutMapping("/update-status-order")
     public ResponseEntity<Response> updateStatusOrder(@RequestBody UpdateOrderRequest accountRequest) {
         return orderService.updateOrder(accountRequest);
+    }
+
+    public User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

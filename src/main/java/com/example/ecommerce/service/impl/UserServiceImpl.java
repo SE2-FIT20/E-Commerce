@@ -73,7 +73,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<Response> changeAccess(ChangeAccessRequest request) {
         User user = findUserById(request.getUserId());
-        //TODO: throw exception for illegal state
         if (request.getOperation().equals("LOCK")) {
             if (user.isLocked()) throw new IllegalStateException("User is already locked");
             if (user.getRole().equals("ADMIN")) throw new IllegalStateException("Admin can not be locked");

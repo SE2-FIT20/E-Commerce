@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-//TODO: category list (admin create)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

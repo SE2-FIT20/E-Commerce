@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin")
 @CrossOrigin(value = "*", maxAge = 3000)
-//TODO: start working on this
 public class AdminController {
 
 

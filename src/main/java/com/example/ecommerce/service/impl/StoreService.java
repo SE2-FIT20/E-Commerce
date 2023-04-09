@@ -10,7 +10,6 @@ import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.StoreDetailedInfo;
-import com.example.ecommerce.dto.response.StoreInformation;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.OrderRepository;
 import com.example.ecommerce.repository.ProductRepository;
@@ -49,7 +48,7 @@ public class StoreService {
     public ResponseEntity<Response> getStoreInformationById(Long storeId) {
         Store store = findStoreById(storeId);
 
-        StoreInformation storeInformation = new StoreInformation(store);
+        StoreDetailedInfo storeInformation = new StoreDetailedInfo(store);
         Response response = Response.builder()
                 .status(200)
                 .message("Get Store information successfully")
@@ -378,6 +377,58 @@ public class StoreService {
                 .status(200)
                 .message("Update store successfully")
                 .data(null)
+                .build());
+    }
+
+    public ResponseEntity<Response> searchOrderByCode(Long storeId, String orderCode) {
+//        Store store = findStoreById(id);
+        Order order = orderRepository.findByOrderCode(orderCode);
+
+        if (order == null) {
+            throw new NotFoundException("Order not found for orderCode: " + orderCode);
+        }
+
+        if (!order.getStore().getId().equals(storeId)) {
+            throw new IllegalStateException("Order doesn't belong to store");
+        }
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get order successfully")
+                .data(order)
+                .build());
+    }
+
+    public ResponseEntity<Response> searchOrderByCustomerName(Long id, String customerName, Integer pageNumber, Integer elementsPerPage) {
+        Store store = findStoreById(id);
+
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage);
+        Customer customer = new Customer();
+        customer.setName(customerName);
+
+        Order orderExample = Order.builder()
+                .customer(customer)
+                .store(store)
+                .build();
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("customer.name", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<Order> example = Example.of(orderExample, matcher);
+
+        Page<Order> page = orderRepository.findAll(example, pageable);
+        PageResponse pageResponse = PageResponse.builder()
+                .content(page.getContent())
+                .totalPages(page.getTotalPages())
+                .pageNumber(pageNumber)
+                .size(page.getSize())
+                .build();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get order successfully")
+                .data(pageResponse)
                 .build());
     }
 }

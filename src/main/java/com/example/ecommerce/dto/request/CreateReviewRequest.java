@@ -9,6 +9,5 @@ import java.time.LocalDateTime;
 public class CreateReviewRequest {
     private int rating;
     private String comment;
-    private LocalDateTime timestamp;
     private Long productId;
 }

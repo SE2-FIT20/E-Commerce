@@ -44,8 +44,7 @@ public class AuthServiceImpl implements AuthService {
         boolean emailAlreadyRegistered = userRepository.existsByEmailIgnoreCase(registrationRequest.getEmail());
 
         if (emailAlreadyRegistered) {
-            //TODO: custom RegistrationException and handle it in ExceptionHandler
-            return ResponseEntity.ok(Response.builder().status(400).message("Email already registered!").build());
+            throw new RegistrationException("Email already registered!");
         }
 
         String role = registrationRequest.getRole();

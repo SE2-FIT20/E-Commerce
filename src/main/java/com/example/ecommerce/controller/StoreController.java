@@ -393,38 +393,47 @@ public class StoreController {
         return storeService.getStoreInformationById(currentStore.getId());
     }
 
+    @GetMapping("/search-order-by-code/{orderCode}")
+    public ResponseEntity<Response> searchOrderByCode(@PathVariable String orderCode) {
+        User currentStore = getCurrentStore();
+        return storeService.searchOrderByCode(currentStore.getId(), orderCode);
+    }
+
+    @GetMapping("/search-order-by-customer-name/{customerName}")
+    public ResponseEntity<Response> searchOrderByCustomerName(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                            @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
+                                                            @PathVariable String customerName) {
+        //TODO: if the name contains space, the space will be replaced by %20
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        User currentStore = getCurrentStore();
+        return storeService.searchOrderByCustomerName(currentStore.getId(), customerName, page, elementsPerPage);
+    }
+
+
+
     public ResponseEntity<Response> updateAccountInformation(UpdateStoreRequest updateStoreRequest) {
         User currentStore = getCurrentStore();
         return storeService.updateInformation(currentStore.getId(), updateStoreRequest);
     }
 
-    @GetMapping("/products-by-status")
-    public ResponseEntity<Response> getProductsByStatus(@RequestParam(defaultValue = "0", required = false) Integer page,
-                                                        @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
-                                                        @RequestParam(defaultValue = "all", required = false) String status,
-                                                        @RequestParam(defaultValue = "name", required = false) String filter,
-                                                        @RequestParam(defaultValue = "asc", required = false) String sortBy) {
-        if (elementsPerPage == null) {
-            elementsPerPage = Integer.parseInt(defaultElementPerPage);
-        }
-        User currentStore = getCurrentStore();
-        return storeService.getProductsByStatus(currentStore.getId(),page, elementsPerPage, status, filter , sortBy);
-    }
 
-    @GetMapping("/store/{storeId}/filter-by-review")
-    public ResponseEntity<Response> getProductByStoreIdFilterByReview(@PathVariable("storeId") Long storeId) {
-        return storeService.getProductByStoreFilterByReview(storeId);
-    }
 
-    @GetMapping("store/{storeId}/asc")
-    public ResponseEntity<Response> getProductByStoreSortAscending(@PathVariable("storeId") Long storeId) {
-        return storeService.getProductByStoreSortByPriceAsc(storeId);
-    }
-
-    @GetMapping("store/{storeId}/desc")
-    public ResponseEntity<Response> getProductByStoreSortDescending(@PathVariable("storeId") Long storeId) {
-        return storeService.getProductByStoreSortByPriceDesc(storeId);
-    }
+//    @GetMapping("/store/{storeId}/filter-by-review")
+//    public ResponseEntity<Response> getProductByStoreIdFilterByReview(@PathVariable("storeId") Long storeId) {
+//        return storeService.getProductByStoreFilterByReview(storeId);
+//    }
+////
+//    @GetMapping("store/{storeId}/asc")
+//    public ResponseEntity<Response> getProductByStoreSortAscending(@PathVariable("storeId") Long storeId) {
+//        return storeService.getProductByStoreSortByPriceAsc(storeId);
+//    }
+//
+//    @GetMapping("store/{storeId}/desc")
+//    public ResponseEntity<Response> getProductByStoreSortDescending(@PathVariable("storeId") Long storeId) {
+//        return storeService.getProductByStoreSortByPriceDesc(storeId);
+//    }
 
     private User getCurrentStore() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
