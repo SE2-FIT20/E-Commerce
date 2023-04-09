@@ -8,6 +8,7 @@ import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.CartStoreItem;
 import com.example.ecommerce.dto.response.CustomerInformation;
+import com.example.ecommerce.dto.response.ProductBriefInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
@@ -113,7 +114,7 @@ public class CustomerService {
                     .customer(customer)
                     .store(store)
                     .items(items)
-                    .status(PENDING)
+                    .status(DELIVERED)
                     .createdAt(LocalDateTime.now())
                     .deliveryPartner(deliveryPartner)
                     .build();
@@ -172,26 +173,23 @@ public class CustomerService {
         List<Order> orders = customer.getOrders();
 
         for (Order order : orders) {
-            //TODO: not checking delivered order now
-//            if (order.getStatus().equals(DELIVERED)) {
-            List<OrderItem> orderItems = order.getItems();
-            for (OrderItem orderItem : orderItems) {
-                if (orderItem.getProduct().equals(product)) {
-                    Review review = Review.builder()
-                            .customer(customer)
-                            .product(product)
-                            .rating(reviewRequest.getRating())
-                            .comment(reviewRequest.getComment())
-                            .createdAt(LocalDateTime.now())
-                            .build();
-
-                    reviewService.save(review);
-                    return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
+            if (order.getStatus().equals(PENDING)) {
+                List<OrderItem> orderItems = order.getItems();
+                for (OrderItem orderItem : orderItems) {
+                    if (orderItem.getProduct().equals(new ProductBriefInfo(product))) {
+                        Review review = Review.builder()
+                                .customer(customer)
+                                .product(product)
+                                .rating(reviewRequest.getRating())
+                                .comment(reviewRequest.getComment())
+                                .createdAt(LocalDateTime.now())
+                                .build();
+                        reviewService.save(review);
+                        return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
+                    }
                 }
             }
-//            }
         }
-
 
         return ResponseEntity.ok(Response.builder()
                 .status(400)

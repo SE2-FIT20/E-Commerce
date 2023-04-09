@@ -6,6 +6,7 @@ import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
+import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.StoreDetailedInfo;
@@ -360,6 +361,23 @@ public class StoreService {
                 .status(200)
                 .message("Get all products successfully")
                 .data(pageResponse)
+                .build());
+    }
+
+    public ResponseEntity<Response> updateInformation(Long id, UpdateStoreRequest updateStoreRequest) {
+        Store store = findStoreById(id);
+        store.setName(updateStoreRequest.getName());
+        store.setDescription(updateStoreRequest.getDescription());
+        store.setEmail(updateStoreRequest.getEmail());
+        store.setAddress(updateStoreRequest.getAddresses());
+        store.setAvatar(updateStoreRequest.getAvatar());
+
+        storeRepository.save(store);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Update store successfully")
+                .data(null)
                 .build());
     }
 }

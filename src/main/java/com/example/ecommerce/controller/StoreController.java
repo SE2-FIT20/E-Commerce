@@ -6,6 +6,7 @@ import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
+import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.service.impl.StoreService;
@@ -390,6 +391,11 @@ public class StoreController {
     public ResponseEntity<Response> getAccountInformation() {
         User currentStore = getCurrentStore();
         return storeService.getStoreInformationById(currentStore.getId());
+    }
+
+    public ResponseEntity<Response> updateAccountInformation(UpdateStoreRequest updateStoreRequest) {
+        User currentStore = getCurrentStore();
+        return storeService.updateInformation(currentStore.getId(), updateStoreRequest);
     }
 
     @GetMapping("/products-by-status")
