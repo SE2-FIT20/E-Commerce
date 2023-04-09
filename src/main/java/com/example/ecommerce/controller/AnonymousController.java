@@ -7,6 +7,7 @@ import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.SearchByNameResult;
 import com.example.ecommerce.dto.response.StoreDetailedInfo;
 import com.example.ecommerce.service.impl.StoreService;
+import com.example.ecommerce.service.service.DeliveryPartnerService;
 import com.example.ecommerce.service.service.ProductService;
 import com.example.ecommerce.service.service.PromotionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +29,16 @@ import java.util.List;
 @CrossOrigin(value = "*", maxAge = 3000)
 public class AnonymousController {
 
-        @Value("${default.elementPerPage}")
-        private String defaultElementPerPage;
+    @Value("${default.elementPerPage}")
+    private String defaultElementPerPage;
     @Autowired
     private ProductService productService;
     @Autowired
     private StoreService storeService;
     @Autowired
     private PromotionService promotionService;
+    @Autowired
+    private DeliveryPartnerService deliveryPartnerService;
 
     @Operation(
             summary = "Get all products"
@@ -194,4 +198,110 @@ public class AnonymousController {
     public ResponseEntity<Response> getALlProductCategories() {
         return productService.getAllProductCategories();
     }
+    @Operation(
+            summary = "Get all delivery partners",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Get list delivery partner successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 200,
+                                                "message": "Get list delivery partner successfully",
+                                                "data": [
+                                                    {
+                                                    "id" : 1,
+                                                    "name": "giao hang nhanh"
+                                                    },
+                                                    {
+                                                    "id" : 2,
+                                                    "name": "giao hang tiet kiem",
+                                                    },
+                                                    {
+                                                    "id" : 3,
+                                                    "name": "giao hang 247",
+                                                    }
+                                                ]
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Get list delivery partner failed!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 400,
+                                                "message": "Can't get list delivery partner!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    )
+            }
+    )
+    @GetMapping("/delivery-partners")
+    public ResponseEntity<Response> getAllDeliveryPartners( @RequestParam(defaultValue = "0", required = false) Integer page,
+                                                            @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        return deliveryPartnerService.getAllDeliveryPartners(page, elementsPerPage);
+    }
+
+    @Operation(
+            summary = "Get delivery partner by id",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Get delivery partner successfully!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 200,
+                                                "message": "Get delivery partner successfully",
+                                                "data": {
+                                                    "id" : 1,
+                                                    "name": "giao hang nhanh"
+                                                }
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Get delivery partner failed!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 400,
+                                                "message": "Get delivery partner failed!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not found delivery partner!",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Response.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "status": 404,
+                                                "message": "Not found delivery partner!",
+                                                "data": null
+                                            }
+                                            """)
+                            )
+                    )
+            }
+    )
+    @GetMapping("delivery-partners/{id}")
+    public ResponseEntity<Response> getDeliveryPartnerById(@PathVariable @Schema(description = "id of delivery partner") Long id) {
+        return deliveryPartnerService.getDeliveryPartnerById(id);
+    }
+
 }

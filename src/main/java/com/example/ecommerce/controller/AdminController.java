@@ -12,10 +12,7 @@ import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
-import com.example.ecommerce.service.service.FeedbackService;
-import com.example.ecommerce.service.service.ProductService;
-import com.example.ecommerce.service.service.UserService;
-import com.example.ecommerce.service.service.PromotionService;
+import com.example.ecommerce.service.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -52,6 +49,9 @@ public class AdminController {
 
     @Autowired
     private FeedbackService feedbackService;
+
+    @Autowired
+    private DeliveryPartnerService deliveryPartnerService;
 
     @Operation(
             summary = "Get all users",
@@ -853,173 +853,75 @@ public class AdminController {
                     )
             }
     )
-    @PostMapping("app-setting/delivery-partner")
+    @PostMapping("app-setting/delivery-partners")
     public ResponseEntity<Response> createDeliveryPartner(@RequestBody CreateDeliveryPartnerRequest deliveryPartnerRequest) {
-        return null;
+        return deliveryPartnerService.createDeliveryPartner(deliveryPartnerRequest);
     }
 
-    @Operation(
-            summary = "Update delivery partner",
-            security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UpdateDeliveryPartnerRequest.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                        "deliveryPartnerId": 1,
-                                        "name": "Fast and Caring delivery Inc."
-                                    }
-                                    """)
-                    )
-            )
+//    @Operation(
+//            summary = "Update delivery partner",
+//            security = @SecurityRequirement(name = "bearerAuth"),
+//            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+//                    content = @Content(
+//                            mediaType = "application/json",
+//                            schema = @Schema(implementation = UpdateDeliveryPartnerRequest.class),
+//                            examples = @ExampleObject(value = """
+//                                    {
+//                                        "deliveryPartnerId": 1,
+//                                        "name": "Fast and Caring delivery Inc."
+//                                    }
+//                                    """)
+//                    )
+//            )
+//
+//    )
+//    @ApiResponses(
+//            value = {
+//                    @ApiResponse(responseCode = "200", description = "Update delivery partner successfully!",
+//                            content = @Content(mediaType = "application/json",
+//                                    schema = @Schema(implementation = Response.class),
+//                                    examples = @ExampleObject(value = """
+//                                            {
+//                                                "status": 200,
+//                                                "message": "Update delivery partner successfully",
+//                                                "data": null
+//                                            }
+//                                            """)
+//                            )
+//                    ),
+//                    @ApiResponse(responseCode = "400", description = "Update delivery partner failed!",
+//                            content = @Content(mediaType = "application/json",
+//                                    schema = @Schema(implementation = Response.class),
+//                                    examples = @ExampleObject(value = """
+//                                            {
+//                                                "status": 400,
+//                                                "message": "Update delivery partner failed!",
+//                                                "data": null
+//                                            }
+//                                            """)
+//                            )
+//                    ),
+//                    @ApiResponse(responseCode = "404", description = "Not found the delivery partner!",
+//                            content = @Content(mediaType = "application/json",
+//                                    schema = @Schema(implementation = Response.class),
+//                                    examples = @ExampleObject(value = """
+//                                            {
+//                                                "status": 404,
+//                                                "message": "Not found the delivery partner!",
+//                                                "data": null
+//                                            }
+//                                            """)
+//                            )
+//                    )
+//            }
+//    )
+//    @PutMapping("app-setting/delivery-partner")
+//    public ResponseEntity<Response> updateDeliveryPartnerById(@RequestBody UpdateDeliveryPartnerRequest request) {
+//
+//        return deliveryPartnerService.updateDeliveryPartner(request);
+//    }
 
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Update delivery partner successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Update delivery partner successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Update delivery partner failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Update delivery partner failed!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Not found the delivery partner!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 404,
-                                                "message": "Not found the delivery partner!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @PutMapping("app-setting/delivery-partner")
-    public ResponseEntity<Response> updateDeliveryPartnerById(@RequestBody UpdateDeliveryPartnerRequest request) {
-        return null;
-    }
 
-    @Operation(
-            summary = "Get all delivery partners",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Get list delivery partner successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Get list delivery partner successfully",
-                                                "data": [
-                                                    {
-                                                    "id" : 1,
-                                                    "name": "giao hang nhanh"
-                                                    },
-                                                    {
-                                                    "id" : 2,
-                                                    "name": "giao hang tiet kiem",
-                                                    },
-                                                    {
-                                                    "id" : 3,
-                                                    "name": "giao hang 247",
-                                                    }
-                                                ]
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Get list delivery partner failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Can't get list delivery partner!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @GetMapping("app-setting/delivery-partner")
-    public ResponseEntity<Response> getAllDeliveryPartners() {
-        return null;
-    }
 
-    @Operation(
-            summary = "Get delivery partner by id",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Get delivery partner successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Get delivery partner successfully",
-                                                "data": {
-                                                    "id" : 1,
-                                                    "name": "giao hang nhanh"
-                                                }
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Get delivery partner failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Get delivery partner failed!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Not found delivery partner!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 404,
-                                                "message": "Not found delivery partner!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @GetMapping("app-setting/delivery-partner/{id}")
-    public ResponseEntity<Response> getDeliveryPartnerById(@PathVariable @Schema(description = "id of delivery partner") int id) {
-        return null;
-    }
 
 }

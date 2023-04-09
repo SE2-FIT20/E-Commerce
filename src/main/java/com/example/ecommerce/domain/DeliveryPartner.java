@@ -1,5 +1,6 @@
 package com.example.ecommerce.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,14 +14,17 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-public class DeliveryPartner {
+//TODO: calculate the average delivery time
+public class DeliveryPartner extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Lob
     private String description;
     private Double shippingFee;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "deliveryPartner")
+    @JsonIgnore
     private List<Order> orders;
 }
