@@ -2,6 +2,7 @@ package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.DeliveryPartner;
 import com.example.ecommerce.domain.Order;
+import com.example.ecommerce.dto.request.UpdateDeliveryPartnerAccountRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
@@ -190,6 +191,34 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Order updated successfully")
+                .data(null)
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> getAccountInformation(Long id) {
+        DeliveryPartner deliveryPartner = findDeliveryPartnerById(id);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Account information retrieved successfully")
+                .data(new DeliveryPartnerInformation(deliveryPartner))
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> updateAccount(Long id, UpdateDeliveryPartnerAccountRequest updateAccountRequest) {
+
+        DeliveryPartner deliveryPartner = findDeliveryPartnerById(id);
+
+        if (updateAccountRequest.getDescription() != null) deliveryPartner.setDescription(updateAccountRequest.getDescription());
+        if (updateAccountRequest.getShippingFee() != null) deliveryPartner.setShippingFee(updateAccountRequest.getShippingFee());
+        if (updateAccountRequest.getAvatar() != null) deliveryPartner.setAvatar(updateAccountRequest.getAvatar());
+
+        deliveryPartnerRepository.save(deliveryPartner);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Account updated successfully")
                 .data(null)
                 .build());
     }

@@ -1,11 +1,11 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.UpdateDeliveryPartnerAccountRequest;
 import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.service.DeliveryPartnerService;
-import com.example.ecommerce.service.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/delivery-partner")
 //TODO: update account endpoint
 public class DeliveryPartnerController {
-
 
     @Autowired
     private DeliveryPartnerService deliveryPartnerService;
@@ -254,6 +253,18 @@ public class DeliveryPartnerController {
     public ResponseEntity<Response> updateStatusOrder(@PathVariable Long orderId, @RequestBody UpdateOrderRequest updateRequest) {
         User user = getCurrentUser();
         return deliveryPartnerService.updateOrder(user.getId(), orderId, updateRequest);
+    }
+
+    @GetMapping("/account")
+    public ResponseEntity<Response> getAccount() {
+        User user = getCurrentUser();
+        return deliveryPartnerService.getAccountInformation(user.getId());
+    }
+
+    @PutMapping("/account")
+    public ResponseEntity<Response> updateAccount(@RequestBody UpdateDeliveryPartnerAccountRequest updateAccountRequest) {
+        User user = getCurrentUser();
+        return deliveryPartnerService.updateAccount(user.getId(), updateAccountRequest);
     }
 
     public User getCurrentUser() {

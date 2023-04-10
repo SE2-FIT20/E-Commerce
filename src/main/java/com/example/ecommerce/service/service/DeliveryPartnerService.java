@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.service;
 
 import com.example.ecommerce.domain.DeliveryPartner;
+import com.example.ecommerce.dto.request.UpdateDeliveryPartnerAccountRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
@@ -25,4 +26,9 @@ public interface DeliveryPartnerService {
      ResponseEntity<Response> getOrderById(Long deliveryPartnerId, Long orderId);
 
      ResponseEntity<Response> updateOrder(Long deliveryPartnerId, Long orderId, UpdateOrderRequest updateRequest);
+
+    ResponseEntity<Response> getAccountInformation(Long id);
+
+     ResponseEntity<Response> updateAccount(Long id, UpdateDeliveryPartnerAccountRequest updateAccountRequest);
+
 }

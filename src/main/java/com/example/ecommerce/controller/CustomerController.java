@@ -1,11 +1,9 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.domain.Customer;
-import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.CreateReviewRequest;
 import com.example.ecommerce.dto.request.RemoveFromCartRequest;
-import com.example.ecommerce.dto.request.UpdateAccountRequest;
+import com.example.ecommerce.dto.request.UpdateDeliveryPartnerAccountRequest;
 import com.example.ecommerce.dto.request.UpdateReviewRequest;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
@@ -17,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -281,7 +278,7 @@ public class CustomerController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = UpdateAccountRequest.class),
+                            schema = @Schema(implementation = UpdateDeliveryPartnerAccountRequest.class),
                             examples = @ExampleObject(value = """
                                     {
                                         "fullName": "Nguyen Van A",

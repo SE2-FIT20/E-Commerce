@@ -254,7 +254,7 @@ public class AnonymousController {
             }
     )
     @GetMapping("/delivery-partners")
-    public ResponseEntity<Response> getAllDeliveryPartners( @RequestParam(defaultValue = "0", required = false) Integer page,
+    public ResponseEntity<Response> getAllDeliveryPartners(@RequestParam(defaultValue = "0", required = false) Integer page,
                                                             @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage) {
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
@@ -329,6 +329,10 @@ public class AnonymousController {
         User user = getCurrentUser();
         return searchService.deleteSearchById(user, searchId);
     }
+
+
+
+
 
     //TODO: get all delivery partners
     public User getCurrentUser() {
