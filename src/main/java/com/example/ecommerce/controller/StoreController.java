@@ -30,7 +30,7 @@ import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/store")
-@CrossOrigin(value = "*", maxAge = 3000)
+@CrossOrigin(value = "*", maxAge = 3000, allowedHeaders = "*")
 public class StoreController {
     @Value("${default.elementPerPage}")
     private String defaultElementPerPage;

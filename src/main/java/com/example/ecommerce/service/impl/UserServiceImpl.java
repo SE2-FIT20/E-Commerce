@@ -24,8 +24,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private SearchService searchService;
 
     @Override
     public ResponseEntity<Response> createUser(User user) {

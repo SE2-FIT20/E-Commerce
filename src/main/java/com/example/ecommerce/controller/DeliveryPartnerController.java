@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/delivery-partner")
-@CrossOrigin(value = "*", maxAge = 3000)
+@CrossOrigin(value = "*", maxAge = 3000, allowedHeaders = "*")
 //TODO: update account endpoint
 public class DeliveryPartnerController {
 

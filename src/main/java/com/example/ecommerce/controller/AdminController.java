@@ -35,7 +35,7 @@ import java.security.Security;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(value = "*", maxAge = 3000)
+@CrossOrigin(value = "*", maxAge = 3000, allowedHeaders = "*")
 public class AdminController {
 
 
