@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.*;
+import com.example.ecommerce.dto.request.CheckoutRequest;
 import com.example.ecommerce.dto.request.CreateReviewRequest;
 import com.example.ecommerce.dto.request.RemoveFromCartRequest;
 import com.example.ecommerce.dto.request.UpdateReviewRequest;
@@ -101,11 +102,11 @@ public class CustomerService {
     }
 
     @Transactional
-    public ResponseEntity<Response> checkout(Long customerId) {
+    public ResponseEntity<Response> checkout(Long customerId, CheckoutRequest request) {
         Customer customer = findCustomerById(customerId);
         Cart cart = customer.getCart();
 
-        DeliveryPartner deliveryPartner = deliveryPartnerService.findDeliveryPartnerById(1L);
+        DeliveryPartner deliveryPartner = deliveryPartnerService.findDeliveryPartnerById(request.getDeliveryPartnerId());
 
         // items in the cart are grouped into group by store
         for (CartStoreItem cartStoreItem : cart.getItems()) {
@@ -116,13 +117,12 @@ public class CustomerService {
                     .customer(customer)
                     .store(store)
                     .items(items)
-                    .status(DELIVERED)
+                    .status(PENDING)
                     .createdAt(LocalDateTime.now())
                     .deliveryPartner(deliveryPartner)
+                    .destinationAddress(request.getDestinationAddress())
                     .build();
 
-            System.out.println("id: ");
-            System.out.println(order.getId());
             // order is the pwning side of the relationship,
             // and it has the customer field, save it to db will make it appear to the customer's order list
             orderService.save(order);
@@ -135,7 +135,12 @@ public class CustomerService {
 
         cart.setItems(new ArrayList<>()); // empty the cart of customer after checking out
         customerRepository.save(customer);
-        return ResponseEntity.ok(Response.builder().status(200).message("Checkout successfully").data(null).build());
+            return ResponseEntity.ok(
+                    Response.builder()
+                    .status(200)
+                    .message("Checkout successfully")
+                    .data(null)
+                        .build());
     }
 
     public ResponseEntity<Response> removeFromCart(User currentCustomer, RemoveFromCartRequest removeFromCartRequest) {

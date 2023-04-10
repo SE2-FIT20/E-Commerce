@@ -4,6 +4,7 @@ import com.example.ecommerce.dto.response.CartStoreItem;
 import com.example.ecommerce.dto.response.StoreBriefInfo;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.*;
@@ -11,12 +12,13 @@ import java.util.stream.Collectors;
 
 @Entity
 @Data
+@ToString(exclude = {"items"}) // to prevent the error of "could not initialize proxy - no Session"
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     List<OrderItem> items; // group the items by store
 
     public void addItem(Product product, Integer quantity) {

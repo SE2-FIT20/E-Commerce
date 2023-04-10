@@ -1,10 +1,7 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.domain.User;
-import com.example.ecommerce.dto.request.CreateReviewRequest;
-import com.example.ecommerce.dto.request.RemoveFromCartRequest;
-import com.example.ecommerce.dto.request.UpdateDeliveryPartnerAccountRequest;
-import com.example.ecommerce.dto.request.UpdateReviewRequest;
+import com.example.ecommerce.dto.request.*;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -160,9 +157,9 @@ public class CustomerController {
             }
     )
     @PostMapping("/checkout")
-    public ResponseEntity<Response> checkout() {
+    public ResponseEntity<Response> checkout(@RequestBody CheckoutRequest request) {
         User currentCustomer = getCurrentCustomer();
-        return customerService.checkout(currentCustomer.getId());
+        return customerService.checkout(currentCustomer.getId(), request);
     }
 
     @GetMapping("/orders")

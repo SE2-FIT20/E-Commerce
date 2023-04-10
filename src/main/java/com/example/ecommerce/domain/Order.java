@@ -59,7 +59,7 @@ public class Order {
     private String orderCode;
     private LocalDateTime createdAt;
     private LocalDateTime deliveredAt;
-
+    private String destinationAddress;
     @Transient
     private Long totalPrice;
 
