@@ -35,7 +35,7 @@ import java.security.Security;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(value = "*", allowedHeaders = "*")
+@CrossOrigin(value = "*", allowedHeaders = "*", origins = "*")
 public class AdminController {
 
 
