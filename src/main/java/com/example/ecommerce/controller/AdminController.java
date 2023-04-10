@@ -877,11 +877,7 @@ public class AdminController {
     }
 
     public User getCurrentAdmin() {
-        System.out.println("hihi");
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public User getCurrentCustomer() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
 }
