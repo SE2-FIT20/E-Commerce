@@ -19,4 +19,5 @@ public interface UserService {
     ResponseEntity<Response> changeAccess(ChangeAccessRequest request);
 
     ResponseEntity<Response> getUserInformationById(Long id);
+
 }
