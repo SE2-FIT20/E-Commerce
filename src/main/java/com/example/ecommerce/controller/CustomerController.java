@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/customer")
-@CrossOrigin(value = "*", maxAge = 3000, allowedHeaders = "*")
+@CrossOrigin(value = "*", allowedHeaders = "*")
 //TODO: add voucher, promotion,
 //TODO: get search history
 public class CustomerController {

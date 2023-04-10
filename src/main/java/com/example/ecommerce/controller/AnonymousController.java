@@ -28,7 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(value = "*", maxAge = 3000, allowedHeaders = "*")
+@CrossOrigin(value = "*", allowedHeaders = "*")
 public class AnonymousController {
 
     @Value("${default.elementPerPage}")
