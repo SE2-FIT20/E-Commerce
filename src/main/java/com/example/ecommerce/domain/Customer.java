@@ -13,20 +13,20 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-@ToString(exclude = {"cart", "orders"}) // to prevent the error of "could not initialize proxy - no Session"
+@ToString(exclude = {"cart", "orders", "addresses"}) // to prevent the error of "could not initialize proxy - no Session"
 public class Customer extends User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
     @Cascade({org.hibernate.annotations.CascadeType.ALL})
     private List<String> addresses;
 
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Cart cart;
 
