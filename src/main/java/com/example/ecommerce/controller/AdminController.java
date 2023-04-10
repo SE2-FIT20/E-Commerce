@@ -2,6 +2,7 @@ package com.example.ecommerce.controller;
 
 import com.example.ecommerce.domain.Feedback;
 import com.example.ecommerce.domain.Promotion;
+import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
@@ -25,7 +26,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Security;
 
 
 @RestController
@@ -114,8 +119,16 @@ public class AdminController {
             }
     )
     @GetMapping("/manage-accounts")
-    public ResponseEntity<Response> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<Response> getAllUsers(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
+                                                @RequestParam(defaultValue = "createdAt",  required = false) String filter,
+                                                @RequestParam(defaultValue = "desc",  required = false) String sortBy,
+                                                @RequestParam(defaultValue = "all", required = false) String status,
+                                                @RequestParam(defaultValue = "all", required = false) String role) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        return userService.getAllUsers(page, elementsPerPage, filter, sortBy, status, role);
     }
 
     @Operation(
@@ -852,75 +865,23 @@ public class AdminController {
                     )
             }
     )
-    @PostMapping("app-setting/delivery-partners")
+    @PostMapping("/app-setting/delivery-partners")
     public ResponseEntity<Response> createDeliveryPartner(@RequestBody CreateDeliveryPartnerRequest deliveryPartnerRequest) {
         return deliveryPartnerService.createDeliveryPartner(deliveryPartnerRequest);
     }
 
-//    @Operation(
-//            summary = "Update delivery partner",
-//            security = @SecurityRequirement(name = "bearerAuth"),
-//            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-//                    content = @Content(
-//                            mediaType = "application/json",
-//                            schema = @Schema(implementation = UpdateDeliveryPartnerRequest.class),
-//                            examples = @ExampleObject(value = """
-//                                    {
-//                                        "deliveryPartnerId": 1,
-//                                        "name": "Fast and Caring delivery Inc."
-//                                    }
-//                                    """)
-//                    )
-//            )
-//
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(responseCode = "200", description = "Update delivery partner successfully!",
-//                            content = @Content(mediaType = "application/json",
-//                                    schema = @Schema(implementation = Response.class),
-//                                    examples = @ExampleObject(value = """
-//                                            {
-//                                                "status": 200,
-//                                                "message": "Update delivery partner successfully",
-//                                                "data": null
-//                                            }
-//                                            """)
-//                            )
-//                    ),
-//                    @ApiResponse(responseCode = "400", description = "Update delivery partner failed!",
-//                            content = @Content(mediaType = "application/json",
-//                                    schema = @Schema(implementation = Response.class),
-//                                    examples = @ExampleObject(value = """
-//                                            {
-//                                                "status": 400,
-//                                                "message": "Update delivery partner failed!",
-//                                                "data": null
-//                                            }
-//                                            """)
-//                            )
-//                    ),
-//                    @ApiResponse(responseCode = "404", description = "Not found the delivery partner!",
-//                            content = @Content(mediaType = "application/json",
-//                                    schema = @Schema(implementation = Response.class),
-//                                    examples = @ExampleObject(value = """
-//                                            {
-//                                                "status": 404,
-//                                                "message": "Not found the delivery partner!",
-//                                                "data": null
-//                                            }
-//                                            """)
-//                            )
-//                    )
-//            }
-//    )
-//    @PutMapping("app-setting/delivery-partner")
-//    public ResponseEntity<Response> updateDeliveryPartnerById(@RequestBody UpdateDeliveryPartnerRequest request) {
-//
-//        return deliveryPartnerService.updateDeliveryPartner(request);
-//    }
+    @GetMapping("/account")
+    public ResponseEntity<Response> getAccountInfo() {
+        User currentAdmin = getCurrentAdmin();
+        return userService.getUserInformationById(currentAdmin.getId());
+    }
 
+    public User getCurrentAdmin() {
+        System.out.println("hihi");
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 
-
-
+    public User getCurrentCustomer() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 }

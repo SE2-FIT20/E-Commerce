@@ -60,7 +60,6 @@ public class PromotionServiceImpl implements PromotionService {
                 .build());
     }
 
-
     @Override
     public ResponseEntity<Response> deletePromotion(Long promotionId) {
         promotionRepository.deleteById(promotionId);

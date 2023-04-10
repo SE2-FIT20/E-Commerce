@@ -426,7 +426,7 @@ public class StoreController {
 //    }
 ////
 //    @GetMapping("store/{storeId}/asc")
-//    public ResponseEntity<Response> getProductByStoreSortAscending(@PathVariable("storeId") Long storeId) {
+//    public RespongegetseEntity<Response> getProductByStoreSortAscending(@PathVariable("storeId") Long storeId) {
 //        return storeService.getProductByStoreSortByPriceAsc(storeId);
 //    }
 //
@@ -438,4 +438,5 @@ public class StoreController {
     private User getCurrentStore() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+
 }

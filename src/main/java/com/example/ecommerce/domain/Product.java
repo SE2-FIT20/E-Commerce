@@ -70,9 +70,9 @@ public class Product {
         AVAILABLE, SOLD_OUT;
 
         public static Status fromString(String str) {
-            if (str.toUpperCase().equals("AVAILABLE")) {
+            if (str.equalsIgnoreCase("AVAILABLE")) {
                 return AVAILABLE;
-            } else if (str.toUpperCase().equals("SOLDOUT") || str.toUpperCase().equals("SOLD_OUT")) {
+            } else if (str.equalsIgnoreCase("SOLDOUT") || str.equalsIgnoreCase("SOLD_OUT")) {
                 return SOLD_OUT;
             }
             return null;
