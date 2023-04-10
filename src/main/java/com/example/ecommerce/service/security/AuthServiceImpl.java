@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 import static com.example.ecommerce.utils.Utils.generateAvatarLink;
@@ -57,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
             customer.setRole(registrationRequest.getRole());
             customer.setAvatar(generateAvatarLink(customer.getName()));
             customer.setCart(new Cart());
+            customer.setCreatedAt(LocalDateTime.now());
             customerService.save(customer);
 
         } else if (role.equals("STORE")) {
@@ -66,6 +68,7 @@ public class AuthServiceImpl implements AuthService {
             store.setName(registrationRequest.getName());
             store.setRole(registrationRequest.getRole());
             store.setAvatar(generateAvatarLink(store.getName()));
+            store.setCreatedAt(LocalDateTime.now());
             storeService.save(store);
         } else {
             throw new RegistrationException("Invalid role!");

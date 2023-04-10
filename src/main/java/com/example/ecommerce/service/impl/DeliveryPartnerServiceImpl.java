@@ -1,25 +1,28 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.DeliveryPartner;
+import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
+import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.DeliveryPartnerInformation;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.DeliveryPartnerRepository;
 import com.example.ecommerce.service.service.DeliveryPartnerService;
+import com.example.ecommerce.service.service.OrderService;
+import com.example.ecommerce.service.service.UserService;
 import com.example.ecommerce.utils.Utils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -27,6 +30,8 @@ import java.util.Optional;
 public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
 
     private final DeliveryPartnerRepository deliveryPartnerRepository;
+    private final UserService userService;
+    private final OrderService orderService;
     private final PasswordEncoder passwordEncoder;
     @Override
     public DeliveryPartner findDeliveryPartnerById(Long deliveryPartnerId) {
@@ -38,10 +43,11 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
     public ResponseEntity<Response> createDeliveryPartner(CreateDeliveryPartnerRequest request) {
 
         DeliveryPartner deliveryPartner = DeliveryPartner.builder()
-                .name(request.getName())
                 .description(request.getDescription())
                 .shippingFee(request.getShippingFee())
                 .build();
+
+        deliveryPartner.setName(request.getName());
         deliveryPartner.setEmail(request.getEmail());
         deliveryPartner.setPassword(passwordEncoder.encode(request.getPassword()));
         String avatarLink = request.getAvatar();
@@ -50,15 +56,16 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
         }
         deliveryPartner.setAvatar(avatarLink);
         //TODO: enumerate role
-        deliveryPartner.setRole("ROLE_DELIVERY_PARTNER");
+        deliveryPartner.setRole("DELIVERY_PARTNER");
+        deliveryPartner.setCreatedAt(LocalDateTime.now());
 
-        DeliveryPartner savedDeliveryPartner = deliveryPartnerRepository.save(deliveryPartner);
+         deliveryPartnerRepository.save(deliveryPartner);
 
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Delivery partner created successfully")
-                .data(savedDeliveryPartner)
+                .data(null)
                 .build());
     }
 
@@ -114,6 +121,76 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
                 .status(200)
                 .message("Delivery partners retrieved successfully")
                 .data(pageResponse)
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> getAllOrderByDeliveryPartners(Integer pageNumber, Integer elementsPerPage, Long deliveryPartnerId, String status, String filter, String sortBy, String from, String to) {
+        DeliveryPartner deliveryPartner = findDeliveryPartnerById(deliveryPartnerId);
+
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
+
+         Page<Order> page;
+
+        if (status != null && !status.equalsIgnoreCase("ALL")) {
+            Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(status.toUpperCase());
+            page = orderService.getAllByDeliveryPartnerAndStatus(deliveryPartner, orderStatus, pageable);
+        } else {
+            page = orderService.getAllByDeliveryPartner(deliveryPartner, pageable);
+        }
+
+        PageResponse pageResponse = PageResponse.builder()
+                .content(page.getContent())
+                .totalPages(page.getTotalPages())
+                .size(page.getSize())
+                .build();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Orders retrieved successfully")
+                .data(pageResponse)
+                .build());
+
+    }
+
+    @Override
+    public ResponseEntity<Response> getOrderById(Long deliveryPartnerId, Long orderId) {
+        Order order = orderService.findOrderById(orderId);
+
+        // check if order belongs to delivery partner
+        if (!order.getDeliveryPartner().getId().equals(deliveryPartnerId)) {
+            throw new IllegalStateException("Order does not belong to delivery partner");
+        }
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Order retrieved successfully")
+                .data(order)
+                .build());
+
+    }
+
+    @Override
+    public ResponseEntity<Response> updateOrder(Long deliveryPartnerId, Long orderId, UpdateOrderRequest updateRequest) {
+
+        DeliveryPartner deliveryPartner = findDeliveryPartnerById(deliveryPartnerId);
+        Order order = orderService.findOrderById(orderId);
+        // check if order belongs to delivery partner
+        if (!order.getDeliveryPartner().getId().equals(deliveryPartnerId)) {
+            throw new IllegalStateException("Order does not belong to delivery partner");
+        }
+
+        if (updateRequest.getStatus() != null) {
+            Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(updateRequest.getStatus().toUpperCase());
+            order.setStatus(orderStatus);
+        }
+
+        orderService.save(order);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Order updated successfully")
+                .data(null)
                 .build());
     }
 }

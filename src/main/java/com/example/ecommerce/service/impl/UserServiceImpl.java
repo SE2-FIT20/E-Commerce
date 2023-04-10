@@ -26,8 +26,12 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public ResponseEntity<Response> createUser(User user) {
-        return null;
+    public ResponseEntity<Response> save(User user) {
+        userRepository.save(user);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Save user successfully")
+                .build());
     }
 
     @Override

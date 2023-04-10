@@ -1,5 +1,6 @@
 package com.example.ecommerce.domain;
 
+import com.example.ecommerce.dto.response.CustomerBriefInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,8 +32,11 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
+
+    public CustomerBriefInfo getCustomer() {
+        return new CustomerBriefInfo(customer); // only return necessary information, hide sensitive information
+    }
 
 }

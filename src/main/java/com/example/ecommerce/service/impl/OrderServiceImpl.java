@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Customer;
+import com.example.ecommerce.domain.DeliveryPartner;
 import com.example.ecommerce.domain.Order;
 
 
@@ -12,10 +13,7 @@ import com.example.ecommerce.repository.OrderRepository;
 import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.ProductService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
 //                .build());
 //
 //    }
-    private Order findOrderById(Long orderId) {
+    public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
     }
@@ -130,6 +128,22 @@ public class OrderServiceImpl implements OrderService {
             Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(status.toUpperCase());
             return orderRepository.findAllByCustomerAndStatusAndCreatedAtBetween(customer, orderStatus, from, to, pageable);
         }
+    }
+
+    @Override
+    public Page<Order> getAll(Example<Order> example, Pageable pageable) {
+        return orderRepository.findAll(example, pageable);
+    }
+
+    @Override
+    public Page<Order> getAllByDeliveryPartnerAndStatus(DeliveryPartner deliveryPartner, Order.OrderStatus orderStatus, Pageable pageable) {
+
+        return orderRepository.findAllByDeliveryPartnerAndStatus(deliveryPartner, orderStatus, pageable);
+    }
+
+    @Override
+    public Page<Order> getAllByDeliveryPartner(DeliveryPartner deliveryPartner, Pageable pageable) {
+        return orderRepository.findAllByDeliveryPartner(deliveryPartner, pageable);
     }
 
 

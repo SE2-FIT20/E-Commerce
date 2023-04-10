@@ -1,5 +1,6 @@
 package com.example.ecommerce.domain;
 
+import com.example.ecommerce.dto.response.CustomerBriefInfo;
 import com.example.ecommerce.dto.response.CustomerInformation;
 import com.example.ecommerce.dto.response.DeliveryPartnerInformation;
 import com.example.ecommerce.dto.response.StoreDetailedInfo;
@@ -67,9 +68,9 @@ public class Order {
                 .mapToLong(item -> (long) (item.getProduct().getPrice() * item.getQuantity())).sum();
     }
 
-    public CustomerInformation getCustomer() {
+    public CustomerBriefInfo getCustomer() {
         if (customer == null) return null;
-        return new CustomerInformation(customer);
+        return new CustomerBriefInfo(customer); // only return necessary information, hide sensitive information
     }
 
     public StoreDetailedInfo getStore() {

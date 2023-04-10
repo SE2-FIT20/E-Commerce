@@ -75,10 +75,7 @@ public class CustomerService {
         Product product = productService.findProductById(orderItem.getProductId());
 
         cart.addItem(product, orderItem.getQuantity());
-
-
         customerRepository.save(customer);
-
         Response response = Response.builder().status(200).message("Add to cart successfully").data(null).build();
 
         return ResponseEntity.ok(response);

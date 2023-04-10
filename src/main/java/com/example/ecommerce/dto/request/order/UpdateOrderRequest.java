@@ -6,5 +6,6 @@ import lombok.Data;
 public class UpdateOrderRequest {
     private Long orderId;
     private String status;
+    private String description;
 
 }

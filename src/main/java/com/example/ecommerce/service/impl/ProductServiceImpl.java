@@ -60,6 +60,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<Response> getReviewByProductId(Long productId) {
+        //TODO: paging, filter
         Product product = findProductById(productId);
         return ResponseEntity.ok(Response.builder()
                 .status(200)

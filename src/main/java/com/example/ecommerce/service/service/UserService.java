@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserService {
 
-    ResponseEntity<Response> createUser(User user);
+
+    ResponseEntity<Response> save(User user);
     ResponseEntity<Response> deleteUserById(Long userId);
     ResponseEntity<Response> updateUser(Long userId, User user);
     ResponseEntity<Response> getUserById(Long userId);

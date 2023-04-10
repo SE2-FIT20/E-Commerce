@@ -3,10 +3,9 @@ package com.example.ecommerce.service.service;
 import com.example.ecommerce.domain.DeliveryPartner;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
+import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Optional;
 
 public interface DeliveryPartnerService {
 
@@ -20,4 +19,10 @@ public interface DeliveryPartnerService {
      ResponseEntity<Response> getDeliveryPartnerById(Long deliveryPartnerId);
 
      ResponseEntity<Response> getAllDeliveryPartners(Integer pageNumber, Integer elementsPerPage);
+
+     ResponseEntity<Response> getAllOrderByDeliveryPartners(Integer page, Integer elementsPerPage, Long id, String status, String filter, String sortBy, String from, String to);
+
+     ResponseEntity<Response> getOrderById(Long deliveryPartnerId, Long orderId);
+
+     ResponseEntity<Response> updateOrder(Long deliveryPartnerId, Long orderId, UpdateOrderRequest updateRequest);
 }

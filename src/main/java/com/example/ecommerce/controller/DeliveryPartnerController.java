@@ -4,6 +4,7 @@ import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.service.service.DeliveryPartnerService;
 import com.example.ecommerce.service.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,12 @@ import org.springframework.web.bind.annotation.*;
 //TODO: update account endpoint
 public class DeliveryPartnerController {
 
+
     @Autowired
-    private OrderService orderService;
+    private DeliveryPartnerService deliveryPartnerService;
+
+    @Value("${default.elementPerPage}")
+    private String defaultElementPerPage;
     @Operation (
             summary = "Get all orders",
             description = "Get all orders of delivery partner"
@@ -94,8 +100,18 @@ public class DeliveryPartnerController {
             }
     )
     @GetMapping("/orders")
-    public ResponseEntity<Response> getAllOrders() {
-        return orderService.getAllOrder();
+    public ResponseEntity<Response> getAllOrders(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                 @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
+                                                 @RequestParam(defaultValue = "ALL",  required = false)  String status,
+                                                 @RequestParam(defaultValue = "createdAt",  required = false) String filter,
+                                                 @RequestParam(defaultValue = "desc",  required = false) String sortBy,
+                                                 @RequestParam(required = false) String from,
+                                                 @RequestParam(required = false) String to) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        User user = getCurrentUser();
+        return deliveryPartnerService.getAllOrderByDeliveryPartners(page, elementsPerPage, user.getId(), status, filter, sortBy, from, to);
     }
 
     //TODO: order has the attribute of deliveryTime
@@ -180,7 +196,8 @@ public class DeliveryPartnerController {
     )
     @GetMapping("/orders/{id}")
     public ResponseEntity<Response> getOrderById(@PathVariable @Schema(description = "id of order") Long id) {
-        return orderService.getOrderById(id);
+        User user = getCurrentUser();
+        return deliveryPartnerService.getOrderById(id, user.getId());
     }
 
     @Operation(
@@ -234,9 +251,10 @@ public class DeliveryPartnerController {
             )
     }
     )
-    @PutMapping("/update-status-order")
-    public ResponseEntity<Response> updateStatusOrder(@RequestBody UpdateOrderRequest accountRequest) {
-        return orderService.updateOrder(accountRequest);
+    @PutMapping("/update-status-order/{orderId}")
+    public ResponseEntity<Response> updateStatusOrder(@PathVariable Long orderId, @RequestBody UpdateOrderRequest updateRequest) {
+        User user = getCurrentUser();
+        return deliveryPartnerService.updateOrder(user.getId(), orderId, updateRequest);
     }
 
     public User getCurrentUser() {
