@@ -168,7 +168,7 @@ public class CustomerService {
 
         // TODO: temporary solution, need to be improved
         for (Order order : orders) {
-            if (order.getStatus().equals(PENDING)) {
+//            if (order.getStatus().equals(PENDING)) {
                 List<OrderItem> orderItems = order.getItems();
                 for (OrderItem orderItem : orderItems) {
                     if (orderItem.getProduct().equals(new ProductBriefInfo(product))) {
@@ -183,7 +183,7 @@ public class CustomerService {
                         return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
                     }
                 }
-            }
+//            }
         }
 
         return ResponseEntity.ok(Response.builder()
