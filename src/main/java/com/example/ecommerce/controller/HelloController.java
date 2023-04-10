@@ -11,8 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(value = "*", allowedHeaders = "*", origins = "*")
-
+@CrossOrigin(value = "*", allowedHeaders = "*", origins = "*", maxAge = 3600)
 public class HelloController {
 
     @Operation(

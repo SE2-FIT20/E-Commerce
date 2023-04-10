@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Component;
 
 @Configuration
-//@EnableWebSecurity
+@EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
 
@@ -20,7 +20,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            .cors().and()
+            .cors().disable()
             .csrf().disable()
             .authorizeHttpRequests(auth ->
                     auth
