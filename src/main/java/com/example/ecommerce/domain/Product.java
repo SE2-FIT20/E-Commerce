@@ -4,6 +4,7 @@ package com.example.ecommerce.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cascade;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
+@ToString(exclude = {"reviews", "store"})// to prevent the error of "could not initialize proxy - no Session"
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

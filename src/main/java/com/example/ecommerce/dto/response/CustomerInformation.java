@@ -25,4 +25,13 @@ public class CustomerInformation {
         this.phoneNumber = customer.getPhoneNumber();
         this.avatar = customer.getAvatar();
     }
+
+    public CustomerInformation(Long id, String name, String email, List<String> addresses, String phoneNumber, String avatar) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.addresses = addresses;
+        this.phoneNumber = phoneNumber;
+        this.avatar = avatar;
+    }
 }

@@ -41,9 +41,20 @@ public class CustomerService {
 
     public ResponseEntity<Response> getCustomerInformationById(Long customerId) {
         Customer customer = findCustomerById(customerId);
-        CustomerInformation customerInformation = new CustomerInformation(customer);
+        String name = customer.getName();
+        String email = customer.getEmail();
+        List<String> addresses = customer.getAddresses();
+        String phoneNumber = customer.getPhoneNumber();
+        String avatar = customer.getAvatar();
 
-        Response response = Response.builder().status(200).message("Get customer information successfully").data(customerInformation).build();
+        CustomerInformation customerInformation = new CustomerInformation(customerId, name, email, addresses, phoneNumber, avatar);
+
+//        CustomerInformation customerInformation = customerRepository.findCustomerNameEmailAddressesAndPhoneNumberById(customerId);
+        Response response = Response.builder()
+                .status(200)
+                .message("Get customer information successfully")
+                .data(customerInformation)
+                .build();
 
         return ResponseEntity.ok(response);
     }

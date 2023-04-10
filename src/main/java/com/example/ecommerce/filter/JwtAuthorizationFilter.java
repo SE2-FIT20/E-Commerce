@@ -37,14 +37,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String email = jwtService.extractEmail(token);
         User user = userService.findByEmail(email);
-        System.out.println("USER ROLE: " + user.getRole());
         if (user.isLocked()) {
             throw new LoginFailedException("Your account is locked! Please contact admin to unlock your account!");
         }
         if (jwtService.validateToken(token, user)) {
             UsernamePasswordAuthenticationToken authenticationToken
                     = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            System.out.println("Setting authentication: " + authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
         } else {

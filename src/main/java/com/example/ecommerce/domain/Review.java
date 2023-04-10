@@ -29,10 +29,10 @@ public class Review {
     List<String> images;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Customer customer;
 
     public CustomerBriefInfo getCustomer() {

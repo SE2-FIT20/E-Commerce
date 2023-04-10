@@ -10,6 +10,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.*;
+
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
@@ -22,6 +24,8 @@ public class SecurityConfig {
         http
             .cors().disable()
             .csrf().disable()
+            .sessionManagement().sessionCreationPolicy(STATELESS)
+            .and()
             .authorizeHttpRequests(auth ->
                     auth
                             .requestMatchers("/api/admin/**").hasRole("ADMIN")
