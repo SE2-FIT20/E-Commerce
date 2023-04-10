@@ -1,5 +1,6 @@
 package com.example.ecommerce.service.impl;
 
+import com.example.ecommerce.domain.Search;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
 import com.example.ecommerce.dto.response.PageResponse;
@@ -7,12 +8,14 @@ import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.UserInformation;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.UserRepository;
+import com.example.ecommerce.service.service.SearchService;
 import com.example.ecommerce.service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SearchService searchService;
 
     @Override
     public ResponseEntity<Response> createUser(User user) {
@@ -123,4 +128,6 @@ public class UserServiceImpl implements UserService {
                 .data(new UserInformation(user))
                 .build());
     }
+
+
 }

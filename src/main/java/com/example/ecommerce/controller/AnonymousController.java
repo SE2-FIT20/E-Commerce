@@ -8,9 +8,7 @@ import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.SearchByNameResult;
 import com.example.ecommerce.dto.response.StoreDetailedInfo;
 import com.example.ecommerce.service.impl.StoreService;
-import com.example.ecommerce.service.service.DeliveryPartnerService;
-import com.example.ecommerce.service.service.ProductService;
-import com.example.ecommerce.service.service.PromotionService;
+import com.example.ecommerce.service.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -21,6 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +42,8 @@ public class AnonymousController {
     @Autowired
     private DeliveryPartnerService deliveryPartnerService;
 
+    @Autowired
+    private SearchService searchService;
     @Operation(
             summary = "Get all products"
     )
@@ -162,6 +163,9 @@ public class AnonymousController {
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
+
+        searchService.saveSearchHistory(getCurrentUser(), keyword);
+
         return productService.searchProduct(keyword, page, elementsPerPage);
 
     }
@@ -174,6 +178,8 @@ public class AnonymousController {
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
+
+        searchService.saveSearchHistory(getCurrentUser(), keyword);
         return storeService.searchStore(keyword, page, elementsPerPage);
 
         // save the search history
@@ -189,6 +195,7 @@ public class AnonymousController {
 
     @GetMapping("/store-information/{storeId}")
     public ResponseEntity<Response> getStoreInfoById(@PathVariable Long storeId) {
+
         return storeService.getStoreInformationById(storeId);
     }
 
@@ -309,9 +316,16 @@ public class AnonymousController {
     }
 
 
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/search-history")
+    public ResponseEntity<Response> getSearchHistory() {
+        User user = getCurrentUser();
+        return searchService.getLatestSearchesByUser(user);
+    }
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
             return (User) authentication.getPrincipal();
         }
         return null;
