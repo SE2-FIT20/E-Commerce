@@ -7,6 +7,9 @@ import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.ReviewRepository;
 import com.example.ecommerce.service.service.ReviewService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,10 +39,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.findAll();
     }
 
-    @Override
-    public List<Review> getReviewByProduct(Product product) {
-        return reviewRepository.findAllByProduct(product);
-    }
 
     @Override
     public List<Review> getReviewByCustomer(User customer) {
@@ -50,6 +49,16 @@ public class ReviewServiceImpl implements ReviewService {
     public Review findReviewById(Long reviewId) {
 
         return reviewRepository.findById(reviewId).orElseThrow(() -> new NotFoundException("Review not found for id: " + reviewId));
+    }
+
+    @Override
+    public Page<Review> findAll(Example<Review> example, Pageable pageable) {
+        return reviewRepository.findAll(example, pageable);
+    }
+
+    @Override
+    public Page<Review> findAllByProduct(Product product, Pageable pageable) {
+        return reviewRepository.findAllByProduct(product, pageable);
     }
 
 }

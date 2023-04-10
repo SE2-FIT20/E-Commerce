@@ -1,8 +1,8 @@
 package com.example.ecommerce.service.impl;
 
-import ch.qos.logback.core.status.Status;
 import com.example.ecommerce.domain.Category;
 import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.Review;
 import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.response.PageResponse;
@@ -13,6 +13,7 @@ import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.repository.StoreRepository;
 import com.example.ecommerce.service.service.ProductService;
+import com.example.ecommerce.service.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,8 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private StoreRepository storeRepository;
 
+    @Autowired
+    private ReviewService reviewService;
     public Product findProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found"));
@@ -59,13 +62,32 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<Response> getReviewByProductId(Long productId) {
+    public ResponseEntity<Response> getReviewByProductId(Long productId, Integer pageNumber, Integer elementsPerPage, String filter, String sortBy) {
         //TODO: paging, filter
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
         Product product = findProductById(productId);
+
+//        Review review = Review.builder()
+//                .product(product)
+//                .build();
+//
+//        ExampleMatcher matcher = ExampleMatcher.matching()
+//                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+//
+//        Example<Review> example = Example.of(review, matcher);
+
+        Page<Review> page = reviewService.findAllByProduct(product, pageable);
+
+        PageResponse pageResponse = PageResponse.builder()
+                .pageNumber(page.getNumber())
+                .totalPages(page.getTotalPages())
+                .content(page.getContent())
+                .build();
+
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get review by product id successfully")
-                .data(product.getReviews())
+                .data(pageResponse)
                 .build());
     }
 

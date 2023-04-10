@@ -199,8 +199,18 @@ public class AnonymousController {
     }
 
     @GetMapping("/reviews/{productId}")
-    public ResponseEntity<Response> getReviewByProduct(@PathVariable Long productId) {
-        return productService.getReviewByProductId(productId);
+    public ResponseEntity<Response> getReviewByProduct(@PathVariable Long productId,
+                                                       @RequestParam(defaultValue = "0", required = false) Integer page,
+                                                       @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
+                                                       @RequestParam(defaultValue = "createdAt",  required = false) String filter,
+                                                       @RequestParam(defaultValue = "desc",  required = false) String sortBy) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+
+
+
+        return productService.getReviewByProductId(productId, page, elementsPerPage, filter, sortBy);
     }
 
     @GetMapping("/product-categories")

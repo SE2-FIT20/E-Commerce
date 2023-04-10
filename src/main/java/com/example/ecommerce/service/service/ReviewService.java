@@ -4,6 +4,9 @@ import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Review;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.response.Response;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -15,9 +18,12 @@ public interface ReviewService {
 
     List<Review> getAllReview();
 
-    List<Review> getReviewByProduct(Product product);
 
     List<Review>  getReviewByCustomer(User customer);
 
     Review findReviewById(Long reviewId);
+
+    Page<Review> findAll(Example<Review> example, Pageable pageable);
+
+    Page<Review> findAllByProduct(Product product, Pageable pageable);
 }
