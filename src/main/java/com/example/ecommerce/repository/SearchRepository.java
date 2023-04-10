@@ -12,4 +12,6 @@ import java.util.List;
 @Repository
 public interface SearchRepository extends JpaRepository<Search, Long> {
     List<Search> findTop10ByUserOrderByCreatedAtDesc(User user);
+
+    void deleteByKeyword(String keyword);
 }

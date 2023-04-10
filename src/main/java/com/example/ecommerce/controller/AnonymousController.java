@@ -323,6 +323,13 @@ public class AnonymousController {
         User user = getCurrentUser();
         return searchService.getLatestSearchesByUser(user);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/search-history/{searchId}")
+    public ResponseEntity<Response> deleteSearchHistory(@PathVariable Long searchId) {
+        User user = getCurrentUser();
+        return searchService.deleteSearchById(user, searchId);
+    }
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {

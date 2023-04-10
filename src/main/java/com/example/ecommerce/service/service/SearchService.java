@@ -5,12 +5,11 @@ import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 public interface SearchService {
     ResponseEntity<Response> getLatestSearchesByUser(User user);
     Search saveSearch(Search search);
-    void deleteSearchById(Long searchId);
+    ResponseEntity<Response> deleteSearchById(User user, Long searchId);
+
 
     void saveSearchHistory(User currentUser, String keyword);
 }
