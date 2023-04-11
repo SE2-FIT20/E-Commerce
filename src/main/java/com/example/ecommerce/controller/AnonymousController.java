@@ -158,7 +158,6 @@ public class AnonymousController {
                                                   @RequestParam(defaultValue = "0") Integer page,
                                                   @RequestParam(defaultValue = "0") Integer elementsPerPage) {
 
-        //TODO: save the search history
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
@@ -173,7 +172,6 @@ public class AnonymousController {
     public ResponseEntity<Response> searchStores(@RequestParam String keyword,
                                                  @RequestParam(defaultValue = "0") Integer page,
                                                  @RequestParam(defaultValue = "0") Integer elementsPerPage) {
-        //TODO: save the search history
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
@@ -344,7 +342,6 @@ public class AnonymousController {
 
 
 
-    //TODO: get all delivery partners
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {

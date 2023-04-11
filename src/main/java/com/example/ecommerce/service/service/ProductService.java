@@ -6,9 +6,6 @@ import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-
-
-//TODO: paging for the getting product
 public interface ProductService {
 
 

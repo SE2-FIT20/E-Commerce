@@ -174,14 +174,13 @@ public class CustomerService {
     }
 
     public ResponseEntity<Response> createReview(User currentCustomer, CreateReviewRequest reviewRequest) {
-        //TODO: Vy - check if the customer has bought the product, the order must be completed
         Customer customer = findCustomerById(currentCustomer.getId());
         Product product = productService.findProductById(reviewRequest.getProductId());
         List<Order> orders = customer.getOrders();
 
         // TODO: temporary solution, need to be improved
         for (Order order : orders) {
-//            if (order.getStatus().equals(PENDING)) {
+            if (order.getStatus().equals(DELIVERED)) {
                 List<OrderItem> orderItems = order.getItems();
                 for (OrderItem orderItem : orderItems) {
                     if (orderItem.getProduct().equals(new ProductBriefInfo(product))) {
@@ -190,18 +189,19 @@ public class CustomerService {
                                 .product(product)
                                 .rating(reviewRequest.getRating())
                                 .comment(reviewRequest.getComment())
+                                .images(reviewRequest.getImages())
                                 .createdAt(LocalDateTime.now())
                                 .build();
                         reviewService.save(review);
                         return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
                     }
                 }
-//            }
+            }
         }
 
         return ResponseEntity.ok(Response.builder()
                 .status(400)
-                .message("Failed to create review for product")
+                .message("You need to buy this product before you can review it")
                 .data(null)
                 .build());
 
@@ -221,6 +221,7 @@ public class CustomerService {
 
         currentReview.setRating(updateReviewRequest.getRating());
         currentReview.setComment(updateReviewRequest.getComment());
+
 
         reviewService.save(currentReview);
         return ResponseEntity.ok(Response.builder().status(200).message("Update review successfully").data(null).build());

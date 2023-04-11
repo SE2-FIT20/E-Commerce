@@ -174,7 +174,6 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
     @Override
     public ResponseEntity<Response> updateOrder(Long deliveryPartnerId, Long orderId, UpdateOrderRequest updateRequest) {
 
-        DeliveryPartner deliveryPartner = findDeliveryPartnerById(deliveryPartnerId);
         Order order = orderService.findOrderById(orderId);
         // check if order belongs to delivery partner
         if (!order.getDeliveryPartner().getId().equals(deliveryPartnerId)) {
@@ -184,6 +183,10 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
         if (updateRequest.getStatus() != null) {
             Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(updateRequest.getStatus().toUpperCase());
             order.setStatus(orderStatus);
+
+            if (orderStatus.equals(Order.OrderStatus.DELIVERED)) {
+                order.setDeliveredAt(LocalDateTime.now());
+            }
         }
 
         orderService.save(order);

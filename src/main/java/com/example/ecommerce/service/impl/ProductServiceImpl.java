@@ -63,7 +63,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<Response> getReviewByProductId(Long productId, Integer pageNumber, Integer elementsPerPage, String filter, String sortBy) {
-        //TODO: paging, filter
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
         Product product = findProductById(productId);
 

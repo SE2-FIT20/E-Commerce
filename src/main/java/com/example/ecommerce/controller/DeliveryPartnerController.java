@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/delivery-partner")
-//TODO: update account endpoint
 public class DeliveryPartnerController {
 
     @Autowired
@@ -112,7 +111,6 @@ public class DeliveryPartnerController {
         return deliveryPartnerService.getAllOrderByDeliveryPartners(page, elementsPerPage, user.getId(), status, filter, sortBy, from, to);
     }
 
-    //TODO: order has the attribute of deliveryTime
     @Operation (
             summary = "Get order by id",
             description = "Get order by id of delivery partner"

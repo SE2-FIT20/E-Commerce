@@ -24,6 +24,7 @@ public class ProductBriefInfo {
     private Double price;
     private List<String> images;
 
+    private int reviewNum;
     private int quantity;
     private int sold;
     private StoreBriefInfo store;
@@ -42,6 +43,7 @@ public class ProductBriefInfo {
         this.store = new StoreBriefInfo(product.getStore());
         this.createdAt = product.getCreatedAt();
         this.rating = product.getRating();
+        this.reviewNum = product.getReviews().size();
     }
 
     public static List<ProductBriefInfo> from(List<Product> products) {

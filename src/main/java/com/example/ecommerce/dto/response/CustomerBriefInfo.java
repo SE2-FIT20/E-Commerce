@@ -13,11 +13,12 @@ public class CustomerBriefInfo {
     private String name;
     private String email;
     private String phoneNumber;
-
+    private String avatar;
     public CustomerBriefInfo(Customer customer) {
         this.id = customer.getId();
         this.name = customer.getName();
         this.email = customer.getEmail();
         this.phoneNumber = customer.getPhoneNumber();
+        this.avatar = customer.getAvatar();
     }
 }
