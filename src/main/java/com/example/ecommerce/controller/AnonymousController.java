@@ -3,6 +3,7 @@ package com.example.ecommerce.controller;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.MarkNotificationsAsRead;
 import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.response.SearchByNameResult;
@@ -43,6 +44,9 @@ public class AnonymousController {
 
     @Autowired
     private SearchService searchService;
+
+    @Autowired
+    private NotificationService notificationService;
     @Operation(
             summary = "Get all products"
     )
@@ -338,7 +342,36 @@ public class AnonymousController {
         return searchService.deleteSearchById(user, searchId);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/notifications")
+    public ResponseEntity<Response> getALlNotifications(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                        @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                        @RequestParam(defaultValue = "all", required = false) String status,
+                                                        @RequestParam(defaultValue = "createdAt", required = false) String filter,
+                                                        @RequestParam(defaultValue = "desc", required = false) String sortBy) {
 
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+
+        User user = getCurrentUser();
+        return notificationService.getAllNotificationsByUser(user, page, elementsPerPage, status, filter, sortBy);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/notifications/{notificationId}")
+    public ResponseEntity<Response> getNotificationById(@PathVariable Long notificationId) {
+        User user = getCurrentUser();
+        return notificationService.getNotificationById(user, notificationId);
+    }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/notifications")
+    public ResponseEntity<Response> markNotificationsAsRead(@RequestBody MarkNotificationsAsRead request) {
+        User user = getCurrentUser();
+        return notificationService.markNotificationsAsRead(user, request);
+    }
 
 
 

@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.ecommerce.domain.Order.OrderStatus.DELIVERED;
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.OrderItemDTO;
 
@@ -35,6 +34,7 @@ public class CustomerService {
     private final DeliveryPartnerService deliveryPartnerService;
     private final StoreService storeService;
     private final ReviewService reviewService;
+    private final NotificationService notificationService;
 
     public void save(Customer customer) {
         customerRepository.save(customer);
@@ -131,6 +131,9 @@ public class CustomerService {
             // but it's good to for understanding that the orders will be savd in the order list of customer,
             // after it is delivered it will be moved to the oldOrder list
             customer.getOrders().add(order);
+
+            sendNotificationForStore(store, order);
+
         }
 
         cart.setItems(new ArrayList<>()); // empty the cart of customer after checking out
@@ -141,6 +144,18 @@ public class CustomerService {
                     .message("Checkout successfully")
                     .data(null)
                         .build());
+    }
+
+    private void sendNotificationForStore(Store store, Order order) {
+        Notification notification = Notification.builder()
+                .content("You have a new order from " + order.getCustomer().getName())
+                .order(order)
+                .createdAt(LocalDateTime.now())
+                .type(Notification.NotificationType.NEW_ORDER)
+                .isRead(false)
+                .build();
+
+        notificationService.sendNotificationToUser(store.getId(), notification);
     }
 
     public ResponseEntity<Response> removeFromCart(User currentCustomer, RemoveFromCartRequest removeFromCartRequest) {
@@ -180,7 +195,7 @@ public class CustomerService {
 
         // TODO: temporary solution, need to be improved
         for (Order order : orders) {
-            if (order.getStatus().equals(DELIVERED)) {
+            if (order.getStatus().equals(PENDING)) {
                 List<OrderItem> orderItems = order.getItems();
                 for (OrderItem orderItem : orderItems) {
                     if (orderItem.getProduct().equals(new ProductBriefInfo(product))) {

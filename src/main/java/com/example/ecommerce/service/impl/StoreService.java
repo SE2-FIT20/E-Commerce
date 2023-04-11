@@ -7,14 +7,13 @@ import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
-import com.example.ecommerce.dto.response.PageResponse;
-import com.example.ecommerce.dto.response.Response;
-import com.example.ecommerce.dto.response.StoreDetailedInfo;
+import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.OrderRepository;
 import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.repository.PromotionRepository;
 import com.example.ecommerce.repository.StoreRepository;
+import com.example.ecommerce.service.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -40,6 +39,9 @@ public class StoreService {
     private PromotionRepository promotionRepository;
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public void  save(Store store) {
         storeRepository.save(store);
@@ -145,15 +147,46 @@ public class StoreService {
 
         for (Order order : orders) {
             if (order.getId().equals(request.getOrderId())) {
-                order.setStatus(Order.OrderStatus.fromString(request.getStatus()));
+                order.setStatus(request.getStatus());
+                orderRepository.save(order);
+
+                if (request.getStatus().equals(Order.OrderStatus.READY_FOR_DELIVERY)) {
+                    sendNotificationToDeliverPartner(order, order.getDeliveryPartner());
+                } else if (request.getStatus().equals(Order.OrderStatus.CANCELLED)) {
+                    sendNotificationToCustomer(order, order.getCustomer());
+                }
+
+                break;
             }
         }
-        storeRepository.save(store);
+
+
+
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Update order successfully")
                 .data(null)
                 .build());
+    }
+
+    private void sendNotificationToCustomer(Order order, CustomerBriefInfo customer) {
+        Notification notification = Notification.builder()
+                .type(Notification.NotificationType.ORDER_STATUS_CHANGED)
+                .content("Your order " + order.getId() + " has been " + order.getStatus().toString().toLowerCase() + " by " + order.getStore().getName() + ".")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationService.sendNotificationToUser(customer.getId(), notification);
+    }
+
+    private void sendNotificationToDeliverPartner(Order order, DeliveryPartnerInformation deliveryPartner) {
+        Notification notification = Notification.builder()
+                .type(Notification.NotificationType.ORDER_STATUS_CHANGED)
+                .content("You have a new order to deliver from " + order.getStore().getName() + ".")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationService.sendNotificationToUser(deliveryPartner.getId(), notification);
     }
 
     public ResponseEntity<Response> getAllPromotions(Long storeId) {

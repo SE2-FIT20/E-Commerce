@@ -412,6 +412,7 @@ public class StoreController {
 
 
 
+    @PutMapping("/account")
     public ResponseEntity<Response> updateAccountInformation(UpdateStoreRequest updateStoreRequest) {
         User currentStore = getCurrentStore();
         return storeService.updateInformation(currentStore.getId(), updateStoreRequest);

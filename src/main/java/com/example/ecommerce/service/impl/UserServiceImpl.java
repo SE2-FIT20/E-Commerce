@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
                 .build());
     }
 
-    private User findUserById(Long userId) {
+    public User findUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
     }
 

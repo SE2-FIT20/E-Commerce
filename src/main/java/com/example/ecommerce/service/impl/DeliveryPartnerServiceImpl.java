@@ -1,17 +1,20 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.DeliveryPartner;
+import com.example.ecommerce.domain.Notification;
 import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.dto.request.UpdateDeliveryPartnerAccountRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
+import com.example.ecommerce.dto.response.CustomerBriefInfo;
 import com.example.ecommerce.dto.response.DeliveryPartnerInformation;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.DeliveryPartnerRepository;
 import com.example.ecommerce.service.service.DeliveryPartnerService;
+import com.example.ecommerce.service.service.NotificationService;
 import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.UserService;
 import com.example.ecommerce.utils.Utils;
@@ -34,6 +37,7 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
     private final UserService userService;
     private final OrderService orderService;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
     @Override
     public DeliveryPartner findDeliveryPartnerById(Long deliveryPartnerId) {
         return deliveryPartnerRepository.findById(deliveryPartnerId)
@@ -181,11 +185,12 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
         }
 
         if (updateRequest.getStatus() != null) {
-            Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(updateRequest.getStatus().toUpperCase());
+            Order.OrderStatus orderStatus = updateRequest.getStatus();
             order.setStatus(orderStatus);
 
             if (orderStatus.equals(Order.OrderStatus.DELIVERED)) {
                 order.setDeliveredAt(LocalDateTime.now());
+                sendNotificationForCustomer(order, order.getCustomer());
             }
         }
 
@@ -196,6 +201,16 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
                 .message("Order updated successfully")
                 .data(null)
                 .build());
+    }
+
+    private void sendNotificationForCustomer(Order order, CustomerBriefInfo customer) {
+        Notification notification = Notification.builder()
+                .type(Notification.NotificationType.ORDER_STATUS_CHANGED)
+                .content("Your order has been delivered")
+                .order(order)
+                .build();
+
+        notificationService.sendNotificationToUser(customer.getId(), notification);
     }
 
     @Override

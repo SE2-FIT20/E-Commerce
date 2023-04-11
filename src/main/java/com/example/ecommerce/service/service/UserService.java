@@ -21,4 +21,6 @@ public interface UserService {
 
     ResponseEntity<Response> getUserInformationById(Long id);
 
+    User findUserById(Long userId);
+
 }
