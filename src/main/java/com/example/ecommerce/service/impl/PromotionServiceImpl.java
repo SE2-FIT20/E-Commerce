@@ -73,8 +73,7 @@ public class PromotionServiceImpl implements PromotionService {
     public ResponseEntity<Response> updatePromotion(UpdatePromotionRequest updatePromotionRequest) {
         Promotion promotion = findPromotionById(updatePromotionRequest.getPromotionId());
 
-        promotion.setName(updatePromotionRequest.getName());
-        promotion.setPercent(updatePromotionRequest.getPercent());
+        promotion.setDiscountPercent(updatePromotionRequest.getPercent());
         promotion.setDescription(updatePromotionRequest.getDescription());
 
         promotionRepository.save(promotion);

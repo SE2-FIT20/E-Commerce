@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-@ToString(exclude = {"inventory", "orders", "promotions"})// to prevent the error of "could not initialize proxy - no Session"
+@ToString(exclude = {"inventory", "orders", "coupons"})// to prevent the error of "could not initialize proxy - no Session"
 public class Store extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,5 +28,6 @@ public class Store extends User{
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Promotion> promotions;
+    private List<Coupon> coupons;
+
 }

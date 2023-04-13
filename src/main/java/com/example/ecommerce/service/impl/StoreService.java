@@ -191,7 +191,7 @@ public class StoreService {
 
     public ResponseEntity<Response> getAllPromotions(Long storeId) {
         Store store = findStoreById(storeId);
-        List<Promotion> promotions = store.getPromotions();
+        List<Promotion> promotions = store.getCoupons();
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)
@@ -202,12 +202,12 @@ public class StoreService {
 
     public ResponseEntity<Response> createPromotion(Long storeId, CreatePromotionRequest promotionRequest) {
         Store store = findStoreById(storeId);
-        Promotion promotion = Promotion.builder()
-                .name(promotionRequest.getName())
-                .description(promotionRequest.getDescription())
-                .percent(promotionRequest.getPercent())
-                .store(store)
-                .build();
+        Coupon coupon = new Coupon();
+
+        coupon.setDescription(promotionRequest.getDescription());
+        coupon.setName(promotionRequest.getName());
+        coupon.setStore(store);
+        coupon.setDiscount(promotionRequest.getDiscount());
 
         promotionRepository.save(promotion); // save promotion to database, since promotion is the owning side, the store will have this promotion in the promotions
 
@@ -220,7 +220,7 @@ public class StoreService {
 
     public ResponseEntity<Response> updatePromotion(Long storeId, UpdatePromotionRequest updatePromotionRequest) {
         Store store = findStoreById(storeId);
-        List<Promotion> promotions = store.getPromotions();
+        List<Coupon> promotions = store.getCoupons();
 
         boolean isExist = promotions.stream().anyMatch(promotion -> promotion.getId().equals(updatePromotionRequest.getPromotionId()));
         if (!isExist) {

@@ -418,7 +418,8 @@ public class StoreController {
         return storeService.updateInformation(currentStore.getId(), updateStoreRequest);
     }
 
-
+//TODO: add sales campaign
+    // TODO: add voucher
 
 //    @GetMapping("/store/{storeId}/filter-by-review")
 //    public ResponseEntity<Response> getProductByStoreIdFilterByReview(@PathVariable("storeId") Long storeId) {

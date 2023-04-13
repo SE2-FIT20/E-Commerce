@@ -16,21 +16,12 @@ public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private double percent;
-    @Lob
+
+    private Double discountPercent;
     private String description;
     private String code;
-    private String image;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Store store;
-
-    private boolean isUsed;
+    private Boolean isUsed;
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
 
-    public boolean isGlobal() {
-        return store == null;
-    }
 }

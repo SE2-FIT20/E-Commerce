@@ -9,5 +9,4 @@ public class UpdatePromotionRequest {
     private String description;
     private double percent;
     private Long storedId;
-    private boolean isGlobal;
 }

@@ -42,6 +42,10 @@ public class Product {
     @JsonIgnore
     private List<Review> reviews;
 
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private ProductOnSaleInformation onSaleInformation;
+
     @ManyToOne
     @JsonIgnore
     private Store store;
