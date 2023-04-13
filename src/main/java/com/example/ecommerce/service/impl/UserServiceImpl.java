@@ -71,15 +71,19 @@ public class UserServiceImpl implements UserService {
             user.setRole(role);
         }
 
-        if (!status.equalsIgnoreCase("ALL")) {
-            if (status.equalsIgnoreCase("LOCKED")) {
-                user.setLocked(true);
-            } else {
-                user.setLocked(false);
-            }
-        }
         ExampleMatcher matcher = ExampleMatcher.matchingAll()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        if (!status.equalsIgnoreCase("ALL")) {
+            if (status.equalsIgnoreCase("LOCKED")) {
+                user.setLocked(true); // only get locked users
+            } else {
+                user.setLocked(false); // only get unlocked users
+            }
+        } else {
+            matcher = matcher.withIgnorePaths("isLocked"); // ignore locked field, since it is false by default
+        }
+
         Example<User> example = Example.of(user, matcher);
 
         Page<User> users = userRepository.findAll(example, pageable);

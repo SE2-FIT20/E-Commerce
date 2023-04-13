@@ -352,7 +352,7 @@ public class AdminController {
                     )
             }
     )
-    @DeleteMapping("/delete-products/{id}")
+    @DeleteMapping("/delete-product/{id}")
     public ResponseEntity<Response> deleteProductById(@PathVariable @Schema(description = "id of product") Long id) {
         return productService.deleteProductById(id);
     }

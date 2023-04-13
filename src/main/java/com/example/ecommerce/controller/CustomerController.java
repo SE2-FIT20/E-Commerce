@@ -421,4 +421,10 @@ public class CustomerController {
         User currentCustomer = getCurrentCustomer();
         return customerService.updateReview(currentCustomer.getId(), updateReviewRequest, reviewId);
     }
+
+    @DeleteMapping("/review/{reviewId}")
+    public ResponseEntity<Response> deleteReview( @PathVariable Long reviewId) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.deleteReview(currentCustomer.getId(), reviewId);
+    }
 }

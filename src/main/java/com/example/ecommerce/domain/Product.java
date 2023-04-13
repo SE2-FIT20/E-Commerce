@@ -28,7 +28,7 @@ public class Product {
     private Double price;
 
     @ElementCollection
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private List<String> images;
     private Integer quantity;
     private int sold;
@@ -38,7 +38,7 @@ public class Product {
     private Status status;
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Review> reviews;
 
@@ -46,6 +46,8 @@ public class Product {
     @JsonIgnore
     private Store store;
 
+    @OneToMany(mappedBy = "product", orphanRemoval = true)
+    private List<OrderItem> orderItem;
     @Transient
     private Double rating;
 

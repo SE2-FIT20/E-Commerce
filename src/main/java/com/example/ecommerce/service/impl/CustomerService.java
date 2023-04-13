@@ -214,11 +214,12 @@ public class CustomerService {
             }
         }
 
-        return ResponseEntity.ok(Response.builder()
-                .status(400)
-                .message("You need to buy this product before you can review it")
-                .data(null)
-                .build());
+        throw new IllegalStateException("You need to buy this product before you can review it");
+//        return ResponseEntity.ok(Response.builder()
+//                .status(400)
+//                .message("You need to buy this product before you can review it")
+//                .data(null)
+//                .build());
 
     }
 
@@ -227,15 +228,12 @@ public class CustomerService {
         Review currentReview = reviewService.findReviewById(reviewId);
 
         if (!currentReview.getCustomer().equals(customer)) {
-            return ResponseEntity.ok(Response.builder()
-                    .status(400)
-                    .message("You are not the owner of this review")
-                    .data(null)
-                    .build());
+            throw new IllegalStateException("You are not the owner of this review");
         }
 
-        currentReview.setRating(updateReviewRequest.getRating());
-        currentReview.setComment(updateReviewRequest.getComment());
+        if (updateReviewRequest.getRating() != null) currentReview.setRating(updateReviewRequest.getRating());
+        if (updateReviewRequest.getImages() != null) currentReview.setImages(updateReviewRequest.getImages());
+        if (updateReviewRequest.getComment() != null) currentReview.setComment(updateReviewRequest.getComment());
 
 
         reviewService.save(currentReview);
@@ -273,5 +271,21 @@ public class CustomerService {
     }
 
 
+    public ResponseEntity<Response> deleteReview(Long id, Long reviewId) {
 
+        Review review = reviewService.findReviewById(reviewId);
+
+        if (!review.getCustomer().getId().equals(id)) {
+            throw new IllegalStateException("You are not the owner of this review");
+        }
+
+        reviewService.deleteByReviewId(reviewId);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Delete review successfully")
+                .data(null)
+                .build()
+        );
+
+    }
 }

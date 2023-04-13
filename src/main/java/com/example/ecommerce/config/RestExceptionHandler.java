@@ -12,7 +12,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Response> handleRuntimeException(RuntimeException e) {
-        return ResponseEntity.ok(Response.builder()
+        return ResponseEntity.badRequest().body(Response.builder()
                 .status(400)
                 .message(e.getMessage())
                 .build());
