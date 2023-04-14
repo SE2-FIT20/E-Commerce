@@ -9,10 +9,7 @@ import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
-import com.example.ecommerce.repository.OrderRepository;
-import com.example.ecommerce.repository.ProductRepository;
-import com.example.ecommerce.repository.PromotionRepository;
-import com.example.ecommerce.repository.StoreRepository;
+import com.example.ecommerce.repository.*;
 import com.example.ecommerce.service.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +39,8 @@ public class StoreService {
 
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private UserRepository userRepository;
 
     public void  save(Store store) {
         storeRepository.save(store);
@@ -403,7 +402,6 @@ public class StoreService {
         if (updateStoreRequest.getDescription() != null) store.setDescription(updateStoreRequest.getDescription());
         if (updateStoreRequest.getAddresses() != null) store.setAddress(updateStoreRequest.getAddresses());
         if (updateStoreRequest.getAvatar() != null) store.setAvatar(updateStoreRequest.getAvatar());
-
 
         storeRepository.save(store);
 
