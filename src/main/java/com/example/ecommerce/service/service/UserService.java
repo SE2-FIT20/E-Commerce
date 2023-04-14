@@ -23,4 +23,7 @@ public interface UserService {
 
     User findUserById(Long userId);
 
+    ResponseEntity<Response> searchUserByName(String name, Integer page, Integer elementsPerPage, String status, String filter, String sortBy, String role);
+
+    ResponseEntity<Response> searchUserByEmail(String email);
 }

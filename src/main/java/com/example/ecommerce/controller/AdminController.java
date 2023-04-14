@@ -875,6 +875,24 @@ public class AdminController {
         return userService.getUserInformationById(currentAdmin.getId());
     }
 
+    @GetMapping("/search-user-by-name")
+    public ResponseEntity<Response> searchUserByName(@RequestParam String name,
+                                                     @RequestParam(defaultValue = "0", required = false) Integer page,
+                                                     @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                     @RequestParam(defaultValue = "all", required = false) String status,
+                                                     @RequestParam(defaultValue = "createdAt", required = false) String filter,
+                                                     @RequestParam(defaultValue = "desc", required = false) String sortBy,
+                                                     @RequestParam(defaultValue = "all", required = false) String role) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        return userService.searchUserByName(name, page, elementsPerPage,status, filter, sortBy, role);
+    }
+    @GetMapping("/search-user-by-email")
+
+    public ResponseEntity<Response> searchUserByEmail(@RequestParam String email) {
+        return userService.searchUserByEmail(email);
+    }
     public User getCurrentAdmin() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
