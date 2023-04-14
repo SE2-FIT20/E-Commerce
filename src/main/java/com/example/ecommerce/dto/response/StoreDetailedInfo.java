@@ -11,6 +11,7 @@ import java.util.List;
 //TODO: considering remove this dto
 public class StoreDetailedInfo {
     private Long id;
+    private String email;
     private String name;
     private String avatar;
     private String description;
@@ -20,6 +21,7 @@ public class StoreDetailedInfo {
     public StoreDetailedInfo(Store store) {
         this.id = store.getId();
         this.name = store.getName();
+        this.email = store.getEmail();
         this.avatar = store.getAvatar();
         this.description = store.getDescription();
         this.address = store.getAddress();

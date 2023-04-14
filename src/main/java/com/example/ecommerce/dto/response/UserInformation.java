@@ -18,7 +18,7 @@ public class UserInformation {
     private boolean isLocked;
     private String role;
     private LocalDateTime createdAt;
-    private Object additionData; // this can be used to store additional data based on the role
+    private Object additionalData; // this can be used to store additional data based on the role
 
     public UserInformation(User user) {
         this.id = user.getId();
@@ -50,6 +50,7 @@ public class UserInformation {
                     .mapToInt(Product::getSold)
                     .sum();
             data.put("numberOfProductsSold", numberOfProductsSold);
+            data.put("city", store.getCity());
         } else if (user instanceof DeliveryPartner) {
             DeliveryPartner deliveryPartner = (DeliveryPartner) user;
 
@@ -60,7 +61,7 @@ public class UserInformation {
         }
 
         if (!data.isEmpty()) {
-            this.additionData = data;
+            this.additionalData = data;
         }
     }
 

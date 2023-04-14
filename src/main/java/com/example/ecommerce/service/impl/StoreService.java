@@ -398,7 +398,8 @@ public class StoreService {
 
     public ResponseEntity<Response> updateInformation(Long id, UpdateStoreRequest updateStoreRequest) {
         Store store = findStoreById(id);
-        if(updateStoreRequest.getName() != null) store.setName(updateStoreRequest.getName());
+
+        if (updateStoreRequest.getName() != null) store.setName(updateStoreRequest.getName());
         if (updateStoreRequest.getDescription() != null) store.setDescription(updateStoreRequest.getDescription());
         if (updateStoreRequest.getAddresses() != null) store.setAddress(updateStoreRequest.getAddresses());
         if (updateStoreRequest.getAvatar() != null) store.setAvatar(updateStoreRequest.getAvatar());
