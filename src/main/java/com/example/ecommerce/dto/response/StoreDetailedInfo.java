@@ -1,5 +1,6 @@
 package com.example.ecommerce.dto.response;
 
+import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Store;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,8 @@ public class StoreDetailedInfo {
     private String description;
     private String address;
     private String city;
+    private int numberOfProducts;
+    private double averageProductRating;
 
     public StoreDetailedInfo(Store store) {
         this.id = store.getId();
@@ -26,6 +29,12 @@ public class StoreDetailedInfo {
         this.description = store.getDescription();
         this.address = store.getAddress();
         this.city = store.getCity();
+        this.numberOfProducts = store.getInventory().size();
+        this.averageProductRating = store.getInventory()
+                .stream()
+                .mapToDouble(Product::getRating)
+                .average()
+                .orElse(0);
     }
 
 
