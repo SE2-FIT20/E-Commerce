@@ -20,6 +20,7 @@ public class Store extends User{
     private String description;
     private String address;
     private String city;
+    private String phoneNumber;
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> inventory;
 

@@ -51,6 +51,8 @@ public class UserInformation {
                     .sum();
             data.put("numberOfProductsSold", numberOfProductsSold);
             data.put("city", store.getCity());
+            data.put("phoneNumber", store.getPhoneNumber());
+
         } else if (user instanceof DeliveryPartner) {
             DeliveryPartner deliveryPartner = (DeliveryPartner) user;
 

@@ -11,5 +11,6 @@ public class UpdateStoreRequest {
     private String description;
     private String addresses;
     private String avatar;
+    private String phoneNumber;
 
 }

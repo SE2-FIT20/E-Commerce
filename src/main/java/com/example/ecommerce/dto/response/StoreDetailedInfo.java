@@ -1,9 +1,12 @@
 package com.example.ecommerce.dto.response;
 
+import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Store;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -17,6 +20,9 @@ public class StoreDetailedInfo {
     private String description;
     private String address;
     private String city;
+    private int numberOfProducts;
+    private double averageProductRating;
+    private LocalDateTime createdAt;
 
     public StoreDetailedInfo(Store store) {
         this.id = store.getId();
@@ -26,6 +32,13 @@ public class StoreDetailedInfo {
         this.description = store.getDescription();
         this.address = store.getAddress();
         this.city = store.getCity();
+        this.numberOfProducts = store.getInventory().size();
+        this.createdAt = store.getCreatedAt();
+        this.averageProductRating = store.getInventory()
+                .stream()
+                .mapToDouble(Product::getRating)
+                .average()
+                .orElse(0);
     }
 
 
