@@ -400,7 +400,7 @@ public class StoreService {
 
         if (updateStoreRequest.getName() != null) store.setName(updateStoreRequest.getName());
         if (updateStoreRequest.getDescription() != null) store.setDescription(updateStoreRequest.getDescription());
-        if (updateStoreRequest.getAddresses() != null) store.setAddress(updateStoreRequest.getAddresses());
+        if (updateStoreRequest.getAddress() != null) store.setAddress(updateStoreRequest.getAddress());
         if (updateStoreRequest.getAvatar() != null) store.setAvatar(updateStoreRequest.getAvatar());
         if (updateStoreRequest.getPhoneNumber() != null) store.setPhoneNumber(updateStoreRequest.getPhoneNumber());
         storeRepository.save(store);
