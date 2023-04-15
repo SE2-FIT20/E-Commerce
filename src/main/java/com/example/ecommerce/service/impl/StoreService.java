@@ -403,6 +403,7 @@ public class StoreService {
         if (updateStoreRequest.getAddress() != null) store.setAddress(updateStoreRequest.getAddress());
         if (updateStoreRequest.getAvatar() != null) store.setAvatar(updateStoreRequest.getAvatar());
         if (updateStoreRequest.getPhoneNumber() != null) store.setPhoneNumber(updateStoreRequest.getPhoneNumber());
+        if (updateStoreRequest.getCity() != null) store.setCity(updateStoreRequest.getCity());
         storeRepository.save(store);
 
         return ResponseEntity.ok(Response.builder()
