@@ -16,7 +16,7 @@ public class Store extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
+    @Column(columnDefinition="TEXT")
     private String description;
     private String address;
     private String city;
