@@ -52,4 +52,5 @@ public interface OrderService {
     Map<String, Long> countOrdersByDeliveryPartner(DeliveryPartner deliveryPartner, LocalDateTime fromDateTime, LocalDateTime toDateTime);
 
     Order findByOrderCode(String orderCode);
+
 }

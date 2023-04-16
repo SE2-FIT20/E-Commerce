@@ -159,6 +159,13 @@ public class OrderServiceImpl implements OrderService {
         return map;
     }
 
+
+
+    @Override
+    public Order findByOrderCode(String orderCode) {
+        return orderRepository.findByOrderCode(orderCode);
+    }
+
     @Override
     public Page<Order> findAllByStoreAndCreatedAtBetween(Store store, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return orderRepository.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
@@ -213,12 +220,6 @@ public class OrderServiceImpl implements OrderService {
 
         return map;
     }
-
-    @Override
-    public Order findByOrderCode(String orderCode) {
-        return orderRepository.findByOrderCode(orderCode);
-    }
-
     private static String generateRandomString(int length) {
         Random random = new Random();
         StringBuilder sb = new StringBuilder(length);
