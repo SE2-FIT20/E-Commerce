@@ -11,6 +11,7 @@ import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.*;
 import com.example.ecommerce.service.service.NotificationService;
+import com.example.ecommerce.service.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +37,7 @@ public class StoreService {
     @Autowired
     private PromotionRepository promotionRepository;
     @Autowired
-    private OrderRepository orderRepository;
+    private OrderService orderService;
 
     @Autowired
     private NotificationService notificationService;
@@ -114,10 +116,10 @@ public class StoreService {
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.by(Sort.Direction.valueOf(sortBy.toUpperCase()), filter));
         Page<Order> page;
         if (status.equals("ALL")) {
-            page = orderRepository.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
+            page = orderService.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
         } else {
             Order.OrderStatus orderStatus = Order.OrderStatus.fromString(status.toUpperCase());
-            page = orderRepository.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
+            page = orderService.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
         }
 
         PageResponse pageResponse = PageResponse.builder()
@@ -147,7 +149,7 @@ public class StoreService {
         for (Order order : orders) {
             if (order.getId().equals(request.getOrderId())) {
                 order.setStatus(request.getStatus());
-                orderRepository.save(order);
+                orderService.save(order);
 
                 if (request.getStatus().equals(Order.OrderStatus.READY_FOR_DELIVERY)) {
                     sendNotificationToDeliverPartner(order, order.getDeliveryPartner());
@@ -450,7 +452,7 @@ public class StoreService {
 
         Example<Order> example = Example.of(orderExample, matcher);
 
-        Page<Order> page = orderRepository.findAll(example, pageable);
+        Page<Order> page = orderService.findAll(example, pageable);
         PageResponse pageResponse = PageResponse.builder()
                 .content(page.getContent())
                 .totalPages(page.getTotalPages())
@@ -462,6 +464,18 @@ public class StoreService {
                 .status(200)
                 .message("Get order successfully")
                 .data(pageResponse)
+                .build());
+    }
+
+    public ResponseEntity<Response> countOrders(Long id, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        Store store = findStoreById(id);
+
+        Map<String, Long> mapCount = orderService.countOrdersByStore(store, fromDateTime, toDateTime);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get order successfully")
+                .data(mapCount)
                 .build());
     }
 }

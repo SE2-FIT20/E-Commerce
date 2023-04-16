@@ -1,16 +1,11 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.domain.Feedback;
-import com.example.ecommerce.domain.Promotion;
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.UpdateAdminRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
-import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
-import com.example.ecommerce.dto.request.paymentOption.CreatePaymentOption;
-import com.example.ecommerce.dto.request.paymentOption.UpdatePaymentOption;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
-import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.service.service.*;
@@ -23,14 +18,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Security;
 
 
 @RestController
@@ -875,6 +865,12 @@ public class AdminController {
         return userService.getUserInformationById(currentAdmin.getId());
     }
 
+
+    @PutMapping("/account")
+    public ResponseEntity<Response> updateAccountInfo(@RequestBody UpdateAdminRequest updateAccountRequest) {
+        User currentAdmin = getCurrentAdmin();
+        return userService.updateAccountInfoById(currentAdmin.getId(), updateAccountRequest);
+    }
     @GetMapping("/search-user-by-name")
     public ResponseEntity<Response> searchUserByName(@RequestParam String name,
                                                      @RequestParam(defaultValue = "0", required = false) Integer page,

@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.UpdateAdminRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
@@ -100,6 +101,21 @@ public class UserServiceImpl implements UserService {
                 .status(200)
                 .message("Get user successfully")
                 .data(new UserInformation(user))
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> updateAccountInfoById(Long id, UpdateAdminRequest updateAccountRequest) {
+        User user = findUserById(id);
+
+        if (updateAccountRequest.getName() != null) user.setName(updateAccountRequest.getName());
+        if (updateAccountRequest.getAvatar() != null) user.setAvatar(updateAccountRequest.getAvatar());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Update user successfully")
                 .build());
     }
 
