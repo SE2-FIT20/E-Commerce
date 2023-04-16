@@ -20,7 +20,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private double rating;
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition="LONGTEXT")
     private String comment;
     private LocalDateTime createdAt;
 

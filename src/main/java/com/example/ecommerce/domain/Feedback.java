@@ -20,7 +20,7 @@ public class Feedback {
     private Long id;
 
     private String title;
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition="LONGTEXT")
     private String content;
     private LocalDateTime createdAt;
     private boolean isResolved;

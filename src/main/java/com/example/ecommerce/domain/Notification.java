@@ -20,7 +20,7 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition="LONGTEXT")
 
     private String content;
 

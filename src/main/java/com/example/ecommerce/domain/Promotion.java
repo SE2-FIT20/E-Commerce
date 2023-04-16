@@ -18,7 +18,7 @@ public class Promotion {
     private Long id;
     private String name;
     private double percent;
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition="LONGTEXT")
     private String description;
     private String code;
     private String image;
