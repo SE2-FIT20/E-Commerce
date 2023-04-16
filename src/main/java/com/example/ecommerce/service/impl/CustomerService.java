@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.OrderItemDTO;
@@ -106,7 +107,8 @@ public class CustomerService {
         Customer customer = findCustomerById(customerId);
         Cart cart = customer.getCart();
 
-        DeliveryPartner deliveryPartner = deliveryPartnerService.findDeliveryPartnerById(request.getDeliveryPartnerId());
+        DeliveryPartner deliveryPartner = deliveryPartnerService
+                .findDeliveryPartnerById(request.getDeliveryPartnerId());
 
         // items in the cart are grouped into group by store
         for (CartStoreItem cartStoreItem : cart.getItems()) {
@@ -286,6 +288,20 @@ public class CustomerService {
                 .data(null)
                 .build()
         );
+
+    }
+
+    public ResponseEntity<Response> countOrders(Long id, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        Customer customer = findCustomerById(id);
+
+        Map<String, Long> mapCount = orderService.countOrdersByCustomer(customer, fromDateTime, toDateTime);
+
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Count orders successfully")
+                .data(mapCount)
+                .build());
 
     }
 }

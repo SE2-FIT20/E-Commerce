@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/delivery-partner")
 public class DeliveryPartnerController {
@@ -195,6 +197,33 @@ public class DeliveryPartnerController {
         User user = getCurrentUser();
         return deliveryPartnerService.getOrderById(id, user.getId());
     }
+
+    @GetMapping("/orders-count")
+    public ResponseEntity<Response> getOrders(@RequestParam(required = false) String from,
+                                              @RequestParam(required = false) String to) {
+
+
+        LocalDateTime fromDateTime = null;
+        LocalDateTime toDateTime = null;
+
+        // the default value for from is 1970, it means that we will get all orders from the beginning
+        if (from == null) {
+            fromDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
+        } else {
+            fromDateTime = LocalDateTime.parse(from + "T00:00:00"); // start of the day
+        }
+
+        // the default value for to is now, the default value for from is null
+        if (to == null) {
+            toDateTime = LocalDateTime.now();
+        } else {
+            toDateTime = LocalDateTime.parse(to + "T23:59:59"); // end of the day
+        }
+
+        User currentDeliveryPartner = getCurrentUser();
+        return deliveryPartnerService.countOrders(currentDeliveryPartner.getId(), fromDateTime, toDateTime);
+    }
+
 
     @Operation(
             summary = "Update status of order",

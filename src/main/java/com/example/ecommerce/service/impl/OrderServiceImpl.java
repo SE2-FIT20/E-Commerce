@@ -1,11 +1,8 @@
 package com.example.ecommerce.service.impl;
 
-import com.example.ecommerce.domain.Customer;
-import com.example.ecommerce.domain.DeliveryPartner;
-import com.example.ecommerce.domain.Order;
+import com.example.ecommerce.domain.*;
 
 
-import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
@@ -18,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -146,6 +140,84 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByDeliveryPartner(deliveryPartner, pageable);
     }
 
+    @Override
+    public Map<String, Long> countOrdersByCustomer(Customer customer, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        Map<String, Long> map =  new LinkedHashMap<>();
+        long pendingCount = orderRepository.countByCustomerAndStatusAndCreatedAtBetween(customer, Order.OrderStatus.PENDING, fromDateTime, toDateTime);
+        long confirmedCount = orderRepository.countByCustomerAndStatusAndCreatedAtBetween(customer, Order.OrderStatus.READY_FOR_DELIVERY, fromDateTime, toDateTime);
+        long deliveringCount = orderRepository.countByCustomerAndStatusAndCreatedAtBetween(customer, Order.OrderStatus.DELIVERING, fromDateTime, toDateTime);
+        long deliveredCount = orderRepository.countByCustomerAndStatusAndCreatedAtBetween(customer, Order.OrderStatus.DELIVERED, fromDateTime, toDateTime);
+        long cancelledCount = orderRepository.countByCustomerAndStatusAndCreatedAtBetween(customer, Order.OrderStatus.CANCELLED, fromDateTime, toDateTime);
+
+        map.put("PENDING", pendingCount);
+        map.put("READY_FOR_DELIVER", confirmedCount);
+        map.put("DELIVERING", deliveringCount);
+        map.put("DELIVERED", deliveredCount);
+        map.put("CANCELLED", cancelledCount);
+
+
+        return map;
+    }
+
+    @Override
+    public Page<Order> findAllByStoreAndCreatedAtBetween(Store store, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        return orderRepository.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
+    }
+
+    @Override
+    public Page<Order> findAllByStoreAndStatusAndCreatedAtBetween(Store store, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        return orderRepository.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
+    }
+
+    @Override
+    public Page<Order> findAll(Example<Order> example, Pageable pageable) {
+        return orderRepository.findAll(example, pageable);
+    }
+
+
+    @Override
+    public Map<String, Long> countOrdersByStore(Store store, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        Map<String, Long> map =  new LinkedHashMap<>();
+        long pendingCount = orderRepository.countByStoreAndStatusAndCreatedAtBetween(store, Order.OrderStatus.PENDING, fromDateTime, toDateTime);
+        long confirmedCount = orderRepository.countByStoreAndStatusAndCreatedAtBetween(store, Order.OrderStatus.READY_FOR_DELIVERY, fromDateTime, toDateTime);
+        long deliveringCount = orderRepository.countByStoreAndStatusAndCreatedAtBetween(store, Order.OrderStatus.DELIVERING, fromDateTime, toDateTime);
+        long deliveredCount = orderRepository.countByStoreAndStatusAndCreatedAtBetween(store, Order.OrderStatus.DELIVERED, fromDateTime, toDateTime);
+        long cancelledCount = orderRepository.countByStoreAndStatusAndCreatedAtBetween(store, Order.OrderStatus.CANCELLED, fromDateTime, toDateTime);
+
+        map.put("PENDING", pendingCount);
+        map.put("READY_FOR_DELIVER", confirmedCount);
+        map.put("DELIVERING", deliveringCount);
+        map.put("DELIVERED", deliveredCount);
+        map.put("CANCELLED", cancelledCount);
+
+
+        return map;
+    }
+
+
+    @Override
+    public Map<String, Long> countOrdersByDeliveryPartner(DeliveryPartner deliveryPartner, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        Map<String, Long> map =  new LinkedHashMap<>();
+        long pendingCount = orderRepository.countByDeliveryPartnerAndStatusAndCreatedAtBetween(deliveryPartner, Order.OrderStatus.PENDING, fromDateTime, toDateTime);
+        long confirmedCount = orderRepository.countByDeliveryPartnerAndStatusAndCreatedAtBetween(deliveryPartner, Order.OrderStatus.READY_FOR_DELIVERY, fromDateTime, toDateTime);
+        long deliveringCount = orderRepository.countByDeliveryPartnerAndStatusAndCreatedAtBetween(deliveryPartner, Order.OrderStatus.DELIVERING, fromDateTime, toDateTime);
+        long deliveredCount = orderRepository.countByDeliveryPartnerAndStatusAndCreatedAtBetween(deliveryPartner, Order.OrderStatus.DELIVERED, fromDateTime, toDateTime);
+        long cancelledCount = orderRepository.countByDeliveryPartnerAndStatusAndCreatedAtBetween(deliveryPartner, Order.OrderStatus.CANCELLED, fromDateTime, toDateTime);
+
+        map.put("PENDING", pendingCount);
+        map.put("READY_FOR_DELIVER", confirmedCount);
+        map.put("DELIVERING", deliveringCount);
+        map.put("DELIVERED", deliveredCount);
+        map.put("CANCELLED", cancelledCount);
+
+
+        return map;
+    }
+
+    @Override
+    public Order findByOrderCode(String orderCode) {
+        return orderRepository.findByOrderCode(orderCode);
+    }
 
     private static String generateRandomString(int length) {
         Random random = new Random();

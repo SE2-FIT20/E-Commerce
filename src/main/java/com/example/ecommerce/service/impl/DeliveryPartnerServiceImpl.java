@@ -27,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -238,6 +239,20 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
                 .status(200)
                 .message("Account updated successfully")
                 .data(null)
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> countOrders(Long id, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+
+        DeliveryPartner deliveryPartner = findDeliveryPartnerById(id);
+
+        Map<String, Long> count = orderService.countOrdersByDeliveryPartner(deliveryPartner, fromDateTime, toDateTime);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Orders count retrieved successfully")
+                .data(count)
                 .build());
     }
 }
