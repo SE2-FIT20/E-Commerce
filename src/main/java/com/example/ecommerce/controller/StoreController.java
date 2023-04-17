@@ -5,7 +5,7 @@ import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
-import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
+import com.example.ecommerce.dto.request.promotion.CreateVoucherRequest;
 import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
@@ -26,7 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/store")
@@ -311,7 +310,7 @@ public class StoreController {
         return storeService.getAllPromotions(currentStore.getId());
     }
 
-    @Operation(summary = "create promotion", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreatePromotionRequest.class), examples = @ExampleObject(value = """
+    @Operation(summary = "create promotion", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateVoucherRequest.class), examples = @ExampleObject(value = """
             {
                 "code": "SHP-123",
                 "description": "Discount 50% for all products",
@@ -333,7 +332,7 @@ public class StoreController {
             }
             """)))})
     @PostMapping("/promotion")
-    public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
+    public ResponseEntity<Response> createPromotion(@RequestBody CreateVoucherRequest promotionRequest) {
         User currentStore = getCurrentStore();
         return storeService.createPromotion(currentStore.getId(), promotionRequest);
 

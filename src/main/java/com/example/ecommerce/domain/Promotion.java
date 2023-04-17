@@ -23,5 +23,5 @@ public class Promotion {
     private Boolean isUsed;
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
-
+    private String image;
 }

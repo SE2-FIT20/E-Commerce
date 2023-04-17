@@ -1,16 +1,10 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.domain.Feedback;
-import com.example.ecommerce.domain.Promotion;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
-import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
-import com.example.ecommerce.dto.request.paymentOption.CreatePaymentOption;
-import com.example.ecommerce.dto.request.paymentOption.UpdatePaymentOption;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
-import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
-import com.example.ecommerce.dto.response.PageResponse;
+import com.example.ecommerce.dto.request.promotion.CreateVoucherRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.service.service.*;
@@ -23,14 +17,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Security;
 
 
 @RestController
@@ -657,7 +646,7 @@ public class AdminController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = CreatePromotionRequest.class),
+                            schema = @Schema(implementation = CreateVoucherRequest.class),
                             examples = @ExampleObject(value = """
                                     {
                                         "code": "PROMO1",
@@ -698,9 +687,9 @@ public class AdminController {
                     )
             }
     )
-    @PostMapping("/create-promotion")
-    public ResponseEntity<Response> createPromotion(@RequestBody CreatePromotionRequest promotionRequest) {
-        return promotionService.createPromotion(promotionRequest);
+    @PostMapping("/create-voucher")
+    public ResponseEntity<Response> createVoucher(@RequestBody CreateVoucherRequest promotionRequest) {
+        return promotionService.createVoucher(promotionRequest);
     }
 
     @Operation(
@@ -765,7 +754,7 @@ public class AdminController {
     )
     @PutMapping("/promotions")
     public ResponseEntity<Response> updatePromotionById(@RequestBody UpdatePromotionRequest promotionRequest) {
-        return promotionService.updatePromotion(promotionRequest);
+        return promotionService.updateVoucher(promotionRequest);
     }
 
     @Operation(
@@ -816,7 +805,7 @@ public class AdminController {
     )
     @DeleteMapping("/promotions/{id}")
     public ResponseEntity<Response> deletePromotionById(@PathVariable @Schema(description = "Id of promotion") Long id) {
-        return promotionService.deletePromotion(id);
+        return promotionService.deleteVoucher(id);
     }
 
 

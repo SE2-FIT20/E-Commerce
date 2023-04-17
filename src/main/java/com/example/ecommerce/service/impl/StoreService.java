@@ -4,7 +4,7 @@ import com.example.ecommerce.domain.*;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
-import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
+import com.example.ecommerce.dto.request.promotion.CreateVoucherRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.*;
@@ -200,12 +200,11 @@ public class StoreService {
                 .build());
     }
 
-    public ResponseEntity<Response> createPromotion(Long storeId, CreatePromotionRequest promotionRequest) {
+    public ResponseEntity<Response> createPromotion(Long storeId, CreateVoucherRequest promotionRequest) {
         Store store = findStoreById(storeId);
         Coupon coupon = new Coupon();
 
         coupon.setDescription(promotionRequest.getDescription());
-        coupon.setName(promotionRequest.getName());
         coupon.setStore(store);
         coupon.setDiscount(promotionRequest.getDiscount());
 

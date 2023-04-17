@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class CreatePromotionRequest {
+public class CreateVoucherRequest {
 
     private String name;
     private double percent;

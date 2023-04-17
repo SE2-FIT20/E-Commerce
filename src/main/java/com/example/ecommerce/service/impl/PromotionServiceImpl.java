@@ -1,7 +1,8 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.Promotion;
-import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
+import com.example.ecommerce.domain.Voucher;
+import com.example.ecommerce.dto.request.promotion.CreateVoucherRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
@@ -31,28 +32,29 @@ public class PromotionServiceImpl implements PromotionService {
     private final PromotionRepository promotionRepository;
 //    private final StoreService storeService;
     @Override
-    public ResponseEntity<Response> createPromotion(CreatePromotionRequest request) {
-        List<Promotion> promotions = new ArrayList<>();
+    public ResponseEntity<Response> createVoucher(CreateVoucherRequest request) {
+        List<Promotion> vouchers = new ArrayList<>();
 
 
         for (int i = 0; i < request.getQuantity(); i++) {
             String img = generateAvatarLink(String.valueOf(request.getPercent()));
             String code = generateRandomString();
-            Promotion promotion = Promotion.builder()
-                    .name(request.getName())
-                    .description(request.getDescription())
-                    .percent(request.getPercent())
-                    .code(code)
-                    .createdAt(LocalDateTime.now())
-                    .expiredAt(request.getExpiredAt())
-                    .image(img)
-                    .isUsed(false)
-                    .build();
-            promotions.add(promotion);
+            Voucher voucher = new Voucher();
+            voucher.setCode(code);
+            voucher.setDiscountPercent(request.getPercent());
+            voucher.setExpiredAt(request.getExpiredAt());
+            voucher.setCreatedAt(LocalDateTime.now());
+            voucher.setIsUsed(false);
+            voucher.setImage(img);
+            voucher.setDescription(request.getDescription());
+
+
+
+            vouchers.add(voucher);
         }
 
 
-        promotionRepository.saveAll(promotions);
+        promotionRepository.saveAll(vouchers);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Create promotion successfully")
@@ -61,7 +63,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public ResponseEntity<Response> deletePromotion(Long promotionId) {
+    public ResponseEntity<Response> deleteVoucher(Long promotionId) {
         promotionRepository.deleteById(promotionId);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
@@ -70,7 +72,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public ResponseEntity<Response> updatePromotion(UpdatePromotionRequest updatePromotionRequest) {
+    public ResponseEntity<Response> updateVoucher(UpdatePromotionRequest updatePromotionRequest) {
         Promotion promotion = findPromotionById(updatePromotionRequest.getPromotionId());
 
         promotion.setDiscountPercent(updatePromotionRequest.getPercent());
