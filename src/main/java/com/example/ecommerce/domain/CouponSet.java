@@ -1,5 +1,6 @@
 package com.example.ecommerce.domain;
 
+import com.example.ecommerce.dto.response.StoreBriefInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -93,5 +94,9 @@ public class CouponSet {
                 break;
             }
         }
+    }
+
+    public StoreBriefInfo getStore() {
+        return new StoreBriefInfo(store);
     }
 }

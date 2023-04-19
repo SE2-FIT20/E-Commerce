@@ -20,4 +20,5 @@ public interface CouponSetService {
 
     void deleteById(CouponSet couponSet);
 
+    Page<CouponSet> findAllByStore(Store store, Pageable pageable);
 }

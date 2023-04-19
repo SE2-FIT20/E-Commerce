@@ -2,10 +2,7 @@ package com.example.ecommerce.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -19,6 +16,7 @@ import static com.example.ecommerce.utils.Utils.generateRandomString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString(exclude = "vouchers")
 public class VoucherSet {
 
     @Id

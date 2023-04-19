@@ -21,6 +21,7 @@ import java.util.*;
 
 @AllArgsConstructor
 @Service
+//TODO: update coupon, update voucher, get by id
 public class PromotionServiceImpl implements PromotionService {
 
 
@@ -102,28 +103,24 @@ public class PromotionServiceImpl implements PromotionService {
     public ResponseEntity<Response> getAllVouchersInSet(Long voucherSetId, Integer pageNumber, Integer elementsPerPage, String status, String filter, String sortBy) {
 
         VoucherSet voucherSet = voucherSetService.findById(voucherSetId);
-        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
 
-        Voucher voucher = new Voucher();
-        voucher.setVoucherSet(voucherSet);
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
+        Page<Voucher> page;
 
         if (!status.equalsIgnoreCase("all")) {
             if (status.equalsIgnoreCase("used")) {
-                voucher.setUsed(true);
+                page = voucherRepository.findAllByVoucherSetAndIsUsed(voucherSet, true, pageable);
             } else {
-                voucher.setUsed(false);
+                page = voucherRepository.findAllByVoucherSetAndIsUsed(voucherSet, false, pageable);
             }
         } else {
-            matcher = matcher.withIgnorePaths("isUsed");
+            page = voucherRepository.findAllByVoucherSet(voucherSet, pageable);
         }
-        Page<Voucher> vouchers = voucherRepository.findAll(Example.of(voucher, matcher), pageable);
         PageResponse pageResponse = PageResponse.builder()
-                .totalPages(vouchers.getTotalPages())
-                .content(vouchers.getContent())
-                .pageNumber(vouchers.getNumber())
-                .size(vouchers.getSize())
+                .totalPages(page.getTotalPages())
+                .content(page.getContent())
+                .pageNumber(page.getNumber())
+                .size(page.getSize())
                 .build();
 
         return ResponseEntity.ok(Response.builder()
@@ -156,15 +153,10 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> getAllCouponSetsOfStore(Long id, Integer pageNumber, Integer elementsPerPage, String filter, String sortBy) {
-        Store store = storeService.findStoreById(id);
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
+        Store store = storeService.findStoreById(id);
 
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-        Coupon coupon = new Coupon();
-        coupon.setStore(store);
-
-        Page<Coupon> page =  couponRepository.findAll(Example.of(coupon, matcher), pageable);
+        Page<CouponSet> page =  couponSetService.findAllByStore(store, pageable);
 
         PageResponse pageResponse = PageResponse.builder()
                 .totalPages(page.getTotalPages())

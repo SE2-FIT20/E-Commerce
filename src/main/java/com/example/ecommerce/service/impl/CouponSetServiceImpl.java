@@ -67,4 +67,11 @@ public class CouponSetServiceImpl implements CouponSetService {
     public void deleteById(CouponSet couponSet) {
         couponSetRepository.delete(couponSet);
     }
+
+    @Override
+    public Page<CouponSet> findAllByStore(Store store, Pageable pageable) {
+
+
+        return couponSetRepository.findAllByStore(store, pageable);
+    }
 }

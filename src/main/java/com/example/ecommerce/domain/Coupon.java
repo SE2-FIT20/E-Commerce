@@ -16,7 +16,7 @@ public class Coupon extends Promotion{
 
     // this method for returning store information to client
     private StoreBriefInfo getStore() {
-        return new StoreBriefInfo(couponSet.getStore()); // only return necessary information, hide sensitive information
+        return couponSet.getStore(); // only return necessary information, hide sensitive information
     }
 
 
