@@ -17,7 +17,7 @@ public class DeliveryPartner extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
+    @Column(columnDefinition="LONGTEXT")
     private String description;
     private Double shippingFee;
 

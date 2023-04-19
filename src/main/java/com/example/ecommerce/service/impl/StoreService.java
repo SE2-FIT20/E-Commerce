@@ -4,16 +4,15 @@ import com.example.ecommerce.domain.*;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
-import com.example.ecommerce.dto.request.promotion.CreateVoucherRequest;
+import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
-import com.example.ecommerce.repository.OrderRepository;
-import com.example.ecommerce.repository.ProductRepository;
-import com.example.ecommerce.repository.PromotionRepository;
-import com.example.ecommerce.repository.StoreRepository;
+import com.example.ecommerce.repository.*;
 import com.example.ecommerce.service.service.NotificationService;
+import com.example.ecommerce.service.service.OrderService;
+import com.example.ecommerce.service.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,10 +35,9 @@ public class StoreService {
     private StoreRepository storeRepository;
     @Autowired
     private ProductRepository productRepository;
+
     @Autowired
-    private PromotionRepository promotionRepository;
-    @Autowired
-    private OrderRepository orderRepository;
+    private OrderService orderService;
 
     @Autowired
     private NotificationService notificationService;
@@ -115,10 +114,10 @@ public class StoreService {
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.by(Sort.Direction.valueOf(sortBy.toUpperCase()), filter));
         Page<Order> page;
         if (status.equals("ALL")) {
-            page = orderRepository.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
+            page = orderService.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
         } else {
             Order.OrderStatus orderStatus = Order.OrderStatus.fromString(status.toUpperCase());
-            page = orderRepository.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
+            page = orderService.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
         }
 
         PageResponse pageResponse = PageResponse.builder()
@@ -148,7 +147,7 @@ public class StoreService {
         for (Order order : orders) {
             if (order.getId().equals(request.getOrderId())) {
                 order.setStatus(request.getStatus());
-                orderRepository.save(order);
+                orderService.save(order);
 
                 if (request.getStatus().equals(Order.OrderStatus.READY_FOR_DELIVERY)) {
                     sendNotificationToDeliverPartner(order, order.getDeliveryPartner());
@@ -189,59 +188,6 @@ public class StoreService {
         notificationService.sendNotificationToUser(deliveryPartner.getId(), notification);
     }
 
-    public ResponseEntity<Response> getAllPromotions(Long storeId) {
-        Store store = findStoreById(storeId);
-        List<Promotion> promotions = store.getCoupons();
-
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Get all promotions successfully")
-                .data(promotions)
-                .build());
-    }
-
-    public ResponseEntity<Response> createPromotion(Long storeId, CreateVoucherRequest promotionRequest) {
-        Store store = findStoreById(storeId);
-        Coupon coupon = new Coupon();
-
-        coupon.setDescription(promotionRequest.getDescription());
-        coupon.setStore(store);
-        coupon.setDiscount(promotionRequest.getDiscount());
-
-        promotionRepository.save(promotion); // save promotion to database, since promotion is the owning side, the store will have this promotion in the promotions
-
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Create promotion successfully")
-                .data(null)
-                .build());
-    }
-
-    public ResponseEntity<Response> updatePromotion(Long storeId, UpdatePromotionRequest updatePromotionRequest) {
-        Store store = findStoreById(storeId);
-        List<Coupon> promotions = store.getCoupons();
-
-        boolean isExist = promotions.stream().anyMatch(promotion -> promotion.getId().equals(updatePromotionRequest.getPromotionId()));
-        if (!isExist) {
-            throw new NotFoundException("Promotion not found for promotionId: " + updatePromotionRequest.getPromotionId());
-        }
-
-        for (Promotion promotion : promotions) {
-            if (promotion.getId().equals(updatePromotionRequest.getPromotionId())) {
-                promotion.setName(updatePromotionRequest.getName());
-                promotion.setDescription(updatePromotionRequest.getDescription());
-                promotion.setPercent(updatePromotionRequest.getPercent());
-                promotionRepository.save(promotion);
-            }
-        }
-
-
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Update promotion successfully")
-                .data(null)
-                .build());
-    }
 
     public ResponseEntity<Response> updateProduct(Long storeId, UpdateProductRequest request) {
         Store store = findStoreById(storeId);
@@ -397,12 +343,13 @@ public class StoreService {
 
     public ResponseEntity<Response> updateInformation(Long id, UpdateStoreRequest updateStoreRequest) {
         Store store = findStoreById(id);
-        store.setName(updateStoreRequest.getName());
-        store.setDescription(updateStoreRequest.getDescription());
-        store.setEmail(updateStoreRequest.getEmail());
-        store.setAddress(updateStoreRequest.getAddresses());
-        store.setAvatar(updateStoreRequest.getAvatar());
 
+        if (updateStoreRequest.getName() != null) store.setName(updateStoreRequest.getName());
+        if (updateStoreRequest.getDescription() != null) store.setDescription(updateStoreRequest.getDescription());
+        if (updateStoreRequest.getAddress() != null) store.setAddress(updateStoreRequest.getAddress());
+        if (updateStoreRequest.getAvatar() != null) store.setAvatar(updateStoreRequest.getAvatar());
+        if (updateStoreRequest.getPhoneNumber() != null) store.setPhoneNumber(updateStoreRequest.getPhoneNumber());
+        if (updateStoreRequest.getCity() != null) store.setCity(updateStoreRequest.getCity());
         storeRepository.save(store);
 
         return ResponseEntity.ok(Response.builder()
@@ -414,7 +361,7 @@ public class StoreService {
 
     public ResponseEntity<Response> searchOrderByCode(Long storeId, String orderCode) {
 //        Store store = findStoreById(id);
-        Order order = orderRepository.findByOrderCode(orderCode);
+        Order order = orderService.findByOrderCode(orderCode);
 
         if (order == null) {
             throw new NotFoundException("Order not found for orderCode: " + orderCode);
@@ -449,7 +396,7 @@ public class StoreService {
 
         Example<Order> example = Example.of(orderExample, matcher);
 
-        Page<Order> page = orderRepository.findAll(example, pageable);
+        Page<Order> page = orderService.findAll(example, pageable);
         PageResponse pageResponse = PageResponse.builder()
                 .content(page.getContent())
                 .totalPages(page.getTotalPages())
@@ -463,4 +410,19 @@ public class StoreService {
                 .data(pageResponse)
                 .build());
     }
+
+    public ResponseEntity<Response> countOrders(Long id, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        Store store = findStoreById(id);
+
+        Map<String, Long> mapCount = orderService.countOrdersByStore(store, fromDateTime, toDateTime);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get order successfully")
+                .data(mapCount)
+                .build());
+    }
+
+
+
 }

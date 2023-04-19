@@ -8,6 +8,8 @@ import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
+
 public interface DeliveryPartnerService {
 
      DeliveryPartner findDeliveryPartnerById(Long deliveryPartnerId);
@@ -25,10 +27,12 @@ public interface DeliveryPartnerService {
 
      ResponseEntity<Response> getOrderById(Long deliveryPartnerId, Long orderId);
 
-     ResponseEntity<Response> updateOrder(Long deliveryPartnerId, Long orderId, UpdateOrderRequest updateRequest);
+     ResponseEntity<Response> updateOrder(Long deliveryPartnerId, UpdateOrderRequest updateRequest);
 
     ResponseEntity<Response> getAccountInformation(Long id);
 
      ResponseEntity<Response> updateAccount(Long id, UpdateDeliveryPartnerAccountRequest updateAccountRequest);
+
+     ResponseEntity<Response> countOrders(Long id, LocalDateTime fromDateTime, LocalDateTime toDateTime);
 
 }

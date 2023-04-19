@@ -19,6 +19,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findAllByCustomerAndStatusAndCreatedAtBetween(Customer customer, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
+    Long countByCustomerAndStatusAndCreatedAtBetween(Customer customer, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to);
+
+    Long countByStoreAndStatusAndCreatedAtBetween(Store store, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to);
+
+
+    Long countByDeliveryPartnerAndStatusAndCreatedAtBetween(DeliveryPartner deliveryPartner, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to);
+
     Order findByOrderCode(String orderCode);
 
     Page<Order> findAllByDeliveryPartnerAndStatus(DeliveryPartner deliveryPartner, Order.OrderStatus orderStatus, Pageable pageable);

@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.service;
 
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.UpdateAdminRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
@@ -23,4 +24,9 @@ public interface UserService {
 
     User findUserById(Long userId);
 
+    ResponseEntity<Response> searchUserByName(String name, Integer page, Integer elementsPerPage, String status, String filter, String sortBy, String role);
+
+    ResponseEntity<Response> searchUserByEmail(String email);
+
+    ResponseEntity<Response> updateAccountInfoById(Long id, UpdateAdminRequest updateAccountRequest);
 }

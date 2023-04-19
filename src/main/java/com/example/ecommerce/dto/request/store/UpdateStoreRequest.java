@@ -9,8 +9,8 @@ public class UpdateStoreRequest {
 
     private String name;
     private String description;
-    private String email;
-    private String addresses;
+    private String address;
     private String avatar;
-
+    private String phoneNumber;
+    private String city;
 }

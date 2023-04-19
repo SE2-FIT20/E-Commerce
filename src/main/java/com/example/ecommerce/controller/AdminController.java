@@ -1,12 +1,12 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.domain.User;
-import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
+import com.example.ecommerce.dto.request.UpdateAdminRequest;
 import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
+import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
-import com.example.ecommerce.dto.request.promotion.CreateVoucherRequest;
+import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
-import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.service.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -341,7 +341,7 @@ public class AdminController {
                     )
             }
     )
-    @DeleteMapping("/delete-products/{id}")
+    @DeleteMapping("/delete-product/{id}")
     public ResponseEntity<Response> deleteProductById(@PathVariable @Schema(description = "id of product") Long id) {
         return productService.deleteProductById(id);
     }
@@ -580,64 +580,75 @@ public class AdminController {
         return feedbackService.deleteById(id);
     }
 
-    @Operation(
-            summary = "Get all promotions",
-            security = @SecurityRequirement(name = "bearerAuth")
+//    @Operation(
+//            summary = "Get all promotions",
+//            security = @SecurityRequirement(name = "bearerAuth")
+//
+//    )
+//    @ApiResponses(
+//            value = {
+//                    @ApiResponse(responseCode = "200", description = "Get promotion successfully!",
+//                            content = @Content(mediaType = "application/json",
+//                                    schema = @Schema(implementation = Response.class),
+//                                    examples = @ExampleObject(value = """
+//                                            {
+//                                                "status": 200,
+//                                                "message": "Get all promotions successfully",
+//                                                "data": [
+//                                                {
+//                                                    "id" : 1,
+//                                                    "percent" : 12,
+//                                                    "storeId" : 35,
+//                                                    "isGlobal": false
+//                                                },
+//                                                {
+//                                                    "id" : 2,
+//                                                    "percent" : 10,
+//                                                    "storeId" : null,
+//                                                    "isGlobal": true
+//                                                }
+//                                                ]
+//                                            }
+//                                            """)
+//                            )
+//                    ),
+//                    @ApiResponse(responseCode = "400", description = "Get promotion failed!",
+//                            content = @Content(mediaType = "application/json",
+//                                    schema = @Schema(implementation = Response.class),
+//                                    examples = @ExampleObject(value = """
+//                                            {
+//                                                "status": 400,
+//                                                "message": "Get all promotions failed",
+//                                                "data": null
+//                                            }
+//                                            """)
+//                            )
+//                    )
+//            }
+//    )
+//    @GetMapping("/promotions")
+//    public ResponseEntity<Response> getAllVouchers(
+//            @RequestParam(defaultValue = "0", required = false) Integer page,
+//            @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+//            @RequestParam(defaultValue = "all", required = false) String status,
+//            @RequestParam(defaultValue = "createdAt", required = false) String filter,
+//            @RequestParam(defaultValue = "desc", required = false) String sortBy) {
+//        if (elementsPerPage == 0) {
+//            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+//        }
+//
+//        return promotionService.getAllVouchers(page, elementsPerPage, status, filter, sortBy);
+//    }
 
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Get promotion successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Get all promotions successfully",
-                                                "data": [
-                                                {
-                                                    "id" : 1,
-                                                    "percent" : 12,
-                                                    "storeId" : 35,
-                                                    "isGlobal": false
-                                                },
-                                                {
-                                                    "id" : 2,
-                                                    "percent" : 10,
-                                                    "storeId" : null,
-                                                    "isGlobal": true
-                                                }
-                                                ]
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Get promotion failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Get all promotions failed",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @GetMapping("/promotions")
-    public ResponseEntity<Response> getAllPromotion(
-            @RequestParam(defaultValue = "0", required = false) Integer page,
-            @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
-            @RequestParam(defaultValue = "all", required = false) String status,
-            @RequestParam(defaultValue = "createdAt", required = false) String filter,
-            @RequestParam(defaultValue = "desc", required = false) String sortBy) {
+    @GetMapping("/voucher-sets")
+    public ResponseEntity<Response> getAllVoucherSets(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                      @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                      @RequestParam(defaultValue = "createdAt", required = false) String filter,
+                                                      @RequestParam(defaultValue = "desc", required = false) String sortBy) {
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
-
-        return promotionService.getAllPromotions(page, elementsPerPage, status, filter, sortBy);
+        return promotionService.getAllVoucherSets(page, elementsPerPage, filter, sortBy);
     }
 
     @Operation(
@@ -646,7 +657,7 @@ public class AdminController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = CreateVoucherRequest.class),
+                            schema = @Schema(implementation = CreatePromotionRequest.class),
                             examples = @ExampleObject(value = """
                                     {
                                         "code": "PROMO1",
@@ -687,126 +698,46 @@ public class AdminController {
                     )
             }
     )
-    @PostMapping("/create-voucher")
-    public ResponseEntity<Response> createVoucher(@RequestBody CreateVoucherRequest promotionRequest) {
-        return promotionService.createVoucher(promotionRequest);
+    @PostMapping("/create-voucher-set")
+    public ResponseEntity<Response> createVoucherSet(@RequestBody CreatePromotionRequest promotionRequest) {
+        return promotionService.createVoucherSet(promotionRequest);
     }
 
-    @Operation(
-            summary = "Update promotion",
-            security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UpdatePromotionRequest.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                        "promotionId": 1,
-                                        "code": "PROMO1",
-                                        "description": "Promotion 1",
-                                        "percent": 12,
-                                        "storeId": 35
-                                    }
-                                    """)
-                    )
-            )
-
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Update promotion successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Update promotion successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Update promotion failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Update information of promotion failed!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Not found the promotion!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 404,
-                                                "message": "Not found the promotion!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @PutMapping("/promotions")
-    public ResponseEntity<Response> updatePromotionById(@RequestBody UpdatePromotionRequest promotionRequest) {
-        return promotionService.updateVoucher(promotionRequest);
+    @DeleteMapping("/voucher-sets/{id}")
+    public ResponseEntity<Response> deleteVoucherSet(@PathVariable Long id) {
+        return promotionService.deleteVoucherSet(id);
     }
 
-    @Operation(
-            summary = "Delete promotion by id",
-            security = @SecurityRequirement(name = "bearerAuth")
 
-
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Delete promotion successfully!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 200,
-                                                "message": "Delete promotion successfully",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Delete promotion failed!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 400,
-                                                "message": "Delete promotion failed!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Not found the promotion!",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "status": 404,
-                                                "message": "Not found the promotion!",
-                                                "data": null
-                                            }
-                                            """)
-                            )
-                    )
-            }
-    )
-    @DeleteMapping("/promotions/{id}")
-    public ResponseEntity<Response> deletePromotionById(@PathVariable @Schema(description = "Id of promotion") Long id) {
-        return promotionService.deleteVoucher(id);
+    @DeleteMapping("/vouchers/{id}")
+    public ResponseEntity<Response> deleteVoucher(@PathVariable Long id) {
+        return promotionService.deleteVoucherById(id);
     }
+
+
+    @PutMapping("/voucher-sets/{id}/add")
+    public ResponseEntity<Response> addVoucherToSet(@PathVariable Long id, @RequestParam int quantity) {
+        return promotionService.addVoucherToSet(id, quantity);
+    }
+
+    @PutMapping("/voucher-sets/{id}/subtract")
+    public ResponseEntity<Response> subtractVoucherToSet(@PathVariable Long id, @RequestParam int quantity) {
+        return promotionService.subtractVoucherToSet(id, quantity);
+    }
+
+    @GetMapping("/voucher-sets/{id}/all")
+    public ResponseEntity<Response> getAllVouchersInSet(@PathVariable Long id,
+                                                        @RequestParam(defaultValue = "0", required = false) Integer page,
+                                                        @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                        @RequestParam(defaultValue = "all", required = false) String status,
+                                                        @RequestParam(defaultValue = "createdAt", required = false) String filter,
+                                                        @RequestParam(defaultValue = "desc", required = false) String sortBy) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        return promotionService.getAllVouchersInSet(id, page, elementsPerPage, status, filter, sortBy);
+    }
+
 
 
     @Operation(
@@ -864,6 +795,30 @@ public class AdminController {
         return userService.getUserInformationById(currentAdmin.getId());
     }
 
+
+    @PutMapping("/account")
+    public ResponseEntity<Response> updateAccountInfo(@RequestBody UpdateAdminRequest updateAccountRequest) {
+        User currentAdmin = getCurrentAdmin();
+        return userService.updateAccountInfoById(currentAdmin.getId(), updateAccountRequest);
+    }
+    @GetMapping("/search-user-by-name")
+    public ResponseEntity<Response> searchUserByName(@RequestParam String name,
+                                                     @RequestParam(defaultValue = "0", required = false) Integer page,
+                                                     @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                     @RequestParam(defaultValue = "all", required = false) String status,
+                                                     @RequestParam(defaultValue = "createdAt", required = false) String filter,
+                                                     @RequestParam(defaultValue = "desc", required = false) String sortBy,
+                                                     @RequestParam(defaultValue = "all", required = false) String role) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        return userService.searchUserByName(name, page, elementsPerPage,status, filter, sortBy, role);
+    }
+    @GetMapping("/search-user-by-email")
+
+    public ResponseEntity<Response> searchUserByEmail(@RequestParam String email) {
+        return userService.searchUserByEmail(email);
+    }
     public User getCurrentAdmin() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

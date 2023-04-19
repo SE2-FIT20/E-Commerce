@@ -1,5 +1,6 @@
 package com.example.ecommerce.domain;
 
+import com.example.ecommerce.dto.response.CustomerBriefInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,11 +18,20 @@ public class Promotion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double discountPercent;
+    private double percent;
+    @Column(columnDefinition="LONGTEXT")
     private String description;
     private String code;
-    private Boolean isUsed;
+    private boolean isUsed;
     private LocalDateTime createdAt;
+    private LocalDateTime startAt;
     private LocalDateTime expiredAt;
     private String image;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Customer customer;
+
+    private CustomerBriefInfo getCustomer() {
+        return new CustomerBriefInfo(customer); // only return necessary information, hide sensitive information
+    }
 }

@@ -20,6 +20,8 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;
+    @Column(columnDefinition="LONGTEXT")
+
     private String content;
 
     @OneToOne

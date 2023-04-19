@@ -19,15 +19,13 @@ import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.UserService;
 import com.example.ecommerce.utils.Utils;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -176,9 +174,9 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
     }
 
     @Override
-    public ResponseEntity<Response> updateOrder(Long deliveryPartnerId, Long orderId, UpdateOrderRequest updateRequest) {
+    public ResponseEntity<Response> updateOrder(Long deliveryPartnerId, UpdateOrderRequest updateRequest) {
 
-        Order order = orderService.findOrderById(orderId);
+        Order order = orderService.findOrderById(updateRequest.getOrderId());
         // check if order belongs to delivery partner
         if (!order.getDeliveryPartner().getId().equals(deliveryPartnerId)) {
             throw new IllegalStateException("Order does not belong to delivery partner");
@@ -238,6 +236,20 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
                 .status(200)
                 .message("Account updated successfully")
                 .data(null)
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> countOrders(Long id, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+
+        DeliveryPartner deliveryPartner = findDeliveryPartnerById(id);
+
+        Map<String, Long> count = orderService.countOrdersByDeliveryPartner(deliveryPartner, fromDateTime, toDateTime);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Orders count retrieved successfully")
+                .data(count)
                 .build());
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.OrderItemDTO;
@@ -106,7 +107,8 @@ public class CustomerService {
         Customer customer = findCustomerById(customerId);
         Cart cart = customer.getCart();
 
-        DeliveryPartner deliveryPartner = deliveryPartnerService.findDeliveryPartnerById(request.getDeliveryPartnerId());
+        DeliveryPartner deliveryPartner = deliveryPartnerService
+                .findDeliveryPartnerById(request.getDeliveryPartnerId());
 
         // items in the cart are grouped into group by store
         for (CartStoreItem cartStoreItem : cart.getItems()) {
@@ -214,11 +216,12 @@ public class CustomerService {
             }
         }
 
-        return ResponseEntity.ok(Response.builder()
-                .status(400)
-                .message("You need to buy this product before you can review it")
-                .data(null)
-                .build());
+        throw new IllegalStateException("You need to buy this product before you can review it");
+//        return ResponseEntity.ok(Response.builder()
+//                .status(400)
+//                .message("You need to buy this product before you can review it")
+//                .data(null)
+//                .build());
 
     }
 
@@ -227,15 +230,12 @@ public class CustomerService {
         Review currentReview = reviewService.findReviewById(reviewId);
 
         if (!currentReview.getCustomer().equals(customer)) {
-            return ResponseEntity.ok(Response.builder()
-                    .status(400)
-                    .message("You are not the owner of this review")
-                    .data(null)
-                    .build());
+            throw new IllegalStateException("You are not the owner of this review");
         }
 
-        currentReview.setRating(updateReviewRequest.getRating());
-        currentReview.setComment(updateReviewRequest.getComment());
+        if (updateReviewRequest.getRating() != null) currentReview.setRating(updateReviewRequest.getRating());
+        if (updateReviewRequest.getImages() != null) currentReview.setImages(updateReviewRequest.getImages());
+        if (updateReviewRequest.getComment() != null) currentReview.setComment(updateReviewRequest.getComment());
 
 
         reviewService.save(currentReview);
@@ -273,5 +273,35 @@ public class CustomerService {
     }
 
 
+    public ResponseEntity<Response> deleteReview(Long id, Long reviewId) {
 
+        Review review = reviewService.findReviewById(reviewId);
+
+        if (!review.getCustomer().getId().equals(id)) {
+            throw new IllegalStateException("You are not the owner of this review");
+        }
+
+        reviewService.deleteByReviewId(reviewId);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Delete review successfully")
+                .data(null)
+                .build()
+        );
+
+    }
+
+    public ResponseEntity<Response> countOrders(Long id, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        Customer customer = findCustomerById(id);
+
+        Map<String, Long> mapCount = orderService.countOrdersByCustomer(customer, fromDateTime, toDateTime);
+
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Count orders successfully")
+                .data(mapCount)
+                .build());
+
+    }
 }

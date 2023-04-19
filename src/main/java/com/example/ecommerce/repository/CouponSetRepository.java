@@ -1,10 +1,9 @@
 package com.example.ecommerce.repository;
 
-import com.example.ecommerce.domain.Coupon;
-import com.example.ecommerce.domain.Voucher;
+import com.example.ecommerce.domain.CouponSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VoucherRepository extends JpaRepository<Voucher, Long> {
+public interface CouponSetRepository extends JpaRepository<CouponSet, Long> {
 }

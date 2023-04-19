@@ -18,7 +18,6 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @ManyToOne
     private Product product;
     private Integer quantity;

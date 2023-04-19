@@ -5,7 +5,7 @@ import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
-import com.example.ecommerce.dto.request.promotion.CreateVoucherRequest;
+import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
@@ -200,6 +200,33 @@ public class StoreController {
         return storeService.getAllOrders(currentStore.getId(), page, elementsPerPage, status, filter, sortBy, fromDateTime, toDateTime);
     }
 
+
+    @GetMapping("/orders-count")
+    public ResponseEntity<Response> getOrders(@RequestParam(required = false) String from,
+                                              @RequestParam(required = false) String to) {
+
+
+        LocalDateTime fromDateTime = null;
+        LocalDateTime toDateTime = null;
+
+        // the default value for from is 1970, it means that we will get all orders from the beginning
+        if (from == null) {
+            fromDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
+        } else {
+            fromDateTime = LocalDateTime.parse(from + "T00:00:00"); // start of the day
+        }
+
+        // the default value for to is now, the default value for from is null
+        if (to == null) {
+            toDateTime = LocalDateTime.now();
+        } else {
+            toDateTime = LocalDateTime.parse(to + "T23:59:59"); // end of the day
+        }
+
+        User currentStore = getCurrentStore();
+        return storeService.countOrders(currentStore.getId(), fromDateTime, toDateTime);
+    }
+
     @GetMapping("/orders/{orderId}")
     public ResponseEntity<Response> getOrderById(@PathVariable Long orderId) {
         User currentStore = getCurrentStore();
@@ -232,42 +259,6 @@ public class StoreController {
         return storeService.updateOrder(currentStore.getId(), request);
     }
 
-    /* this is optional as the result of the team discussion
-
-      @ApiResponses (
-              value = {
-                      @ApiResponse (responseCode = "200", description = "Get sale report successfully!",
-                              content = @Content (mediaType = "application/json",
-                                      schema = @Schema (implementation = Response.class),
-                                      examples = @ExampleObject (value = """
-                                              {
-                                                  "status": 200,
-                                                  "message": "Get sale report successfully",
-                                                  "data":  null
-                                              }
-                                              """)
-                              )
-                      ),
-                      @ApiResponse(responseCode = "400", description = "Get sale report failed!",
-                              content = @Content(mediaType = "application/json",
-                                      schema = @Schema(implementation = Response.class),
-                                      examples = @ExampleObject(value = """
-                                              {
-                                                  "status": 400,
-                                                  "message": "Get sale report failed",
-                                                  "data": null
-                                              }
-                                              """)
-                              )
-                      )
-              }
-      )
-
-      @GetMapping("/sale-report")
-      public ResponseEntity<Response> getSaleReport() {
-          return null;
-      }
-  */
     @Operation(summary = "get promotion")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get promotion successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
             {
@@ -304,67 +295,60 @@ public class StoreController {
                 "data": null
             }
             """)))})
-    @GetMapping("/promotion")
-    public ResponseEntity<Response> getPromotion() {
+    @GetMapping("/coupon-sets")
+    public ResponseEntity<Response> getAllCouponSets(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                     @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                     @RequestParam(defaultValue = "createdAt", required = false) String filter,
+                                                     @RequestParam(defaultValue = "desc", required = false) String sortBy) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
         User currentStore = getCurrentStore();
-        return storeService.getAllPromotions(currentStore.getId());
+        return promotionService.getAllCouponSetsOfStore(currentStore.getId(), page, elementsPerPage, filter, sortBy);
     }
 
-    @Operation(summary = "create promotion", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateVoucherRequest.class), examples = @ExampleObject(value = """
-            {
-                "code": "SHP-123",
-                "description": "Discount 50% for all products",
-                "percent": 50,
-                "storeId": null,
-            }
-            """))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Create promotion successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 200,
-                "message": "Create promotion successfully",
-                "data": null
-            }
-            """))), @ApiResponse(responseCode = "400", description = "Create promotion failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 400,
-                "message": "Create promotion failed",
-                "data": null
-            }
-            """)))})
-    @PostMapping("/promotion")
-    public ResponseEntity<Response> createPromotion(@RequestBody CreateVoucherRequest promotionRequest) {
+    @PostMapping("/coupon-sets")
+    public ResponseEntity<Response> createCouponSet(@RequestBody CreatePromotionRequest request) {
         User currentStore = getCurrentStore();
-        return storeService.createPromotion(currentStore.getId(), promotionRequest);
-
+        return promotionService.createCouponSet(currentStore.getId(), request);
     }
 
-    @Operation(summary = "update promotion", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdatePromotionRequest.class), examples = @ExampleObject(value = """
-            {
-                "name": "Promotion 1",
-                "percent": 10,
-                "storeId": null,
-                "isGlobal": true,
-            }
-            """))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Update promotion successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 200,
-                "message": "Update promotion successfully",
-                "data": null
-            }
-            """))), @ApiResponse(responseCode = "400", description = "Update promotion failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 400,
-                "message": "Update promotion failed",
-                "data": null
-            }
-            """)))})
-    @PutMapping("/promotion")
-    public ResponseEntity<Response> updatePromotionRequest(@RequestBody UpdatePromotionRequest updatePromotionRequest) {
+    @PutMapping("/coupon-sets/{couponSetId}/add")
+    public ResponseEntity<Response> addCouponToCouponSet(@PathVariable Long couponSetId, @RequestParam int quantity) {
         User currentStore = getCurrentStore();
-        return storeService.updatePromotion(currentStore.getId(), updatePromotionRequest);
+        return promotionService.addCouponToCouponSet(currentStore.getId(), couponSetId, quantity);
     }
 
+    @PutMapping("/coupon-sets/{couponSetId}/subtract")
+    public ResponseEntity<Response> subtractCouponFromCouponSet(@PathVariable Long couponSetId, @RequestParam int quantity) {
+        User currentStore = getCurrentStore();
+        return promotionService.subtractCouponFromCouponSet(currentStore.getId(), couponSetId, quantity);
+    }
+
+    @GetMapping("/coupon-sets/{couponSetId}/all")
+    public ResponseEntity<Response> getAllCouponsOfCouponSet(@PathVariable Long couponSetId,
+                                                             @RequestParam(defaultValue = "0", required = false) Integer page,
+                                                             @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
+                                                             @RequestParam(defaultValue = "all", required = false) String status,
+                                                             @RequestParam(defaultValue = "createdAt", required = false) String filter,
+                                                             @RequestParam(defaultValue = "desc", required = false) String sortBy) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+        User currentStore = getCurrentStore();
+        return promotionService.getAllCouponsOfCouponSet(currentStore.getId(), couponSetId, page, elementsPerPage, status, filter, sortBy);
+    }
+
+    @DeleteMapping("/coupon-sets/{couponSetId}")
+    public ResponseEntity<Response> deleteCouponSetById(@PathVariable Long couponSetId) {
+        User currentStore = getCurrentStore();
+        return promotionService.deleteCouponSetById(currentStore.getId(), couponSetId);
+    }
+    @DeleteMapping("/coupons/{couponId}")
+    public ResponseEntity<Response> deleteCouponById(@PathVariable Long couponId) {
+        User currentStore = getCurrentStore();
+        return promotionService.deleteCouponById(currentStore.getId(), couponId);
+    }
     @Operation(summary = "Get store information")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get store information successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
             {
@@ -412,7 +396,7 @@ public class StoreController {
 
 
     @PutMapping("/account")
-    public ResponseEntity<Response> updateAccountInformation(UpdateStoreRequest updateStoreRequest) {
+    public ResponseEntity<Response> updateAccountInformation(@RequestBody UpdateStoreRequest updateStoreRequest) {
         User currentStore = getCurrentStore();
         return storeService.updateInformation(currentStore.getId(), updateStoreRequest);
     }

@@ -34,5 +34,8 @@ public class Customer extends User{
     @JsonIgnore
     private List<Order> orders;
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Promotion> vouchersAndCoupons;
 
 }

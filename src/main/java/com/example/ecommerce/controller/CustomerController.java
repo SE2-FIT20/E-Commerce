@@ -198,6 +198,33 @@ public class CustomerController {
 
 
 
+
+    @GetMapping("/orders-count")
+    public ResponseEntity<Response> getOrders(@RequestParam(required = false) String from,
+                                              @RequestParam(required = false) String to) {
+
+
+        LocalDateTime fromDateTime = null;
+        LocalDateTime toDateTime = null;
+
+        // the default value for from is 1970, it means that we will get all orders from the beginning
+        if (from == null) {
+            fromDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
+        } else {
+            fromDateTime = LocalDateTime.parse(from + "T00:00:00"); // start of the day
+        }
+
+        // the default value for to is now, the default value for from is null
+        if (to == null) {
+            toDateTime = LocalDateTime.now();
+        } else {
+            toDateTime = LocalDateTime.parse(to + "T23:59:59"); // end of the day
+        }
+
+        User currentCustomer = getCurrentCustomer();
+        return customerService.countOrders(currentCustomer.getId(), fromDateTime, toDateTime);
+    }
+
     //TODO: endpoint to check the eligibility of the promotion code
 
     /* This is optional as the result of team discussion
@@ -420,5 +447,11 @@ public class CustomerController {
     public ResponseEntity<Response> updateReview(@RequestBody UpdateReviewRequest updateReviewRequest, @PathVariable Long reviewId) {
         User currentCustomer = getCurrentCustomer();
         return customerService.updateReview(currentCustomer.getId(), updateReviewRequest, reviewId);
+    }
+
+    @DeleteMapping("/review/{reviewId}")
+    public ResponseEntity<Response> deleteReview( @PathVariable Long reviewId) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.deleteReview(currentCustomer.getId(), reviewId);
     }
 }

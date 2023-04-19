@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
     public ResponseEntity<Response> deleteProductById(Long productId) {
         Product product = findProductById(productId); // check if this product exists
         deleteById(productId);
-        return ResponseEntity.ok(Response .builder()
+        return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Delete product successfully")
                 .build());

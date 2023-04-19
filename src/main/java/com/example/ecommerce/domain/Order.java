@@ -62,12 +62,18 @@ public class Order {
     private String destinationAddress;
     @Transient
     private Long totalPrice;
+    @Transient
+    private Double shippingFee;
 
     public Long getTotalPrice() {
         return items.stream()
                 .mapToLong(item -> (long) (item.getProduct().getPrice() * item.getQuantity())).sum();
     }
 
+    public Double getShippingPrice() {
+        if (deliveryPartner == null) return 0.0;
+        return deliveryPartner.getShippingFee();
+    }
     public CustomerBriefInfo getCustomer() {
         if (customer == null) return null;
         return new CustomerBriefInfo(customer); // only return necessary information, hide sensitive information

@@ -1,13 +1,8 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.domain.Product;
-import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.MarkNotificationsAsRead;
-import com.example.ecommerce.dto.response.ProductDetailedInfo;
 import com.example.ecommerce.dto.response.Response;
-import com.example.ecommerce.dto.response.SearchByNameResult;
-import com.example.ecommerce.dto.response.StoreDetailedInfo;
 import com.example.ecommerce.service.impl.StoreService;
 import com.example.ecommerce.service.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,8 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -190,7 +183,7 @@ public class AnonymousController {
 
     @GetMapping("/promotions/{code}")
     public ResponseEntity<Response> getPromotionByCode(@PathVariable String code) {
-        return promotionService.getPromotionByCode(code);
+        return promotionService.getVoucherByCode(code);
     }
 
 

@@ -16,10 +16,11 @@ public class Store extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
+    @Column(columnDefinition="LONGTEXT")
     private String description;
     private String address;
     private String city;
+    private String phoneNumber;
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> inventory;
 
@@ -28,6 +29,6 @@ public class Store extends User{
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Coupon> coupons;
+    private List<CouponSet> couponSets;
 
 }
