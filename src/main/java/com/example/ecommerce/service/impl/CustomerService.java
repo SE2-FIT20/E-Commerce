@@ -1,10 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.*;
-import com.example.ecommerce.dto.request.CheckoutRequest;
-import com.example.ecommerce.dto.request.CreateReviewRequest;
-import com.example.ecommerce.dto.request.RemoveFromCartRequest;
-import com.example.ecommerce.dto.request.UpdateReviewRequest;
+import com.example.ecommerce.dto.request.*;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.*;
@@ -19,11 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.OrderItemDTO;
+import static com.example.ecommerce.utils.Utils.isValidCardNumber;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class CustomerService {
     private final StoreService storeService;
     private final ReviewService reviewService;
     private final NotificationService notificationService;
-
+    private final PaymentInformationService paymentInformationService;
     public void save(Customer customer) {
         customerRepository.save(customer);
     }
@@ -303,5 +302,107 @@ public class CustomerService {
                 .data(mapCount)
                 .build());
 
+    }
+
+    public ResponseEntity<Response> checkEligibleToReview(Long id, Long productId) {
+        Product product = productService.findProductById(productId); // check product exist
+        Customer customer = findCustomerById(id);
+
+        List<Order> orders = customer.getOrders();
+
+        boolean existInOrder = orders.stream()
+                .anyMatch(order -> order.getItems()
+                        .stream()
+                        .anyMatch(orderItem -> orderItem.getProduct().getId().equals(productId))
+                );
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("eligible", existInOrder);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Check eligible to review successfully")
+                .data(map)
+                .build());
+    }
+
+    public ResponseEntity<Response> topUpBalance(Long customerId, TopUpBalanceRequest request) {
+        Customer customer = findCustomerById(customerId);
+        PaymentInformation paymentInformation = paymentInformationService.findPaymentInformationById(request.getPaymentInformationId());
+        if (!customer.getPaymentInformation().contains(paymentInformation)) {
+            throw new IllegalStateException("You are not the owner of this payment information");
+        }
+        if (request.getAmount() <= 0) {
+            throw new IllegalStateException("Amount must be greater than 0");
+        }
+
+        customer.setBalance(customer.getBalance() + request.getAmount());
+        save(customer);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Top up balance successfully")
+                .data(null)
+                .build());
+    }
+
+    public ResponseEntity<Response> getPaymentInformation(Long id) {
+        Customer customer = findCustomerById(id);
+        List<PaymentInformation> paymentInformation = customer.getPaymentInformation();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get payment information successfully")
+                .data(paymentInformation)
+                .build());
+    }
+
+    public ResponseEntity<Response> addPaymentInformationRequest(Long id, AddPaymentInformationRequest request) {
+        Customer customer = findCustomerById(id);
+        boolean supportedBank = request.getCardNumber().matches("^[459][0-9]{15}|^[459][0-9]{18}"); // only accept VISA, MasterCard, Napas
+        if (!supportedBank) {
+            throw new IllegalStateException("This bank is not supported, only accept VISA, MasterCard, Napas");
+        }
+
+
+        boolean validCardNumber = isValidCardNumber(request.getCardNumber());
+        if (!validCardNumber) {
+            throw new IllegalStateException("Invalid card number");
+        }
+        PaymentInformation.CardType cardType = null;
+        if (request.getCardNumber().startsWith("4")) {
+            cardType = PaymentInformation.CardType.VISA;
+        } else if (request.getCardNumber().startsWith("5")) {
+            cardType = PaymentInformation.CardType.MASTERCARD;
+        } else if (request.getCardNumber().startsWith("9")) {
+            cardType = PaymentInformation.CardType.NAPAS;
+        }
+        PaymentInformation paymentInformation = PaymentInformation.builder()
+                .customer(customer)
+                .cardNumber(request.getCardNumber())
+                .nameOnCard(request.getNameOnCard())
+                .expirationDate(request.getExpirationDate())
+                .cardType(cardType)
+                .build();
+
+
+        paymentInformationService.save(paymentInformation);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Add payment information successfully")
+                .data(null)
+                .build());
+    }
+
+    public ResponseEntity<Response> deletePaymentInformation(Long customerId, Long paymentInformationId) {
+        Customer customer = findCustomerById(customerId);
+        PaymentInformation paymentInformation = paymentInformationService.findPaymentInformationById(paymentInformationId);
+        if (!customer.getPaymentInformation().contains(paymentInformation)) {
+            throw new IllegalStateException("You are not the owner of this payment information");
+        }
+        paymentInformationService.deleteByPaymentInformationId(paymentInformationId);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Delete payment information successfully")
+                .data(null)
+                .build());
     }
 }

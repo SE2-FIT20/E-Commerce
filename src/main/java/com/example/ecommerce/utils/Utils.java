@@ -31,4 +31,39 @@ public class Utils {
         }
         return sb.toString();
     }
+
+    // Luhn algorithm
+    public static boolean isValidCardNumber(String cardNumber) {
+        // Step 1: Remove all non-digit characters from the card number
+        String digitsOnly = cardNumber.replaceAll("[^0-9]", "");
+
+        // Step 2: Check if the length of the card number is between 13 and 19 digits
+        int length = digitsOnly.length();
+        if (length < 13 || length > 19) {
+            return false;
+        }
+
+        // Step 3: Calculate the Luhn checksum of the card number
+        int sum = 0;
+        boolean alternate = false;
+        for (int i = length - 1; i >= 0; i--) {
+            int digit = Integer.parseInt(digitsOnly.substring(i, i + 1));
+            if (alternate) {
+                digit *= 2;
+                if (digit > 9) {
+                    digit -= 9;
+                }
+            }
+            sum += digit;
+            alternate = !alternate;
+        }
+        int checksum = sum % 10;
+        if (checksum != 0) {
+            checksum = 10 - checksum;
+        }
+
+        // Step 4: Compare the calculated checksum with the last digit of the card number
+        int lastDigit = Integer.parseInt(digitsOnly.substring(length - 1, length));
+        return checksum == lastDigit;
+    }
 }

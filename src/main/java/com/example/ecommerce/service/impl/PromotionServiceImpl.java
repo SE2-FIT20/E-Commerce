@@ -17,7 +17,7 @@ import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -30,6 +30,8 @@ public class PromotionServiceImpl implements PromotionService {
     private final CouponRepository couponRepository;
     private final CouponSetService couponSetService;
     private final StoreService storeService;
+    private final CustomerService customerService;
+
 //    private final StoreService storeService;
     @Override
     public ResponseEntity<Response> createVoucherSet(CreatePromotionRequest request) {
@@ -114,7 +116,7 @@ public class PromotionServiceImpl implements PromotionService {
                 voucher.setUsed(false);
             }
         } else {
-            matcher = matcher.withIgnorePaths("used");
+            matcher = matcher.withIgnorePaths("isUsed");
         }
         Page<Voucher> vouchers = voucherRepository.findAll(Example.of(voucher, matcher), pageable);
         PageResponse pageResponse = PageResponse.builder()
@@ -230,7 +232,7 @@ public class PromotionServiceImpl implements PromotionService {
                 coupon.setUsed(false);
             }
         } else {
-            matcher = matcher.withIgnorePaths("used");
+            matcher = matcher.withIgnorePaths("isUsed");
         }
 
         Page<Coupon> coupons = couponRepository.findAll(Example.of(coupon, matcher), pageable);
@@ -278,6 +280,24 @@ public class PromotionServiceImpl implements PromotionService {
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Delete coupon set successfully")
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> getVouchersCoupons(Long customerId) {
+        Customer customer = customerService.findCustomerById(customerId);
+
+        List<Voucher> vouchers = voucherRepository.findAllByCustomerAndIsUsed(customer, false);
+        List<Coupon> coupons = couponRepository.findAllByCustomerAndIsUsed(customer, false);
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("vouchers", vouchers);
+        map.put("coupons", coupons);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get vouchers and coupons successfully")
+                .data(map)
                 .build());
     }
 

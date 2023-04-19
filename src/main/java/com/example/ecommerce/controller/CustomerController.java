@@ -6,6 +6,7 @@ import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.impl.CustomerService;
+import com.example.ecommerce.service.service.PromotionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -22,8 +23,8 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/customer")
-//TODO: add voucher, promotion,
-//TODO: get search history
+//TODO: save voucher, coupon,
+//TODO: add voucher, coupon to cart
 public class CustomerController {
 
     @Value("${default.elementPerPage}")
@@ -31,6 +32,9 @@ public class CustomerController {
 
     @Autowired
     private  CustomerService customerService;
+
+    @Autowired
+    private PromotionService promotionService;
 
     @ApiResponses(
             value = {
@@ -196,8 +200,17 @@ public class CustomerController {
         return customerService.getOrders(currentCustomer.getId(), page, elementsPerPage, status, filter, sortBy, fromDateTime, toDateTime);
     }
 
+    @GetMapping("/vouchers-coupons")
+    public ResponseEntity<Response> getVouchersCoupons() {
+        User currentCustomer = getCurrentCustomer();
+        return promotionService.getVouchersCoupons(currentCustomer.getId());
+    }
 
-
+    @GetMapping("/check-eligible-to-review/{productId}")
+    public ResponseEntity<Response> checkEligibleToReview(@PathVariable Long productId) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.checkEligibleToReview(currentCustomer.getId(), productId);
+    }
 
     @GetMapping("/orders-count")
     public ResponseEntity<Response> getOrders(@RequestParam(required = false) String from,
@@ -225,7 +238,26 @@ public class CustomerController {
         return customerService.countOrders(currentCustomer.getId(), fromDateTime, toDateTime);
     }
 
-    //TODO: endpoint to check the eligibility of the promotion code
+
+    @GetMapping("/payment-information")
+    public ResponseEntity<Response> getPaymentInformation() {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.getPaymentInformation(currentCustomer.getId());
+    }
+
+
+    @PostMapping("/payment-information")
+    public ResponseEntity<Response> updatePaymentInformation(@RequestBody AddPaymentInformationRequest request) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.addPaymentInformationRequest(currentCustomer.getId(), request);
+    }
+
+    @DeleteMapping("/payment-information/{paymentInformationId}")
+    public ResponseEntity<Response> deletePaymentInformation(@PathVariable Long paymentInformationId) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.deletePaymentInformation(currentCustomer.getId(), paymentInformationId);
+    }
+
 
     /* This is optional as the result of team discussion
     @ApiResponses(
@@ -369,6 +401,15 @@ public class CustomerController {
         User currentCustomer = getCurrentCustomer();
         return customerService.updateAccount(currentCustomer.getId(), accountRequest);
     }
+
+
+    @PutMapping("/top-up-balance")
+    public ResponseEntity<Response> topUpBalance(@RequestBody TopUpBalanceRequest topUpBalanceRequest) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.topUpBalance(currentCustomer.getId(), topUpBalanceRequest);
+    }
+
+
     @Operation (
             summary = "Get information of account"
     )

@@ -70,7 +70,7 @@ public class Order {
                 .mapToLong(item -> (long) (item.getProduct().getPrice() * item.getQuantity())).sum();
     }
 
-    public Double getShippingPrice() {
+    public Double getShippingFee() {
         if (deliveryPartner == null) return 0.0;
         return deliveryPartner.getShippingFee();
     }

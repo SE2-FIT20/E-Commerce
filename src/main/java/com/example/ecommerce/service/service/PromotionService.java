@@ -43,4 +43,6 @@ public interface PromotionService {
     ResponseEntity<Response> deleteCouponById(Long id, Long couponSetId);
 
     ResponseEntity<Response> deleteCouponSetById(Long id, Long couponSetId);
+
+    ResponseEntity<Response> getVouchersCoupons(Long id);
 }
