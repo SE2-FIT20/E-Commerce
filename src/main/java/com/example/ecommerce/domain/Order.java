@@ -1,8 +1,7 @@
 package com.example.ecommerce.domain;
 
 import com.example.ecommerce.dto.response.CustomerBriefInfo;
-import com.example.ecommerce.dto.response.CustomerInformation;
-import com.example.ecommerce.dto.response.DeliveryPartnerInformation;
+import com.example.ecommerce.dto.response.DeliveryPartnerBriefInformation;
 import com.example.ecommerce.dto.response.StoreDetailedInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -10,7 +9,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 
 @AllArgsConstructor
@@ -85,9 +83,9 @@ public class Order {
     }
 
 
-    public DeliveryPartnerInformation getDeliveryPartner() {
+    public DeliveryPartnerBriefInformation getDeliveryPartner() {
         if (deliveryPartner == null) return null;
 
-        return new DeliveryPartnerInformation(deliveryPartner);
+        return new DeliveryPartnerBriefInformation(deliveryPartner);
     }
 }

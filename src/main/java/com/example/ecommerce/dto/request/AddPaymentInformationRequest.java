@@ -13,5 +13,5 @@ public class AddPaymentInformationRequest {
     private String nameOnCard;
     private String cardNumber;
     private int cvv;
-    private LocalDate expirationDate;
+    private String expirationDate;
 }

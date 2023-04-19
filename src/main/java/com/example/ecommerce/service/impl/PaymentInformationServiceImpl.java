@@ -26,6 +26,8 @@ public class PaymentInformationServiceImpl implements PaymentInformationService 
 
     @Override
     public void deleteByPaymentInformationId(Long paymentInformationId) {
+        PaymentInformation paymentInformation = findPaymentInformationById(paymentInformationId);// check if payment information exists
         paymentInformationRepository.deleteById(paymentInformationId);
+
     }
 }

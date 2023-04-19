@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-//TODO: considering remove this dto
+// for the data that can only be shown to the customer himself
 public class StoreDetailedInfo {
     private Long id;
     private String email;
@@ -26,6 +26,7 @@ public class StoreDetailedInfo {
     private double averageProductRating;
     private LocalDateTime createdAt;
     private String phoneNumber;
+    private double balance;
     public StoreDetailedInfo(Store store) {
         this.id = store.getId();
         this.name = store.getName();
@@ -37,6 +38,7 @@ public class StoreDetailedInfo {
         this.numberOfProducts = store.getInventory().size();
         this.createdAt = store.getCreatedAt();
         this.phoneNumber = store.getPhoneNumber();
+        this.balance = store.getBalance();
         double rating = store.getInventory()
                 .stream()
                 .filter(product -> !product.getReviews().isEmpty())

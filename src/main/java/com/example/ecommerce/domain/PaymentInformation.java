@@ -23,8 +23,8 @@ public class PaymentInformation {
     private String cardNumber;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int cvv;
-    private LocalDate expirationDate;
-    @Enumerated
+    private String expirationDate;
+    @Enumerated(EnumType.STRING)
     private CardType cardType;
 
     @ManyToOne(fetch = FetchType.LAZY)

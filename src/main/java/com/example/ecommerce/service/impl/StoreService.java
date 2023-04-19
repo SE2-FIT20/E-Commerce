@@ -4,15 +4,12 @@ import com.example.ecommerce.domain.*;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
-import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
-import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.request.store.UpdateStoreRequest;
 import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.*;
 import com.example.ecommerce.service.service.NotificationService;
 import com.example.ecommerce.service.service.OrderService;
-import com.example.ecommerce.service.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -178,7 +175,7 @@ public class StoreService {
         notificationService.sendNotificationToUser(customer.getId(), notification);
     }
 
-    private void sendNotificationToDeliverPartner(Order order, DeliveryPartnerInformation deliveryPartner) {
+    private void sendNotificationToDeliverPartner(Order order, DeliveryPartnerBriefInformation deliveryPartner) {
         Notification notification = Notification.builder()
                 .type(Notification.NotificationType.ORDER_STATUS_CHANGED)
                 .content("You have a new order to deliver from " + order.getStore().getName() + ".")

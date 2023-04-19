@@ -7,10 +7,7 @@ import com.example.ecommerce.dto.request.UpdateDeliveryPartnerAccountRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.UpdateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
-import com.example.ecommerce.dto.response.CustomerBriefInfo;
-import com.example.ecommerce.dto.response.DeliveryPartnerInformation;
-import com.example.ecommerce.dto.response.PageResponse;
-import com.example.ecommerce.dto.response.Response;
+import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.DeliveryPartnerRepository;
 import com.example.ecommerce.service.service.DeliveryPartnerService;
@@ -105,7 +102,7 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Delivery partner retrieved successfully")
-                .data(new DeliveryPartnerInformation(deliveryPartner))
+                .data(new DeliveryPartnerBriefInformation(deliveryPartner))
                 .build());
     }
 
@@ -115,7 +112,7 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
         Page<DeliveryPartner> deliveryPartners = deliveryPartnerRepository.findAll(pageable);
 
         PageResponse pageResponse = PageResponse.builder()
-                .content(DeliveryPartnerInformation.from(deliveryPartners.getContent()))
+                .content(DeliveryPartnerBriefInformation.from(deliveryPartners.getContent()))
                 .totalPages(deliveryPartners.getTotalPages())
                 .size(deliveryPartners.getSize ())
                 .build();
@@ -217,7 +214,7 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Account information retrieved successfully")
-                .data(new DeliveryPartnerInformation(deliveryPartner))
+                .data(new DeliveryPartnerDetailedInformation(deliveryPartner))
                 .build());
     }
 

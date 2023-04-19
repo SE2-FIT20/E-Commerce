@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+// for the data that can be publicly shown
 public class CustomerBriefInfo {
     private Long id;
     private String name;

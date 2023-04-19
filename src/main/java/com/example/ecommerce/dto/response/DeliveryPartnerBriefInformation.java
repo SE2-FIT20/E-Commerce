@@ -8,7 +8,8 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class DeliveryPartnerInformation {
+// for the data that can be publicly shown
+public class DeliveryPartnerBriefInformation {
     private Long id;
     private String avatar;
     private String email;
@@ -16,7 +17,7 @@ public class DeliveryPartnerInformation {
     private String description;
     private Double shippingFee;
 
-    public DeliveryPartnerInformation(DeliveryPartner deliveryPartner) {
+    public DeliveryPartnerBriefInformation(DeliveryPartner deliveryPartner) {
         this.id = deliveryPartner.getId();
         this.avatar = deliveryPartner.getAvatar();
         this.email = deliveryPartner.getEmail();
@@ -25,7 +26,7 @@ public class DeliveryPartnerInformation {
         this.shippingFee = deliveryPartner.getShippingFee();
     }
 
-    public static List<DeliveryPartnerInformation> from(List<DeliveryPartner> deliveryPartners) {
-        return deliveryPartners.stream().map(DeliveryPartnerInformation::new).toList();
+    public static List<DeliveryPartnerBriefInformation> from(List<DeliveryPartner> deliveryPartners) {
+        return deliveryPartners.stream().map(DeliveryPartnerBriefInformation::new).toList();
     }
 }

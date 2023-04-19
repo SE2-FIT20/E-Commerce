@@ -42,15 +42,8 @@ public class CustomerService {
 
     public ResponseEntity<Response> getCustomerInformationById(Long customerId) {
         Customer customer = findCustomerById(customerId);
-        String name = customer.getName();
-        String email = customer.getEmail();
-        List<String> addresses = customer.getAddresses();
-        String phoneNumber = customer.getPhoneNumber();
-        String avatar = customer.getAvatar();
 
-        CustomerInformation customerInformation = new CustomerInformation(customerId, name, email, addresses, phoneNumber, avatar);
-
-//        CustomerInformation customerInformation = customerRepository.findCustomerNameEmailAddressesAndPhoneNumberById(customerId);
+        CustomerDetailedInformation customerInformation = new CustomerDetailedInformation(customer);
         Response response = Response.builder()
                 .status(200)
                 .message("Get customer information successfully")
@@ -398,7 +391,12 @@ public class CustomerService {
         if (!customer.getPaymentInformation().contains(paymentInformation)) {
             throw new IllegalStateException("You are not the owner of this payment information");
         }
+
+        // because the relationship is bidirectional, so we need to delete both side
         paymentInformationService.deleteByPaymentInformationId(paymentInformationId);
+        customer.getPaymentInformation().remove(paymentInformation);
+        save(customer);
+
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Delete payment information successfully")

@@ -8,6 +8,7 @@ import lombok.Data;
 @Entity
 @DiscriminatorValue("coupon")
 @Data
+//TODO: transient field for duplicated fields with the set
 public class Coupon extends Promotion{
 
     @Transient

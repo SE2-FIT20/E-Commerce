@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+// for the data that can be publicly shown
 public class StoreBriefInfo {
     private Long id;
     private String name;
