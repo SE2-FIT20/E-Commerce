@@ -7,8 +7,11 @@ import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.OrderRepository;
+import com.example.ecommerce.service.service.NotificationService;
 import com.example.ecommerce.service.service.OrderService;
 import com.example.ecommerce.service.service.ProductService;
+import com.example.ecommerce.service.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -27,45 +30,123 @@ public class OrderServiceImpl implements OrderService {
 
 
     private final OrderRepository orderRepository;
+    private final NotificationService notificationService;
+    private final UserService userService;
+    private final ProductService productService;
+
     public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
     }
 
     @Override
+    @Transactional
     public ResponseEntity<Response> updateOrder(UpdateOrderRequest request) {
         Order order = findOrderById(request.getOrderId());
-        OrderStatus status = valueOf(request.getStatus().toString().toUpperCase());
-        order.setStatus(status);
+
+        //TODO: check if the update status is valid or not!
+        order.setStatus(request.getStatus());
+        if (request.getStatus().equals(DELIVERED)) {
+            handleWhenOrderIsDelivered(order);
+        } else if (request.getStatus().equals(CANCELLED_BY_CUSTOMER) || request.getStatus().equals(CANCELLED_BY_STORE)) {
+            handleWhenOrderIsCancelled(order);
+
+        }
+        save(order);
+        sendNotificationToNotifyNewOrderStatus(request, order);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Update order successfully")
-                .data(order)
+                .data(null)
                 .build());
     }
 
-
-
-
+    @Transactional
     @Override
-    public ResponseEntity<Response> getOrderById(Long orderId) {
-        Order order = findOrderById(orderId);
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Get order successfully")
-                .data(order)
-                .build());
+    public void handleWhenOrderIsCancelled(Order order) {
+        // increase the product quantity back, since the order has been cancelled
+        List<Long> productIds = order.getItems().stream().map(orderItem -> orderItem.getProduct().getId()).toList();
+        List<Product> products = productService.findProductsByIds(productIds);
+
+        for (Product product : products) {
+            int checkoutQuantity = order.getItems()
+                    .stream()
+                    .filter(orderItem -> orderItem.getProduct().getId().equals(product.getId()))
+                    .mapToInt(OrderItem::getQuantity)
+                    .sum();
+            product.setQuantity(product.getQuantity() + checkoutQuantity);
+        }
+        productService.saveAll(products);
+
+        // refund the money to customer
+        User customer = userService.findUserById(order.getCustomer().getId());
+        customer.setBalance(customer.getBalance() + order.getTotalPrice());
+        userService.save(customer);
+
     }
 
+    @Transactional
     @Override
-    public ResponseEntity<Response> getAllOrder() {
-        List<Order> allOrder = orderRepository.findAll();
-        return ResponseEntity.ok(Response.builder()
-                .status(200)
-                .message("Get all order successfully")
-                .data(allOrder)
-                .build());
+    public void handleWhenOrderIsDelivered(Order order) {
+        // increase product sold quantity
+        List<Long> productIds = order.getItems().stream().map(orderItem -> orderItem.getProduct().getId()).toList();
+        List<Product> products = productService.findProductsByIds(productIds);
+
+        for (Product product : products) {
+            int checkoutQuantity = order.getItems()
+                    .stream()
+                    .filter(orderItem -> orderItem.getProduct().getId().equals(product.getId()))
+                    .mapToInt(OrderItem::getQuantity)
+                    .sum();
+            product.setSold(product.getSold() + checkoutQuantity);
+        }
+        productService.saveAll(products);
+
+        // increase the balance of store and delivery partner
+        User store = userService.findUserById(order.getStore().getId());
+        store.setBalance(store.getBalance() + order.getTotalPrice());
+        User deliveryPartner = userService.findUserById(order.getDeliveryPartner().getId());
+        deliveryPartner.setBalance(deliveryPartner.getBalance() + order.getShippingFee());
+        userService.saveAll(List.of(store, deliveryPartner));
+
+
     }
+
+
+    private void sendNotificationToNotifyNewOrderStatus(UpdateOrderRequest request, Order order) {
+        String message = null;
+        List<Long> recipientIds = new ArrayList<>();
+        if (request.getStatus().equals(CANCELLED_BY_CUSTOMER)) {
+            message = String.format("Your order %s has been cancelled by customer %s", order.getOrderCode(), order.getCustomer().getName());
+            recipientIds = List.of(order.getStore().getId()); // store
+        } else if (request.getStatus().equals(CANCELLED_BY_STORE)) {
+            message = String.format("Your order %s has been cancelled by store %s", order.getOrderCode(), order.getStore().getName());
+            recipientIds = List.of(order.getCustomer().getId()); // customer
+        } else if (request.getStatus().equals(READY_FOR_DELIVERY)) {
+            message = String.format("You have a new order %s is ready for delivery", order.getOrderCode());
+            recipientIds = List.of(order.getDeliveryPartner().getId()); // delivery partner
+        } else if (request.getStatus().equals(DELIVERED)) {
+            message = String.format("Your order %s has been delivered successfully", order.getOrderCode());
+            recipientIds = List.of(order.getCustomer().getId(), order.getStore().getId()); // customer and store
+        }
+
+        for (Long recipientId : recipientIds) {
+            if (message == null) break; // if there is nothing to send
+            prepareNotificationAndSendToUser(recipientId, message);
+        }
+    }
+
+
+    private void prepareNotificationAndSendToUser(Long userId, String message) {
+        Notification notification = Notification.builder()
+                .type(Notification.NotificationType.ORDER_STATUS_CHANGED)
+                .content(message)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationService.sendNotificationToUser(userId, notification);
+    }
+
 
     @Override
     public void save(Order order) {

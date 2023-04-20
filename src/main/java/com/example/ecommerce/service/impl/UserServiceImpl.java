@@ -124,6 +124,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void saveAll(List<User> list) {
+         userRepository.saveAll(list);
+    }
+
+    @Override
     public ResponseEntity<Response> getAllUsers(Integer page, Integer elementsPerPage, String filter, String sortBy, String status, String role) {
 
         Pageable pageable = PageRequest.of(page, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);

@@ -7,6 +7,8 @@ import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface UserService {
 
@@ -29,4 +31,7 @@ public interface UserService {
     ResponseEntity<Response> searchUserByEmail(String email);
 
     ResponseEntity<Response> updateAccountInfoById(Long id, UpdateAdminRequest updateAccountRequest);
+
+    void saveAll(List<User> store);
+
 }

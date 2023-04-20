@@ -6,6 +6,7 @@ import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,17 +17,9 @@ import java.util.Map;
 
 public interface OrderService {
 
-//    ResponseEntity<Response> createOrder(AddToCartRequest request);
-//
-//    ResponseEntity<Response> deleteOrderById(Long orderId);
-
-    ResponseEntity<Response> updateOrder(UpdateOrderRequest order);
-
-    ResponseEntity<Response> getOrderById(Long orderId);
-
-    ResponseEntity<Response> getAllOrder();
 
     Order findOrderById(Long orderId);
+
     void save(Order order);
 
     Page<Order> getAllOrdersOfCustomer(Integer pageNumber, Integer elementsPerPage,  Customer customer, String status, String filter, String sortBy, LocalDateTime from, LocalDateTime to);
@@ -45,6 +38,11 @@ public interface OrderService {
 
     Page<Order> findAll(Example<Order> example, Pageable pageable);
 
+    @Transactional
+    ResponseEntity<Response> updateOrder(UpdateOrderRequest request);
+
+    void handleWhenOrderIsCancelled(Order order);
+    void handleWhenOrderIsDelivered(Order order);
 
     Map<String, Long> countOrdersByStore(Store store, LocalDateTime fromDateTime, LocalDateTime toDateTime);
 

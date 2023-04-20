@@ -37,12 +37,6 @@ public class StoreController {
     private StoreService storeService;
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
     private PromotionService promotionService;
 
     @Operation(summary = "Create product", description = "Create product", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateProductRequest.class), examples = @ExampleObject(value = """
