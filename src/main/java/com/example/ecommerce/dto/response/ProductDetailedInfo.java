@@ -62,6 +62,7 @@ public class ProductDetailedInfo {
         return products.stream().map(ProductDetailedInfo::new).collect(Collectors.toList());
     }
 
+    @Data
     private class StoreInformationForProduct {
         private Long id;
         private String name;

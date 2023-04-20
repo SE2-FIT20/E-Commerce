@@ -403,6 +403,11 @@ public class PromotionServiceImpl implements PromotionService {
                     .build());
     }
 
+    @Override
+    public ResponseEntity<Response> addVouchersCouponsToCart(Long customerId, Long promotionId) {
+        return null;
+    }
+
 
     private Voucher findVoucherById(Long promotionId) {
         return voucherRepository.findById(promotionId)
