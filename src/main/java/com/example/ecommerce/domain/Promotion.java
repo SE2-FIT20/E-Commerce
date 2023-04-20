@@ -26,7 +26,7 @@ public abstract class Promotion {
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
-    private CustomerBriefInfo getCustomer() {
+    public CustomerBriefInfo getCustomer() {
         return new CustomerBriefInfo(customer); // only return necessary information, hide sensitive information
     }
 

@@ -405,7 +405,53 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> addVouchersCouponsToCart(Long customerId, Long promotionId) {
-        return null;
+        Customer customer = customerService.findCustomerById(customerId);
+        Cart cart = customer.getCart();
+        Promotion promotion = findPromotionById(promotionId);
+
+        if (promotion.getCustomer().getId().equals(customerId)) {
+            throw new IllegalArgumentException("Promotion does not belong to this customer");
+        }
+
+        if (promotion.isUsed()) {
+            throw new IllegalArgumentException("Promotion has been already used!");
+        }
+
+        if (promotion.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Promotion has expired!");
+        }
+
+
+        if (promotion instanceof Voucher) {
+            Voucher voucher = (Voucher) promotion;
+            boolean cartAlreadyHasAVoucher = cart.getPromotions().stream().anyMatch(p -> p instanceof Voucher);
+            if (cartAlreadyHasAVoucher) {
+                throw new IllegalArgumentException("Cart already has a voucher!");
+            }
+            voucher.setCustomer(customer);
+
+
+        } else if (promotion instanceof Coupon) {
+            Coupon coupon = (Coupon) promotion;
+            boolean cartAlreadyHasAPromotion = cart.getPromotions().stream().anyMatch(p -> p instanceof Coupon);
+            if (cartAlreadyHasAPromotion) {
+                throw new IllegalArgumentException("Cart already has a coupon!");
+            }
+            coupon.setCustomer(customer);
+
+        }
+
+        promotionRepository.save(promotion);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Add promotion to cart successfully")
+                .build());
+    }
+
+    private Promotion findPromotionById(Long promotionId) {
+        return promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new NotFoundException("Promotion not found"));
     }
 
 

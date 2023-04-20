@@ -67,7 +67,8 @@ public class ProductDetailedInfo {
         private Long id;
         private String name;
         private String avatar;
-        private int numberOfProducts;
+        private long numberOfProducts;
+        private long numbersOfReviews;
         private double averageRating;
         private LocalDateTime createdAt;
         private String city;
@@ -77,6 +78,8 @@ public class ProductDetailedInfo {
             this.name = store.getName();
             this.avatar = store.getAvatar();
             this.numberOfProducts = store.getInventory().size();
+            this.numbersOfReviews = store.getInventory().stream()
+                    .map(Product::getReviews).count();
             this.averageRating = store.getInventory()
                     .stream().filter(product -> product.getReviews().size() > 0)
                     .mapToDouble(product -> product.getReviews().stream().mapToDouble(Review::getRating).average().orElse(0.0))
