@@ -14,6 +14,8 @@ import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -96,11 +98,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<Response> searchUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
+        List<User> userList = userRepository.findAllByEmailContaining(email.toLowerCase());
+        List<UserInformation> userInformationList = UserInformation.from(userList);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get user successfully")
-                .data(new UserInformation(user))
+                .data(userInformationList)
                 .build());
     }
 

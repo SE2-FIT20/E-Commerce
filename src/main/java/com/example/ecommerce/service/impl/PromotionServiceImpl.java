@@ -17,6 +17,7 @@ import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @AllArgsConstructor
@@ -79,7 +80,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> addVoucherToSet(Long voucherSetId, int quantity) {
         VoucherSet voucherSet = voucherSetService.findById(voucherSetId);
-        voucherSet.addVoucher(quantity);
+        voucherSet.addItems(quantity);
 
         voucherSetService.save(voucherSet);
         return ResponseEntity.ok(Response.builder()
@@ -91,7 +92,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> subtractVoucherToSet(Long voucherSetId, int quantity) {
         VoucherSet voucherSet = voucherSetService.findById(voucherSetId);
-        voucherSet.subtractVoucher(quantity);
+        voucherSet.subtractItems(quantity);
         voucherSetService.save(voucherSet);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
@@ -178,7 +179,7 @@ public class PromotionServiceImpl implements PromotionService {
         if (!couponSet.getStore().getId().equals(storeId)) {
             throw new IllegalArgumentException("Coupon set does not belong to this store");
         }
-        couponSet.addCoupon(quantity);
+        couponSet.addItems(quantity);
         couponSetService.save(couponSet);
 
         return ResponseEntity.ok(Response.builder()
@@ -193,7 +194,7 @@ public class PromotionServiceImpl implements PromotionService {
         if (!couponSet.getStore().getId().equals(storeId)) {
             throw new IllegalArgumentException("Coupon set does not belong to this store");
         }
-        couponSet.subtractCoupon(quantity);
+        couponSet.subtractItems(quantity);
         couponSetService.save(couponSet);
 
         return ResponseEntity.ok(Response.builder()
@@ -291,6 +292,68 @@ public class PromotionServiceImpl implements PromotionService {
                 .message("Get vouchers and coupons successfully")
                 .data(map)
                 .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> updateVoucherSet(Long voucherSetId, UpdatePromotionRequest promotionRequest) {
+        VoucherSet voucherSet = voucherSetService.findById(voucherSetId);
+        if (promotionRequest.getPercent() != null) voucherSet.setPercent(promotionRequest.getPercent());
+        if (promotionRequest.getStartAt() != null) voucherSet.setStartAt(promotionRequest.getStartAt());
+        if (promotionRequest.getExpiredAt() != null) voucherSet.setExpiredAt(promotionRequest.getExpiredAt());
+        if (promotionRequest.getDescription() != null) voucherSet.setDescription(promotionRequest.getDescription());
+        if (promotionRequest.getName() != null) voucherSet.setName(promotionRequest.getName());
+
+        voucherSetService.save(voucherSet);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Update voucher set successfully")
+                .build());
+
+    }
+
+    @Override
+    public ResponseEntity<Response> updateCouponSet(Long storeId, Long couponSetId, UpdatePromotionRequest request) {
+
+        Store store = storeService.findStoreById(storeId);
+        CouponSet couponSet = couponSetService.findById(couponSetId);
+        if (!couponSet.getStore().getId().equals(store.getId())) {
+            throw new IllegalArgumentException("Coupon set does not belong to this store");
+        }
+
+        if (request.getPercent() != null) couponSet.setPercent(request.getPercent());
+        if (request.getStartAt() != null) couponSet.setStartAt(request.getStartAt());
+        if (request.getExpiredAt() != null) couponSet.setExpiredAt(request.getExpiredAt());
+        if (request.getDescription() != null) couponSet.setDescription(request.getDescription());
+        if (request.getName() != null) couponSet.setName(request.getName());
+
+        couponSetService.save(couponSet);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Update coupon set successfully")
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> getMiniGameVouchers(Long customerId) {
+        Customer customer = customerService.findCustomerById(customerId);
+
+        List<VoucherSet> voucherSets = voucherSetService.findAllByExpiredAtBefore(LocalDateTime.now());
+        List<Voucher> vouchers = voucherRepository.findAllByCustomerAndIsUsed(customer, false);
+
+        // remove voucher set that the customer has already got
+        voucherSets.removeIf(voucherSet -> vouchers
+                .stream()
+                .anyMatch(voucher -> voucher.getVoucherSet().getId().equals(voucherSet.getId())
+        ));
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get mini game vouchers successfully")
+                .data(voucherSets)
+                .build());
+
     }
 
 

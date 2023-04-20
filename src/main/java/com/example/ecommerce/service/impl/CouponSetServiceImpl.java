@@ -45,7 +45,7 @@ public class CouponSetServiceImpl implements CouponSetService {
         }
                 
         couponSet.setCoupons(new ArrayList<>());
-        couponSet.addCoupon(request.getQuantity());
+        couponSet.addItems(request.getQuantity());
 
         couponSetRepository.save(couponSet); // save couponSet to database, this will cascade save all coupons
     }

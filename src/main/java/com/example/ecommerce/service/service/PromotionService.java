@@ -4,6 +4,7 @@ import com.example.ecommerce.domain.Coupon;
 import com.example.ecommerce.domain.Promotion;
 import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
+import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 
@@ -45,4 +46,10 @@ public interface PromotionService {
     ResponseEntity<Response> deleteCouponSetById(Long id, Long couponSetId);
 
     ResponseEntity<Response> getVouchersCoupons(Long id);
+
+    ResponseEntity<Response> updateVoucherSet(Long voucherSetId, UpdatePromotionRequest promotionRequest);
+
+    ResponseEntity<Response> updateCouponSet(Long storeId, Long couponSetId, UpdatePromotionRequest request);
+
+    ResponseEntity<Response> getMiniGameVouchers(Long customerId);
 }

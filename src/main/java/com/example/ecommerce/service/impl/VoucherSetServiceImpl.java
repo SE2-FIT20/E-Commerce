@@ -41,16 +41,22 @@ public class VoucherSetServiceImpl implements VoucherSetService {
         voucherSet.setName(request.getName());
 
         voucherSet.setVouchers(new ArrayList<>());
-        voucherSet.addVoucher(request.getQuantity());
+        voucherSet.addItems(request.getQuantity());
         voucherSetRepository.save(voucherSet); // save voucherSet to database, this will cascade save all vouchers
 
 
     }
 
+
     @Override
     public Page<VoucherSet> findAll(Pageable pageable) {
 
         return voucherSetRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<VoucherSet> findAll() {
+        return voucherSetRepository.findAll();
     }
 
     @Override
@@ -67,5 +73,11 @@ public class VoucherSetServiceImpl implements VoucherSetService {
     @Override
     public void save(VoucherSet voucherSet) {
         voucherSetRepository.save(voucherSet);
+    }
+
+    @Override
+    public List<VoucherSet> findAllByExpiredAtBefore(LocalDateTime now) {
+
+        return voucherSetRepository.findAllByExpiredAtBefore(now);
     }
 }

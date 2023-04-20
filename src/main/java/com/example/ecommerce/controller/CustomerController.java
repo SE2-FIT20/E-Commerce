@@ -206,6 +206,12 @@ public class CustomerController {
         return promotionService.getVouchersCoupons(currentCustomer.getId());
     }
 
+
+    @GetMapping("/mini-game-vouchers")
+    public ResponseEntity<Response> getMiniGameVouchers() {
+        User currentCustomer = getCurrentCustomer();
+        return promotionService.getMiniGameVouchers(currentCustomer.getId());
+    }
     @GetMapping("/check-eligible-to-review/{productId}")
     public ResponseEntity<Response> checkEligibleToReview(@PathVariable Long productId) {
         User currentCustomer = getCurrentCustomer();

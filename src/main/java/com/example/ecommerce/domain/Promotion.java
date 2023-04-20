@@ -11,27 +11,42 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Promotion {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Promotion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double percent;
-    @Column(columnDefinition="LONGTEXT")
-    private String description;
     private String code;
     private boolean isUsed;
     private LocalDateTime createdAt;
-    private LocalDateTime startAt;
-    private LocalDateTime expiredAt;
-    private String image;
-
+    @Transient
+    private String status;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
     private CustomerBriefInfo getCustomer() {
         return new CustomerBriefInfo(customer); // only return necessary information, hide sensitive information
     }
+
+
+    public abstract double getPercent();
+
+
+    public abstract String getStatus();
+
+    public abstract LocalDateTime getStartAt();
+
+    public abstract LocalDateTime getExpiredAt();
+
+    public abstract String getImage();
+
+    public abstract String getDescription();
+
+//        if (expiredAt.isBefore(LocalDateTime.now())) {
+//            return "Expired";
+//        }
+//        return "Available";
+//    }
 }

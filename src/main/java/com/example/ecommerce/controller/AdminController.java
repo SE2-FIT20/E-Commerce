@@ -6,6 +6,7 @@ import com.example.ecommerce.dto.request.auth.ChangeAccessRequest;
 import com.example.ecommerce.dto.request.deliveryPartner.CreateDeliveryPartnerRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
+import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -714,6 +715,10 @@ public class AdminController {
         return promotionService.deleteVoucherById(id);
     }
 
+    @PutMapping("/voucher-sets/{id}")
+    public ResponseEntity<Response> updateVoucherSet(@PathVariable Long id, @RequestBody UpdatePromotionRequest promotionRequest) {
+        return promotionService.updateVoucherSet(id, promotionRequest);
+    }
 
     @PutMapping("/voucher-sets/{id}/add")
     public ResponseEntity<Response> addVoucherToSet(@PathVariable Long id, @RequestParam int quantity) {
