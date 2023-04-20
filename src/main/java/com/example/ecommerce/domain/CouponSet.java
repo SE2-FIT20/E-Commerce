@@ -60,6 +60,14 @@ public class CouponSet extends PromotionSet{
         }
     }
 
+    @Override
+    public Promotion getAnUnUsedItem() {
+        return coupons.stream()
+                .filter(coupon -> !coupon.isUsed())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No coupon available for this coupon set"));
+    }
+
 
     public StoreBriefInfo getStore() {
         return new StoreBriefInfo(store);

@@ -13,7 +13,13 @@ public enum Category {
     TOYS,
     TRAVEL,
     SHOES,
-    BAGS;
+    BAGS,
+    PETS,
+    WATCHES,
+    CARS_MOTORBIKES,
+    CAMERAS,
+    PHONES,
+    OTHERS;
 
 
     public static Category fromString(String val) {
@@ -46,6 +52,18 @@ public enum Category {
                 return SHOES;
             case "BAGS":
                 return BAGS;
+            case "PETS":
+                return PETS;
+            case "WATCHES":
+                return WATCHES;
+            case "CARS_MOTORBIKES":
+                return CARS_MOTORBIKES;
+            case "CAMERAS":
+                return CAMERAS;
+            case "PHONES":
+                return PHONES;
+            case "OTHERS":
+                return OTHERS;
             default:
                 return null;
         }

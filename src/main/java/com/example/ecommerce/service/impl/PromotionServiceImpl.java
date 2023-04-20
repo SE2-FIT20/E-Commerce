@@ -8,10 +8,12 @@ import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CouponRepository;
 import com.example.ecommerce.repository.PromotionRepository;
+import com.example.ecommerce.repository.PromotionSetRepository;
 import com.example.ecommerce.repository.VoucherRepository;
 import com.example.ecommerce.service.service.CouponSetService;
 import com.example.ecommerce.service.service.PromotionService;
 import com.example.ecommerce.service.service.VoucherSetService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ public class PromotionServiceImpl implements PromotionService {
 
 
     private final PromotionRepository promotionRepository;
+    private final PromotionSetRepository promotionSetRepository;
     private final VoucherRepository voucherRepository;
     private final VoucherSetService voucherSetService;
     private final CouponRepository couponRepository;
@@ -354,6 +357,50 @@ public class PromotionServiceImpl implements PromotionService {
                 .data(voucherSets)
                 .build());
 
+    }
+
+    @Override
+    public ResponseEntity<Response> getCouponSetsByStore(Long storeId, Integer pageNumber, Integer elementsPerPage, String filter, String sortBy) {
+        Store store = storeService.findStoreById(storeId);
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
+        Page<CouponSet> couponSets = couponSetService.findAllByStoreAndExpireAtBefore(store, LocalDateTime.now(), pageable);
+
+        PageResponse pageResponse = PageResponse.builder()
+                .totalPages(couponSets.getTotalPages())
+                .content(couponSets.getContent())
+                .pageNumber(couponSets.getNumber())
+                .size(couponSets.getSize())
+                .build();
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get coupon sets successfully")
+                .data(pageResponse)
+                .build());
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, Long promotionSetId) {
+        Customer customer = customerService.findCustomerById(customerId);
+        // the promotion set is either a voucher set or a coupon set
+        PromotionSet promotionSet = promotionSetRepository.findById(promotionSetId)
+                .orElseThrow(() -> new NotFoundException("Promotion not found"));
+
+        // get an unused promotion from the promotion set (it can be a voucher or a coupon)
+        Promotion unUsedPromotion = promotionSet.getAnUnUsedItem();
+        unUsedPromotion.setCustomer(customer);
+        promotionRepository.save(unUsedPromotion); // since the promotion is the owner of the relationship, saving it will update the customer's promotion list
+
+//       no need to do this since the promotion is the owner of the relationship
+//        customer.getVouchersAndCoupons().add(unUsedPromotion);
+//        customerService.save(customer);
+
+            return ResponseEntity.ok(Response.builder()
+                    .status(200)
+                    .message("Save promotion successfully")
+                    .data(unUsedPromotion)
+                    .build());
     }
 
 

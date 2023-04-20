@@ -206,12 +206,29 @@ public class CustomerController {
         return promotionService.getVouchersCoupons(currentCustomer.getId());
     }
 
+    @PutMapping("/vouchers-coupons/{promotionSetId}")
+    public ResponseEntity<Response> saveVoucherOrCoupon(@PathVariable Long promotionSetId) {
+        User currentCustomer = getCurrentCustomer();
+        return promotionService.saveVoucherOrCoupon(currentCustomer.getId(), promotionSetId);
+    }
 
+    @PutMapping("/add-vouchers-coupons-to-cart/{promotionId}")
+    public ResponseEntity<Response> addVouchersCouponsToCart(@PathVariable Long promotionId) {
+        User currentCustomer = getCurrentCustomer();
+        return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), promotionId);
+    }
+
+    @GetMapping("/vouchers-coupons-to-add-to-cart")
+    public ResponseEntity<Response> getVouchersAndCouponsToAddToCart() {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.getVouchersAndCouponsToAddToCart(currentCustomer.getId());
+    }
     @GetMapping("/mini-game-vouchers")
     public ResponseEntity<Response> getMiniGameVouchers() {
         User currentCustomer = getCurrentCustomer();
         return promotionService.getMiniGameVouchers(currentCustomer.getId());
     }
+
     @GetMapping("/check-eligible-to-review/{productId}")
     public ResponseEntity<Response> checkEligibleToReview(@PathVariable Long productId) {
         User currentCustomer = getCurrentCustomer();

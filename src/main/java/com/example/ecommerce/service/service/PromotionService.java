@@ -1,14 +1,10 @@
 package com.example.ecommerce.service.service;
 
-import com.example.ecommerce.domain.Coupon;
 import com.example.ecommerce.domain.Promotion;
-import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 public interface PromotionService {
 
@@ -52,4 +48,10 @@ public interface PromotionService {
     ResponseEntity<Response> updateCouponSet(Long storeId, Long couponSetId, UpdatePromotionRequest request);
 
     ResponseEntity<Response> getMiniGameVouchers(Long customerId);
+
+    ResponseEntity<Response> getCouponSetsByStore(Long storeId, Integer page, Integer elementsPerPage, String filter, String sortBy);
+
+    ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, Long promotionSetId);
+
+    ResponseEntity<Response> addVouchersCouponsToCart(Long customerId, Long promotionId);
 }

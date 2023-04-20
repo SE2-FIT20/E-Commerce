@@ -11,6 +11,7 @@ import com.example.ecommerce.service.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -403,4 +404,44 @@ public class CustomerService {
                 .data(null)
                 .build());
     }
+
+    public ResponseEntity<Response> getVouchersAndCouponsToAddToCart(Long id) {
+        Customer customer = findCustomerById(id);
+        Cart cart = customer.getCart();
+        List<Promotion> promotions = customer.getVouchersAndCoupons();
+
+        List<Promotion> usable = new ArrayList<>();
+        List<Promotion> unUsable = new ArrayList<>();
+        for (Promotion promotion : promotions) {
+            if (promotion instanceof Voucher) {
+                usable.add(promotion); // because vouchers can be used for every product
+            } else {
+                Coupon coupon = (Coupon) promotion;
+                boolean productOfStoreInCart = cart.getItems().stream()
+                        .anyMatch(cartItem -> cartItem.getItems()
+                                .stream()
+                                .anyMatch(orderItem -> orderItem.getProduct().getStore().getId().equals(coupon.getStore().getId()
+                        ))
+                        );
+                // because coupon of a store is only usable for products of that store
+                if (productOfStoreInCart) {
+                    usable.add(promotion);
+                } else {
+                    unUsable.add(promotion);
+                }
+            }
+        }
+
+
+        Map<String, List> map = new HashMap<>();
+        map.put("usable", usable);
+        map.put("unUsable", unUsable);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get vouchers and coupons to add to cart successfully")
+                .data(map)
+                .build());
+    }
+
 }

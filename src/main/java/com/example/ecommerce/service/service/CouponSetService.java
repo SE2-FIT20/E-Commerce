@@ -8,6 +8,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CouponSetService {
@@ -21,4 +22,6 @@ public interface CouponSetService {
     void deleteById(CouponSet couponSet);
 
     Page<CouponSet> findAllByStore(Store store, Pageable pageable);
+
+    Page<CouponSet> findAllByStoreAndExpireAtBefore(Store store, LocalDateTime now, Pageable pageable);
 }

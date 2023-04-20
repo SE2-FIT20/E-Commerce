@@ -23,7 +23,6 @@ public class VoucherSet extends PromotionSet{
     @JsonIgnore
     private List<Voucher> vouchers;
 
-
     @Override
     public int getQuantityAvailable() {
         return vouchers.stream().filter(voucher -> !voucher.isUsed()).toArray().length;
@@ -52,5 +51,13 @@ public class VoucherSet extends PromotionSet{
                 break;
             }
         }
+    }
+
+    @Override
+    public Promotion getAnUnUsedItem() {
+        return vouchers.stream()
+                .filter(voucher -> !voucher.isUsed())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No voucher available for this voucher set"));
     }
 }

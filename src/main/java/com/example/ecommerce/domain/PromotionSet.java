@@ -36,6 +36,7 @@ public abstract class PromotionSet {
     public abstract void addItems(int quantity);
     public abstract void subtractItems(int quantity);
 
+    public abstract Promotion getAnUnUsedItem();
     public String getStatus() {
         if (expiredAt.isBefore(LocalDateTime.now())) {
             return "Expired";
