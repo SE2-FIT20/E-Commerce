@@ -1,5 +1,6 @@
 package com.example.ecommerce.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +37,7 @@ public abstract class PromotionSet {
     public abstract void addItems(int quantity);
     public abstract void subtractItems(int quantity);
 
+    @JsonIgnore
     public abstract Promotion getAnUnUsedItem();
     public String getStatus() {
         if (expiredAt.isBefore(LocalDateTime.now())) {

@@ -42,6 +42,7 @@ public class VoucherSetServiceImpl implements VoucherSetService {
 
         voucherSet.setVouchers(new ArrayList<>());
         voucherSet.addItems(request.getQuantity());
+        System.out.println(voucherSet.getVouchers().size());
         voucherSetRepository.save(voucherSet); // save voucherSet to database, this will cascade save all vouchers
 
 

@@ -24,9 +24,13 @@ public abstract class Promotion {
     @Transient
     private String status;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Customer customer;
 
     public CustomerBriefInfo getCustomer() {
+        if (customer == null) {
+            return null;
+        }
         return new CustomerBriefInfo(customer); // only return necessary information, hide sensitive information
     }
 

@@ -399,7 +399,7 @@ public class PromotionServiceImpl implements PromotionService {
             return ResponseEntity.ok(Response.builder()
                     .status(200)
                     .message("Save promotion successfully")
-                    .data(unUsedPromotion)
+                    .data(null)
                     .build());
     }
 
@@ -409,7 +409,7 @@ public class PromotionServiceImpl implements PromotionService {
         Cart cart = customer.getCart();
         Promotion promotion = findPromotionById(promotionId);
 
-        if (promotion.getCustomer().getId().equals(customerId)) {
+        if (!promotion.getCustomer().getId().equals(customerId)) {
             throw new IllegalArgumentException("Promotion does not belong to this customer");
         }
 
@@ -428,7 +428,7 @@ public class PromotionServiceImpl implements PromotionService {
             if (cartAlreadyHasAVoucher) {
                 throw new IllegalArgumentException("Cart already has a voucher!");
             }
-            voucher.setCustomer(customer);
+            cart.addVoucher(voucher);
 
 
         } else if (promotion instanceof Coupon) {
@@ -437,12 +437,11 @@ public class PromotionServiceImpl implements PromotionService {
             if (cartAlreadyHasAPromotion) {
                 throw new IllegalArgumentException("Cart already has a coupon!");
             }
-            coupon.setCustomer(customer);
+            cart.addCoupon(coupon);
 
         }
 
-        promotionRepository.save(promotion);
-
+        customerService.save(customer);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Add promotion to cart successfully")

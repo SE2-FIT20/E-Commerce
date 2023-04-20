@@ -25,7 +25,7 @@ public class VoucherSet extends PromotionSet{
 
     @Override
     public int getQuantityAvailable() {
-        return vouchers.stream().filter(voucher -> !voucher.isUsed()).toArray().length;
+        return vouchers.stream().filter(voucher -> voucher.getCustomer() == null).toArray().length;
     }
 
     @Override
@@ -34,6 +34,7 @@ public class VoucherSet extends PromotionSet{
             Voucher voucher = new Voucher();
             voucher.setVoucherSet(this);
             voucher.setCreatedAt(LocalDateTime.now());
+            vouchers.add(voucher);
         }
     }
 

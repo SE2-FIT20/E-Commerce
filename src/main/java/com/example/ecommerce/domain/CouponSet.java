@@ -31,7 +31,7 @@ public class CouponSet extends PromotionSet{
     private Store store;
 
     public int getQuantityAvailable() {
-        return coupons.stream().filter(voucher -> !voucher.isUsed()).toArray().length;
+        return coupons.stream().filter(coupon -> coupon.getCustomer() == null).toArray().length;
     }
 
     @Override

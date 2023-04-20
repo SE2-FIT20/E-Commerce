@@ -18,11 +18,41 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     List<OrderItem> items; // group the items by store
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Promotion> promotions;
+    
+    public void addVoucher(Voucher voucher) {
+        if (voucher != null) {
+            Map<StoreBriefInfo, List<OrderItem>> itemsByStore = groupItemsByStore();
+            // apply voucher to all items
+            itemsByStore.forEach((store, storeItems) -> {
+                storeItems.forEach(item -> {
+                    item.applyPromotion(voucher);
+                });
+            });
+        }
+
+    }
+
+    public void addCoupon(Coupon coupon) {
+        if (coupon != null) {
+            // apply coupon to the items of the store that the coupon belongs to
+            Map<StoreBriefInfo, List<OrderItem>> itemsByStore = groupItemsByStore();
+
+            itemsByStore.forEach((store, storeItems) -> {
+                if (store.getId().equals(coupon.getStore().getId())) {
+                    storeItems.forEach(item -> {
+                        item.applyPromotion(coupon);
+                    });
+                }
+            });
+        }
+
+    }
+
 
     public void addItem(Product product, Integer quantity) {
 
@@ -59,6 +89,19 @@ public class Cart {
 
     public List<CartStoreItem> getItems() {
         // group the items by store
+
+        Map<StoreBriefInfo, List<OrderItem>> itemsByStore = groupItemsByStore();
+
+
+        return itemsByStore.entrySet().stream()
+                .map(entry -> CartStoreItem.builder()
+                        .store(entry.getKey())
+                        .items(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private Map<StoreBriefInfo, List<OrderItem>> groupItemsByStore() {
         Map<StoreBriefInfo, List<OrderItem>> itemsByStore = new LinkedHashMap<>();
         for (OrderItem item : items) {
             StoreBriefInfo store = item.getProduct().getStore();
@@ -70,14 +113,7 @@ public class Cart {
                 itemsByStore.put(store, storeItems);
             }
         }
-
-
-        return itemsByStore.entrySet().stream()
-                .map(entry -> CartStoreItem.builder()
-                        .store(entry.getKey())
-                        .items(entry.getValue())
-                        .build())
-                .collect(Collectors.toList());
+        return itemsByStore;
     }
 
     public List<OrderItem> getOrderItemsPreview() {

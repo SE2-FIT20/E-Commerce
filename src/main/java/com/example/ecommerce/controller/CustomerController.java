@@ -212,7 +212,7 @@ public class CustomerController {
         return promotionService.saveVoucherOrCoupon(currentCustomer.getId(), promotionSetId);
     }
 
-    @PutMapping("/add-vouchers-coupons-to-cart/{promotionId}")
+    @PutMapping("/add-voucher-coupon-to-cart/{promotionId}")
     public ResponseEntity<Response> addVouchersCouponsToCart(@PathVariable Long promotionId) {
         User currentCustomer = getCurrentCustomer();
         return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), promotionId);
