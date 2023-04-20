@@ -109,6 +109,23 @@ public class DeliveryPartnerController {
         if (elementsPerPage == 0) {
             elementsPerPage = Integer.parseInt(defaultElementPerPage);
         }
+        LocalDateTime fromDateTime = null;
+        LocalDateTime toDateTime = null;
+
+        // the default value for from is 1970, it means that we will get all orders from the beginning
+        if (from == null) {
+            fromDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
+        } else {
+            fromDateTime = LocalDateTime.parse(from + "T00:00:00"); // start of the day
+        }
+
+        // the default value for to is now, the default value for from is null
+        if (to == null) {
+            toDateTime = LocalDateTime.now();
+        } else {
+            toDateTime = LocalDateTime.parse(to + "T23:59:59"); // end of the day
+        }
+
         User user = getCurrentUser();
         return deliveryPartnerService.getAllOrderByDeliveryPartners(page, elementsPerPage, user.getId(), status, filter, sortBy, from, to);
     }
