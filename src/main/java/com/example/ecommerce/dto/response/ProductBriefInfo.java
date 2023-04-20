@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
-//TODO: considering remove this dto
 public class ProductBriefInfo {
     private Long id;
     private String name;

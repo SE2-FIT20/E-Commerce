@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class CheckoutRequest {
     private Long deliveryPartnerId;
     private String destinationAddress;
+    private String paymentMethod;
 }

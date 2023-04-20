@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.*;
+import com.example.ecommerce.domain.Order.OrderStatus;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.request.product.CreateProductRequest;
 import com.example.ecommerce.dto.request.product.UpdateProductRequest;
@@ -10,6 +11,7 @@ import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.*;
 import com.example.ecommerce.service.service.NotificationService;
 import com.example.ecommerce.service.service.OrderService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -17,10 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.example.ecommerce.domain.Order.OrderStatus.*;
 
 @Service
 public class StoreService {
@@ -113,7 +118,7 @@ public class StoreService {
         if (status.equals("ALL")) {
             page = orderService.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
         } else {
-            Order.OrderStatus orderStatus = Order.OrderStatus.fromString(status.toUpperCase());
+            OrderStatus orderStatus = fromString(status.toUpperCase());
             page = orderService.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
         }
 
@@ -132,32 +137,19 @@ public class StoreService {
         );
     }
 
+    @Transactional
     public ResponseEntity<Response> updateOrder(Long storeId, UpdateOrderRequest request) {
         Store store = findStoreById(storeId);
-        List<Order> orders = store.getOrders();
+        Order order = orderService.findOrderById(request.getOrderId());
 
-        boolean isExist = orders.stream().anyMatch(order -> order.getId().equals(request.getOrderId()));
-        if (!isExist) {
-            throw new NotFoundException("Order not found for orderId: " + request.getOrderId());
+        if (order.getStore().getId().equals(store.getId())) {
+            throw new IllegalStateException("Order does not belong to this store");
         }
 
-        for (Order order : orders) {
-            if (order.getId().equals(request.getOrderId())) {
-                order.setStatus(request.getStatus());
-                orderService.save(order);
-
-                if (request.getStatus().equals(Order.OrderStatus.READY_FOR_DELIVERY)) {
-                    sendNotificationToDeliverPartner(order, order.getDeliveryPartner());
-                } else if (request.getStatus().equals(Order.OrderStatus.CANCELLED)) {
-                    sendNotificationToCustomer(order, order.getCustomer());
-                }
-
-                break;
-            }
-        }
-
-
-
+        //TODO: check if the update status is valid or not!
+        order.setStatus(request.getStatus());
+        orderService.save(order);
+        sendNotificationToNotifyNewOrderStatus(request, order);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Update order successfully")
@@ -165,24 +157,38 @@ public class StoreService {
                 .build());
     }
 
-    private void sendNotificationToCustomer(Order order, CustomerBriefInfo customer) {
-        Notification notification = Notification.builder()
-                .type(Notification.NotificationType.ORDER_STATUS_CHANGED)
-                .content("Your order " + order.getId() + " has been " + order.getStatus().toString().toLowerCase() + " by " + order.getStore().getName() + ".")
-                .createdAt(LocalDateTime.now())
-                .build();
+    private void sendNotificationToNotifyNewOrderStatus(UpdateOrderRequest request, Order order) {
+        String message = null;
+        List<Long> recipientIds = new ArrayList<>();
+        if (request.getStatus().equals(CANCELLED_BY_CUSTOMER)) {
+            message = String.format("Your order %s has been cancelled by customer %s", order.getOrderCode(), order.getCustomer().getName());
+            recipientIds = List.of(order.getStore().getId()); // store
+        } else if (request.getStatus().equals(CANCELLED_BY_STORE)) {
+            message = String.format("Your order %s has been cancelled by store %s", order.getOrderCode(), order.getStore().getName());
+            recipientIds = List.of(order.getCustomer().getId()); // customer
+        } else if (request.getStatus().equals(READY_FOR_DELIVERY)) {
+            message = String.format("You have a new order %s is ready for delivery", order.getOrderCode());
+            recipientIds = List.of(order.getDeliveryPartner().getId()); // delivery partner
+        } else if (request.getStatus().equals(DELIVERED)) {
+            message = String.format("Your order %s has been delivered successfully", order.getOrderCode());
+            recipientIds = List.of(order.getCustomer().getId(), order.getStore().getId()); // customer and store
+        }
 
-        notificationService.sendNotificationToUser(customer.getId(), notification);
+        for (Long recipientId : recipientIds) {
+            if (message == null) break; // if there is nothing to send
+            prepareNotificationAndSendToUser(recipientId, message);
+        }
     }
 
-    private void sendNotificationToDeliverPartner(Order order, DeliveryPartnerBriefInformation deliveryPartner) {
+
+    private void prepareNotificationAndSendToUser(Long userId, String message) {
         Notification notification = Notification.builder()
                 .type(Notification.NotificationType.ORDER_STATUS_CHANGED)
-                .content("You have a new order to deliver from " + order.getStore().getName() + ".")
+                .content(message)
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        notificationService.sendNotificationToUser(deliveryPartner.getId(), notification);
+        notificationService.sendNotificationToUser(userId, notification);
     }
 
 

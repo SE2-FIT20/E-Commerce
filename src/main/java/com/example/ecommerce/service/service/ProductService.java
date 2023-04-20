@@ -6,6 +6,9 @@ import com.example.ecommerce.dto.request.product.UpdateProductRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+
 public interface ProductService {
 
 
@@ -31,5 +34,10 @@ public interface ProductService {
     Page<Product> getProductOfStore(Integer page, Integer elementsPerPage, Store store);
 
     ResponseEntity<Response> getAllProductCategories();
+
+    List<Product> findProductsByIds(List<Long> productIds);
+
+
+    void saveAll(List<Product> products);
 
 }

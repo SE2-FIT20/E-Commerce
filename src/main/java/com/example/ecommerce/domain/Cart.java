@@ -2,6 +2,7 @@ package com.example.ecommerce.domain;
 
 import com.example.ecommerce.dto.response.CartStoreItem;
 import com.example.ecommerce.dto.response.StoreBriefInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -85,6 +86,11 @@ public class Cart {
             throw new IllegalStateException("Product doesn't exist in the cart");
 
         }
+    }
+
+    @JsonIgnore
+    public Double getTotalPrice() {
+        return items.stream().mapToDouble(OrderItem::getPrice).sum();
     }
 
     public List<CartStoreItem> getItems() {

@@ -19,7 +19,13 @@ import java.util.List;
 @Table(name = "Orders") // Order is a reserved word in SQL
 public class Order {
     public enum OrderStatus {
-        PENDING, READY_FOR_DELIVERY, DELIVERING, DELIVERED, CANCELLED;
+        PENDING,
+        READY_FOR_DELIVERY,
+        DELIVERING,
+        DELIVERED,
+        CANCELLED_BY_CUSTOMER,
+        CANCELLED_BY_STORE,
+        DELIVERY_FAILED;
 
          public static OrderStatus fromString(String status) {
              return switch (status) {
@@ -27,11 +33,24 @@ public class Order {
                  case "READY_FOR_DELIVERY" -> READY_FOR_DELIVERY;
                  case "DELIVERING" -> DELIVERING;
                  case "DELIVERED" -> DELIVERED;
-                 case "CANCELLED" -> CANCELLED;
+                 case "CANCELLED_BY_CUSTOMER" -> CANCELLED_BY_CUSTOMER;
+                 case "CANCELLED_BY_STORE" -> CANCELLED_BY_STORE;
+                 case "DELIVERED_FAILED" -> DELIVERY_FAILED;
                  default -> null;
              };
          }
 
+    }
+
+    public enum PaymentMethod {
+        CASH_ON_DELIVERY, ONLINE_PAYMENT;
+        public static PaymentMethod fromString(String method) {
+            return switch (method.toUpperCase()) {
+                case "CASH_ON_DELIVERY" -> CASH_ON_DELIVERY;
+                case "ONLINE_PAYMENT" -> ONLINE_PAYMENT;
+                default -> null;
+            };
+        }
     }
 
     @Id
@@ -51,6 +70,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
     @ManyToOne(fetch = FetchType.LAZY)
     private DeliveryPartner deliveryPartner;
 
@@ -58,7 +79,6 @@ public class Order {
     private LocalDateTime createdAt;
     private LocalDateTime deliveredAt;
     private String destinationAddress;
-    @Transient
     private Long totalPrice;
     @Transient
     private Double shippingFee;

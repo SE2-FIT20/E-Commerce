@@ -98,6 +98,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<Response> searchUserByEmail(String email) {
+        //TODO: search john@gmail.com -> johndue@gmail.com
         List<User> userList = userRepository.findAllByEmailContaining(email.toLowerCase());
         List<UserInformation> userInformationList = UserInformation.from(userList);
         return ResponseEntity.ok(Response.builder()

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -19,10 +20,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findAllByCustomerAndStatusAndCreatedAtBetween(Customer customer, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    Long countByCustomerAndStatusAndCreatedAtBetween(Customer customer, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to);
+    Long countByCustomerAndStatusInAndCreatedAtBetween(Customer customer, List<Order.OrderStatus> orderStatuses, LocalDateTime from, LocalDateTime to);
 
-    Long countByStoreAndStatusAndCreatedAtBetween(Store store, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to);
+    Long countByStoreAndStatusInAndCreatedAtBetween(Store store, List<Order.OrderStatus> orderStatuses, LocalDateTime fromDateTime, LocalDateTime toDateTime);
 
+    Long countByDeliveryPartnerAndStatusInAndCreatedAtBetween(DeliveryPartner deliveryPartner, List<Order.OrderStatus> orderStatuses, LocalDateTime fromDateTime, LocalDateTime toDateTime);
 
     Long countByDeliveryPartnerAndStatusAndCreatedAtBetween(DeliveryPartner deliveryPartner, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to);
 
@@ -31,4 +33,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findAllByDeliveryPartnerAndStatus(DeliveryPartner deliveryPartner, Order.OrderStatus orderStatus, Pageable pageable);
 
     Page<Order> findAllByDeliveryPartner(DeliveryPartner deliveryPartner, Pageable pageable);
+
+
 }

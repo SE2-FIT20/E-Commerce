@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-//TODO: return this dto
 public class ProductDetailedInfo {
     private Long id;
     private String name;
@@ -79,7 +78,7 @@ public class ProductDetailedInfo {
             this.avatar = store.getAvatar();
             this.numberOfProducts = store.getInventory().size();
             this.numbersOfReviews = store.getInventory().stream()
-                    .map(Product::getReviews).count();
+                    .mapToInt(p -> p.getReviews().size()).count();
             this.averageRating = store.getInventory()
                     .stream().filter(product -> product.getReviews().size() > 0)
                     .mapToDouble(product -> product.getReviews().stream().mapToDouble(Review::getRating).average().orElse(0.0))

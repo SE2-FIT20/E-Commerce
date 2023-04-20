@@ -709,6 +709,10 @@ public class AdminController {
         return promotionService.deleteVoucherSet(id);
     }
 
+    @GetMapping("/voucher-sets/{id}")
+    public ResponseEntity<Response> getVoucherSetById(@PathVariable Long id) {
+        return promotionService.getVoucherSetById(id);
+    }
 
     @DeleteMapping("/vouchers/{id}")
     public ResponseEntity<Response> deleteVoucher(@PathVariable Long id) {

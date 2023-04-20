@@ -1,6 +1,7 @@
 package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.domain.*;
+import com.example.ecommerce.domain.Order.PaymentMethod;
 import com.example.ecommerce.dto.request.*;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
@@ -11,7 +12,6 @@ import com.example.ecommerce.service.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.ecommerce.domain.Order.OrderStatus.DELIVERED;
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.OrderItemDTO;
 import static com.example.ecommerce.utils.Utils.isValidCardNumber;
@@ -69,7 +70,11 @@ public class CustomerService {
         customerRepository.save(customer);
 
 
-        Response response = Response.builder().status(200).message("Update customer information successfully").data(null).build();
+        Response response = Response.builder()
+                .status(200)
+                .message("Update customer information successfully")
+                .data(null)
+                .build();
 
         return ResponseEntity.ok(response);
     }
@@ -103,9 +108,35 @@ public class CustomerService {
 
         DeliveryPartner deliveryPartner = deliveryPartnerService
                 .findDeliveryPartnerById(request.getDeliveryPartnerId());
+        PaymentMethod paymentMethod = PaymentMethod.fromString(request.getPaymentMethod());
 
+        // CHECK ONLINE PAYMENT TO SUBTRACT BALANCE
+        if (paymentMethod.equals(PaymentMethod.ONLINE_PAYMENT)) {
+            double totalAmount = cart.getTotalPrice();
+            // check if customer has enough balance to checkout by online payment method
+            if (customer.getBalance() < totalAmount) {
+                throw new IllegalStateException("Not enough balance to checkout");
+            }
+            customer.setBalance(customer.getBalance() - totalAmount);
+        }
+
+        // CREATE ORDER
         // items in the cart are grouped into group by store
-        for (CartStoreItem cartStoreItem : cart.getItems()) {
+        createOrdersByStore(request, customer, deliveryPartner);
+
+        cart.setItems(new ArrayList<>()); // empty the cart of customer after checking out
+        customerRepository.save(customer);
+            return ResponseEntity.ok(
+                    Response.builder()
+                    .status(200)
+                    .message("Checkout successfully")
+                    .data(null)
+                    .build());
+    }
+
+    private void createOrdersByStore(CheckoutRequest request, Customer customer, DeliveryPartner deliveryPartner) {
+        PaymentMethod paymentMethod = PaymentMethod.fromString(request.getPaymentMethod());
+        for (CartStoreItem cartStoreItem : customer.getCart().getItems()) {
             Store store = storeService.findStoreById(cartStoreItem.getStore().getId());
             List<OrderItem> items = cartStoreItem.getItems();
 
@@ -114,6 +145,7 @@ public class CustomerService {
                     .store(store)
                     .items(items)
                     .status(PENDING)
+                    .paymentMethod(paymentMethod)
                     .createdAt(LocalDateTime.now())
                     .deliveryPartner(deliveryPartner)
                     .destinationAddress(request.getDestinationAddress())
@@ -123,23 +155,27 @@ public class CustomerService {
             // and it has the customer field, save it to db will make it appear to the customer's order list
             orderService.save(order);
 
-            // this line is not really necessary,
-            // but it's good to for understanding that the orders will be savd in the order list of customer,
-            // after it is delivered it will be moved to the oldOrder list
-            customer.getOrders().add(order);
+            subtractQuantityOfProducts(items);
 
             sendNotificationForStore(store, order);
 
         }
+    }
 
-        cart.setItems(new ArrayList<>()); // empty the cart of customer after checking out
-        customerRepository.save(customer);
-            return ResponseEntity.ok(
-                    Response.builder()
-                    .status(200)
-                    .message("Checkout successfully")
-                    .data(null)
-                        .build());
+    private void subtractQuantityOfProducts(List<OrderItem> items) {
+        List<Long> productIds = items.stream().map(OrderItem::getProduct).map(ProductBriefInfo::getId).toList();
+        List<Product> products = productService.findProductsByIds(productIds);
+
+        for (Product product : products) {
+            for (OrderItem item : items) {
+                if (item.getProduct().getId().equals(product.getId())) {
+                    product.setQuantity(product.getQuantity() - item.getQuantity());
+                    break;
+                }
+            }
+        }
+
+        productService.saveAll(products);
     }
 
     private void sendNotificationForStore(Store store, Order order) {
@@ -191,7 +227,7 @@ public class CustomerService {
 
         // TODO: temporary solution, need to be improved
         for (Order order : orders) {
-            if (order.getStatus().equals(PENDING)) {
+            if (order.getStatus().equals(DELIVERED)) {
                 List<OrderItem> orderItems = order.getItems();
                 for (OrderItem orderItem : orderItems) {
                     if (orderItem.getProduct().equals(new ProductBriefInfo(product))) {
@@ -445,4 +481,24 @@ public class CustomerService {
                 .build());
     }
 
+    public ResponseEntity<Response> cancelOrder(Long customerId, Long orderId) {
+        Customer customer = findCustomerById(customerId);
+        Order order = orderService.findOrderById(orderId);
+        if (!customer.getOrders().contains(order)) {
+            throw new IllegalStateException("You are not the owner of this order");
+        }
+        if (order.getStatus() != Order.OrderStatus.PENDING) {
+            throw new IllegalStateException("You can only cancel pending order");
+        }
+
+        //TODO: hihi
+//        order.setStatus(Order.OrderStatus.C);
+//        orderService.updateOrder(order);
+        orderService.save(order);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Cancel order successfully")
+                .data(null)
+                .build());
+    }
 }

@@ -106,6 +106,16 @@ public class ProductServiceImpl implements ProductService {
                 .build());
     }
 
+    @Override
+    public List<Product> findProductsByIds(List<Long> productIds) {
+        return productRepository.findAllById(productIds);
+    }
+
+    @Override
+    public void saveAll(List<Product> products) {
+        productRepository.saveAll(products);
+    }
+
 
     @Override
     public ResponseEntity<Response> deleteProductById(Long productId) {

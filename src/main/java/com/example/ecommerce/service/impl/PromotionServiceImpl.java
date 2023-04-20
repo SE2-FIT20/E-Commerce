@@ -448,6 +448,32 @@ public class PromotionServiceImpl implements PromotionService {
                 .build());
     }
 
+    @Override
+    public ResponseEntity<Response> getVoucherSetById(Long id) {
+        VoucherSet voucherSet = voucherSetService.findById(id);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get voucher set successfully")
+                .data(voucherSet)
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Response> getCouponSetById(Long storeId, Long couponSetId) {
+        Store store = storeService.findStoreById(storeId);
+        CouponSet couponSet = couponSetService.findById(couponSetId);
+
+        if (!couponSet.getStore().getId().equals(storeId)) {
+            throw new IllegalArgumentException("Coupon set does not belong to this store");
+        }
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get coupon set successfully")
+                .data(couponSet)
+                .build());
+    }
+
     private Promotion findPromotionById(Long promotionId) {
         return promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new NotFoundException("Promotion not found"));

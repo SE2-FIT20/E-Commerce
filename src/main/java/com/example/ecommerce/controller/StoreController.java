@@ -319,6 +319,13 @@ public class StoreController {
         return promotionService.updateCouponSet(currentStore.getId(), couponSetId, request);
     }
 
+    //TODO: cancel order
+    @GetMapping("/coupon-sets/{couponSetId}")
+    public ResponseEntity<Response> getCouponSetById(@PathVariable Long couponSetId) {
+        User currentStore = getCurrentStore();
+        return promotionService.getCouponSetById(currentStore.getId(), couponSetId);
+    }
+
     @PutMapping("/coupon-sets/{couponSetId}/add")
     public ResponseEntity<Response> addCouponToCouponSet(@PathVariable Long couponSetId, @RequestParam int quantity) {
         User currentStore = getCurrentStore();

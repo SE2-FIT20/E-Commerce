@@ -53,10 +53,10 @@ public class OrderItem {
     private Double calculateDiscountPrice() {
         Double originalPrice = calculateOriginalPrice();
         if (coupon != null) {
-            originalPrice = originalPrice * (1 - coupon.getPercent());
+            originalPrice = originalPrice * ((100.0 - coupon.getPercent()) / 100.0);
         }
         if (voucher != null) {
-            originalPrice = originalPrice * (1 - voucher.getPercent());
+            originalPrice = originalPrice *  ((100.0 - voucher.getPercent()) / 100.0);
         }
         return originalPrice;
     }

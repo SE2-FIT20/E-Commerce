@@ -54,4 +54,8 @@ public interface PromotionService {
     ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, Long promotionSetId);
 
     ResponseEntity<Response> addVouchersCouponsToCart(Long customerId, Long promotionId);
+
+    ResponseEntity<Response> getVoucherSetById(Long id);
+
+    ResponseEntity<Response> getCouponSetById(Long storeId, Long couponSetId);
 }

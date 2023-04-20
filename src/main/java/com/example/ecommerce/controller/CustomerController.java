@@ -23,8 +23,6 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/customer")
-//TODO: save voucher, coupon,
-//TODO: add voucher, coupon to cart
 public class CustomerController {
 
     @Value("${default.elementPerPage}")
@@ -166,6 +164,12 @@ public class CustomerController {
         return customerService.checkout(currentCustomer.getId(), request);
     }
 
+    //TODO: endpoint to cancel order
+    @PutMapping("/cancel-order/{orderId}")
+    public ResponseEntity<Response> cancelOrder(@PathVariable Long orderId) {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.cancelOrder(currentCustomer.getId(), orderId);
+    }
     @GetMapping("/orders")
     public ResponseEntity<Response> getOrders(@RequestParam(defaultValue = "0", required = false) Integer page,
                                               @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,

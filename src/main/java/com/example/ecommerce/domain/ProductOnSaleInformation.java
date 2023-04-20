@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
+//TODO: sale campaign
 public class ProductOnSaleInformation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,5 @@ public class ProductOnSaleInformation {
     private Product product;
 
     @Transient
-    //TODO: calculate the discounted price
     private Double discountedPrice;
 }
