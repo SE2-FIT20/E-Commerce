@@ -474,6 +474,35 @@ public class PromotionServiceImpl implements PromotionService {
                 .build());
     }
 
+    @Override
+    public ResponseEntity<Response> removeVouchersCouponsToCart(Long customerId, Long promotionId) {
+        Customer customer = customerService.findCustomerById(customerId);
+        Cart cart = customer.getCart();
+        Promotion promotion = findPromotionById(promotionId);
+
+        if (!promotion.getCustomer().getId().equals(customerId)) {
+            throw new IllegalArgumentException("Promotion does not belong to this customer");
+        }
+
+        boolean existsInCart = cart.getPromotions().stream().anyMatch(p -> p.getId().equals(promotionId));
+
+        if (!existsInCart) {
+            throw new IllegalArgumentException("Promotion does not exist in cart");
+        }
+
+        if (promotion instanceof Voucher) {
+            cart.removeVoucher((Voucher) promotion);
+        } else if (promotion instanceof Coupon) {
+            cart.removeCoupon((Coupon) promotion);
+        }
+
+        customerService.save(customer);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Remove promotion from cart successfully")
+                .build());
+    }
+
     private Promotion findPromotionById(Long promotionId) {
         return promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new NotFoundException("Promotion not found"));

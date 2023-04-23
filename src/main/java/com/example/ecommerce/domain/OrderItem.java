@@ -42,6 +42,14 @@ public class OrderItem {
             this.coupon = (Coupon) promotion;
         }
     }
+
+    public void removePromotion(Promotion promotion) {
+        if (promotion instanceof Voucher) {
+            this.voucher = null;
+        } else if (promotion instanceof Coupon) {
+            this.coupon = null;
+        }
+    }
     public Double getPrice() {
         if (coupon == null && voucher == null) {
             return calculateOriginalPrice();

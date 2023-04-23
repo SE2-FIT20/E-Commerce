@@ -5,6 +5,7 @@ import com.example.ecommerce.domain.Order.PaymentMethod;
 import com.example.ecommerce.dto.request.*;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
+import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.example.ecommerce.domain.Order.OrderStatus.DELIVERED;
 import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
@@ -259,7 +257,7 @@ public class CustomerService {
         User customer = findCustomerById(customerId);
         Review currentReview = reviewService.findReviewById(reviewId);
 
-        if (!currentReview.getCustomer().equals(customer)) {
+        if (!currentReview.getCustomer().getId().equals(customer.getId())) {
             throw new IllegalStateException("You are not the owner of this review");
         }
 
@@ -481,24 +479,23 @@ public class CustomerService {
                 .build());
     }
 
-    public ResponseEntity<Response> cancelOrder(Long customerId, Long orderId) {
+
+    public ResponseEntity<Response> updateOrderRequest(Long customerId, UpdateOrderRequest request) {
         Customer customer = findCustomerById(customerId);
-        Order order = orderService.findOrderById(orderId);
+        Order order = orderService.findOrderById(request.getOrderId());
+
+
         if (!customer.getOrders().contains(order)) {
             throw new IllegalStateException("You are not the owner of this order");
         }
-        if (order.getStatus() != Order.OrderStatus.PENDING) {
-            throw new IllegalStateException("You can only cancel pending order");
-        }
 
-        //TODO: hihi
-//        order.setStatus(Order.OrderStatus.C);
-//        orderService.updateOrder(order);
-        orderService.save(order);
+        orderService.updateOrder(request);
+
         return ResponseEntity.ok(Response.builder()
                 .status(200)
-                .message("Cancel order successfully")
+                .message("Update order successfully")
                 .data(null)
                 .build());
+
     }
 }

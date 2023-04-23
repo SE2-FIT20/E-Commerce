@@ -4,6 +4,7 @@ import com.example.ecommerce.domain.User;
 import com.example.ecommerce.dto.request.*;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
+import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.impl.CustomerService;
 import com.example.ecommerce.service.service.PromotionService;
@@ -164,11 +165,10 @@ public class CustomerController {
         return customerService.checkout(currentCustomer.getId(), request);
     }
 
-    //TODO: endpoint to cancel order
-    @PutMapping("/cancel-order/{orderId}")
-    public ResponseEntity<Response> cancelOrder(@PathVariable Long orderId) {
+    @PutMapping("/update-status-order")
+    public ResponseEntity<Response> updateOrderRequest(@RequestBody UpdateOrderRequest request) {
         User currentCustomer = getCurrentCustomer();
-        return customerService.cancelOrder(currentCustomer.getId(), orderId);
+        return customerService.updateOrderRequest(currentCustomer.getId(), request);
     }
     @GetMapping("/orders")
     public ResponseEntity<Response> getOrders(@RequestParam(defaultValue = "0", required = false) Integer page,
@@ -220,6 +220,13 @@ public class CustomerController {
     public ResponseEntity<Response> addVouchersCouponsToCart(@PathVariable Long promotionId) {
         User currentCustomer = getCurrentCustomer();
         return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), promotionId);
+    }
+
+
+    @PutMapping("/remove-voucher-coupon-to-cart/{promotionId}")
+    public ResponseEntity<Response> removeVouchersCouponsToCart(@PathVariable Long promotionId) {
+        User currentCustomer = getCurrentCustomer();
+        return promotionService.removeVouchersCouponsToCart(currentCustomer.getId(), promotionId);
     }
 
     @GetMapping("/vouchers-coupons-to-add-to-cart")

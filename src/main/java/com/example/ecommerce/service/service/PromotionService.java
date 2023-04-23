@@ -58,4 +58,7 @@ public interface PromotionService {
     ResponseEntity<Response> getVoucherSetById(Long id);
 
     ResponseEntity<Response> getCouponSetById(Long storeId, Long couponSetId);
+
+    ResponseEntity<Response> removeVouchersCouponsToCart(Long customerId, Long promotionId);
+
 }

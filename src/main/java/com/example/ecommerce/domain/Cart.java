@@ -19,13 +19,14 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     List<OrderItem> items; // group the items by store
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Promotion> promotions;
     
     public void addVoucher(Voucher voucher) {
+        promotions.add(voucher);
         if (voucher != null) {
             Map<StoreBriefInfo, List<OrderItem>> itemsByStore = groupItemsByStore();
             // apply voucher to all items
@@ -39,6 +40,7 @@ public class Cart {
     }
 
     public void addCoupon(Coupon coupon) {
+        promotions.add(coupon);
         if (coupon != null) {
             // apply coupon to the items of the store that the coupon belongs to
             Map<StoreBriefInfo, List<OrderItem>> itemsByStore = groupItemsByStore();
@@ -54,6 +56,33 @@ public class Cart {
 
     }
 
+
+    public void removeVoucher(Voucher voucher) {
+        if (voucher != null) {
+            Map<StoreBriefInfo, List<OrderItem>> itemsByStore = groupItemsByStore();
+            // apply voucher to all items
+            itemsByStore.forEach((store, storeItems) -> {
+                storeItems.forEach(item -> {
+                    item.removePromotion(voucher);
+                });
+            });
+        }
+    }
+
+    public void removeCoupon(Coupon coupon) {
+        if (coupon != null) {
+            // apply coupon to the items of the store that the coupon belongs to
+            Map<StoreBriefInfo, List<OrderItem>> itemsByStore = groupItemsByStore();
+
+            itemsByStore.forEach((store, storeItems) -> {
+                if (store.getId().equals(coupon.getStore().getId())) {
+                    storeItems.forEach(item -> {
+                        item.removePromotion(coupon);
+                    });
+                }
+            });
+        }
+    }
 
     public void addItem(Product product, Integer quantity) {
 
