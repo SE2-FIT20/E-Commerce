@@ -106,7 +106,6 @@ public class CustomerController {
         return customerService.getCartItems(getCurrentCustomer());
     }
 
-    //TODO: checkout with promotion code
     @Operation(
             summary = "Checkout"
     )

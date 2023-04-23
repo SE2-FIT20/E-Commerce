@@ -23,7 +23,7 @@ public class Review {
     @Column(columnDefinition="LONGTEXT")
     private String comment;
     private LocalDateTime createdAt;
-
+    private LocalDateTime updatedAt;
     @ElementCollection
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     List<String> images;

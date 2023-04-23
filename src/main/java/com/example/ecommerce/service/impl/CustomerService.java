@@ -261,9 +261,20 @@ public class CustomerService {
             throw new IllegalStateException("You are not the owner of this review");
         }
 
-        if (updateReviewRequest.getRating() != null) currentReview.setRating(updateReviewRequest.getRating());
-        if (updateReviewRequest.getImages() != null) currentReview.setImages(updateReviewRequest.getImages());
-        if (updateReviewRequest.getComment() != null) currentReview.setComment(updateReviewRequest.getComment());
+        if (updateReviewRequest.getRating() != null) {
+            currentReview.setRating(updateReviewRequest.getRating());
+            currentReview.setUpdatedAt(LocalDateTime.now());
+        }
+        if (updateReviewRequest.getImages() != null) {
+            currentReview.setImages(updateReviewRequest.getImages());
+            currentReview.setUpdatedAt(LocalDateTime.now());
+        }
+
+        if (updateReviewRequest.getComment() != null) {
+            currentReview.setComment(updateReviewRequest.getComment());
+            currentReview.setUpdatedAt(LocalDateTime.now());
+
+        }
 
 
         reviewService.save(currentReview);
