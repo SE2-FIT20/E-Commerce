@@ -1,26 +1,21 @@
 package com.example.ecommerce.service.impl;
 
-import com.example.ecommerce.domain.Coupon;
 import com.example.ecommerce.domain.CouponSet;
 import com.example.ecommerce.domain.Store;
-import com.example.ecommerce.domain.VoucherSet;
 import com.example.ecommerce.dto.request.promotion.CreatePromotionRequest;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CouponRepository;
 import com.example.ecommerce.repository.CouponSetRepository;
 import com.example.ecommerce.service.service.CouponSetService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.example.ecommerce.utils.Utils.generateAvatarLink;
-import static com.example.ecommerce.utils.Utils.generateRandomString;
 
 @Service
 @AllArgsConstructor
@@ -76,7 +71,7 @@ public class CouponSetServiceImpl implements CouponSetService {
     }
 
     @Override
-    public Page<CouponSet> findAllByStoreAndExpireAtBefore(Store store, LocalDateTime now, Pageable pageable) {
-        return couponSetRepository.findAllByStoreAndExpiredAtBefore(store, now, pageable);
+    public Page<CouponSet> findAllByStoreAndExpiredAtAfter(Store store, LocalDateTime now, Pageable pageable) {
+        return couponSetRepository.findAllByStoreAndExpiredAtAfter(store, now, pageable);
     }
 }

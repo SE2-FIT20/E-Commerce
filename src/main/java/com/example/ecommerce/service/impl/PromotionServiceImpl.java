@@ -363,7 +363,7 @@ public class PromotionServiceImpl implements PromotionService {
     public ResponseEntity<Response> getCouponSetsByStore(Long storeId, Integer pageNumber, Integer elementsPerPage, String filter, String sortBy) {
         Store store = storeService.findStoreById(storeId);
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
-        Page<CouponSet> couponSets = couponSetService.findAllByStoreAndExpireAtBefore(store, LocalDateTime.now(), pageable);
+        Page<CouponSet> couponSets = couponSetService.findAllByStoreAndExpiredAtAfter(store, LocalDateTime.now(), pageable);
 
         PageResponse pageResponse = PageResponse.builder()
                 .totalPages(couponSets.getTotalPages())
