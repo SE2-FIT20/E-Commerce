@@ -40,6 +40,7 @@ public class CouponSet extends PromotionSet{
             Coupon coupon = new Coupon();
             coupon.setCouponSet(this);
             coupon.setCreatedAt(LocalDateTime.now());
+            coupons.add(coupon);
         }
     }
 
