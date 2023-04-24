@@ -47,7 +47,7 @@ public interface PromotionService {
 
     ResponseEntity<Response> updateCouponSet(Long storeId, Long couponSetId, UpdatePromotionRequest request);
 
-    ResponseEntity<Response> getMiniGameVouchers(Long customerId);
+    ResponseEntity<Response> getMiniGameVouchers();
 
     ResponseEntity<Response> getCouponSetsByStore(Long storeId, Integer page, Integer elementsPerPage, String filter, String sortBy);
 

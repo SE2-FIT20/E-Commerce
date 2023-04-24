@@ -339,17 +339,9 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public ResponseEntity<Response> getMiniGameVouchers(Long customerId) {
-        Customer customer = customerService.findCustomerById(customerId);
+    public ResponseEntity<Response> getMiniGameVouchers() {
 
         List<VoucherSet> voucherSets = voucherSetService.findAllByExpiredAtBefore(LocalDateTime.now());
-        List<Voucher> vouchers = voucherRepository.findAllByCustomerAndIsUsed(customer, false);
-
-        // remove voucher set that the customer has already got
-        voucherSets.removeIf(voucherSet -> vouchers
-                .stream()
-                .anyMatch(voucher -> voucher.getVoucherSet().getId().equals(voucherSet.getId())
-        ));
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)

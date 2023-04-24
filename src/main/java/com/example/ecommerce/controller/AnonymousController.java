@@ -376,7 +376,10 @@ public class AnonymousController {
         return notificationService.markNotificationsAsRead(user, request);
     }
 
-
+    @GetMapping("/mini-game-vouchers")
+    public ResponseEntity<Response> getMiniGameVouchers() {
+        return promotionService.getMiniGameVouchers();
+    }
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

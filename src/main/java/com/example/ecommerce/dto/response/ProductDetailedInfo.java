@@ -78,7 +78,7 @@ public class ProductDetailedInfo {
             this.avatar = store.getAvatar();
             this.numberOfProducts = store.getInventory().size();
             this.numbersOfReviews = store.getInventory().stream()
-                    .mapToInt(p -> p.getReviews().size()).count();
+                    .mapToInt(p -> p.getReviews().size()).sum();
             this.averageRating = store.getInventory()
                     .stream().filter(product -> product.getReviews().size() > 0)
                     .mapToDouble(product -> product.getReviews().stream().mapToDouble(Review::getRating).average().orElse(0.0))
