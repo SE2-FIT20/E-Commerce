@@ -247,7 +247,7 @@ public class StoreController {
                 "data": null
             }
             """)))})
-    @PutMapping("/update-order-status")
+    @PutMapping("/update-status-order")
     public ResponseEntity<Response> updateOrder(@RequestBody UpdateOrderRequest request) {
         User currentStore = getCurrentStore();
         return storeService.updateOrder(currentStore.getId(), request);
