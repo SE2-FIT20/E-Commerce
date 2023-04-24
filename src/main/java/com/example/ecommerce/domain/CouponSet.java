@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,21 +45,8 @@ public class CouponSet extends PromotionSet{
         }
     }
 
-    @Override
-    public void subtractItems(int quantity) {
-
-        Iterator<Coupon> iterator = coupons.iterator();
-        while (iterator.hasNext()) {
-            Coupon coupon = iterator.next();
-            // only remove unused coupon
-            if (!coupon.isUsed()) {
-                iterator.remove();
-                quantity--;
-            }
-            if (quantity == 0) {
-                break;
-            }
-        }
+    public List<Promotion> subtractCoupons(int quantity) {
+        return subtractItems(coupons, quantity);
     }
 
     @Override

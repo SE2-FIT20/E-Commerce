@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Entity
 @Data
@@ -35,7 +38,28 @@ public abstract class PromotionSet {
     public int quantityAvailable;
     public abstract int getQuantityAvailable();
     public abstract void addItems(int quantity);
-    public abstract void subtractItems(int quantity);
+    protected List<Promotion> subtractItems(List<? extends Promotion> promotionList, int quantity) {
+        List<Promotion> removed = new ArrayList<>();
+        Iterator<? extends Promotion> iterator = promotionList.iterator();
+        while (iterator.hasNext()) {
+            Promotion coupon = iterator.next();
+            // only remove unused coupon
+            if (!coupon.isUsed()) {
+                iterator.remove();
+                removed.add(coupon);
+                quantity--;
+            }
+            if (quantity == 0) {
+                break;
+            }
+        }
+        // return the removed coupons, since the relationship is bidirectional,
+        // the coupons will be removed from the coupon list and removed from the database
+        return removed;
+    }
+
+
+
 
     @JsonIgnore
     public abstract Promotion getAnUnUsedItem();

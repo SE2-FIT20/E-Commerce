@@ -5,11 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.example.ecommerce.utils.Utils.generateAvatarLink;
-import static com.example.ecommerce.utils.Utils.generateRandomString;
 
 @Entity
 @Data
@@ -38,20 +36,8 @@ public class VoucherSet extends PromotionSet{
         }
     }
 
-    @Override
-    public void subtractItems(int quantity) {
-        Iterator<Voucher> iterator = vouchers.iterator();
-        while (iterator.hasNext()) {
-            Voucher voucher = iterator.next();
-            // only remove unused voucher
-            if (!voucher.isUsed()) {
-                iterator.remove();
-                quantity--;
-            }
-            if (quantity == 0) {
-                break;
-            }
-        }
+    public List<Promotion> subtractVouchers(int quantity) {
+        return subtractItems(vouchers, quantity);
     }
 
     @Override

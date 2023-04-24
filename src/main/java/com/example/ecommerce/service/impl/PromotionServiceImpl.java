@@ -93,9 +93,13 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<Response> subtractVoucherToSet(Long voucherSetId, int quantity) {
         VoucherSet voucherSet = voucherSetService.findById(voucherSetId);
-        voucherSet.subtractItems(quantity);
+        List<Promotion> removedVouchers = voucherSet.subtractVouchers(quantity);
+
+        // since the relationship is bidirectional, we need to remove the voucher both from the list in the voucher set and in the database
+        promotionRepository.deleteAll(removedVouchers);
         voucherSetService.save(voucherSet);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
@@ -192,12 +196,16 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<Response> subtractCouponFromCouponSet(Long storeId, Long couponSetId, int quantity) {
         CouponSet couponSet = couponSetService.findById(couponSetId);
         if (!couponSet.getStore().getId().equals(storeId)) {
             throw new IllegalArgumentException("Coupon set does not belong to this store");
         }
-        couponSet.subtractItems(quantity);
+        List<Promotion> removed = couponSet.subtractCoupons(quantity);
+
+        // since the relationship is bidirectional, we need to remove the coupon both from the list in the coupon set and in the database
+        promotionRepository.deleteAll(removed);
         couponSetService.save(couponSet);
 
         return ResponseEntity.ok(Response.builder()
