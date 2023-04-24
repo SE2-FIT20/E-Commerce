@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.example.ecommerce.domain.Order.OrderStatus.DELIVERED;
-import static com.example.ecommerce.domain.Order.OrderStatus.PENDING;
+import static com.example.ecommerce.domain.Order.OrderStatus.*;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.OrderItemDTO;
 import static com.example.ecommerce.utils.Utils.isValidCardNumber;
 
@@ -308,7 +307,22 @@ public class CustomerService {
     public ResponseEntity<Response> getOrders(Long id, Integer pageNumber, Integer elementsPerPage, String status, String filter, String sortBy, LocalDateTime from, LocalDateTime to) {
         Customer customer = findCustomerById(id);
 
-        Page<Order> page = orderService.getAllOrdersOfCustomer(pageNumber, elementsPerPage, customer, status,  filter, sortBy, from, to);
+        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
+        Page<Order> page;
+        if (status.equals("ALL")) {
+            page = orderService.findAllByCustomerAndCreatedAtBetween(customer, from, to, pageable);
+        } else {
+            List<Order.OrderStatus> statuses = new ArrayList<>();
+            // the status of "CANCELLED" is a combination of "CANCELLED_BY_STORE" and "CANCELLED_BY_CUSTOMER
+            if (status.equals("CANCELLED")) {
+                statuses.add(CANCELLED_BY_STORE);
+                statuses.add(CANCELLED_BY_CUSTOMER);
+            } else {
+                Order.OrderStatus orderStatus = fromString(status.toUpperCase());
+                statuses.add(orderStatus);
+            }
+            page = orderService.findAllByCustomerAndStatusInAndCreatedAtBetween(customer, statuses, from, to, pageable);
+        }
         PageResponse pageResponse = PageResponse.builder()
                 .totalPages(page.getTotalPages())
                 .content(page.getContent())

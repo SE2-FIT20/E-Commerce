@@ -104,9 +104,11 @@ public class OrderServiceImpl implements OrderService {
 
         // increase the balance of store and delivery partner
         User store = userService.findUserById(order.getStore().getId());
-        store.setBalance(store.getBalance() + order.getTotalPrice());
+        store.setBalance(store.getBalance() + order.getTotalPrice()); // store get the money from customer
+
         User deliveryPartner = userService.findUserById(order.getDeliveryPartner().getId());
-        deliveryPartner.setBalance(deliveryPartner.getBalance() + order.getShippingFee());
+        deliveryPartner.setBalance(deliveryPartner.getBalance() + order.getShippingFee()); // delivery partner get the shipping fee from customer
+
         userService.saveAll(List.of(store, deliveryPartner));
 
 
@@ -156,18 +158,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> getAllOrdersOfCustomer(Integer pageNumber, Integer elementsPerPage, Customer customer, String status, String filter, String sortBy, LocalDateTime from, LocalDateTime to) {
-        Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
-
-        if (status.equals("ALL")) {
-            return orderRepository.findAllByCustomerAndCreatedAtBetween(customer, from, to, pageable);
-        } else {
-            OrderStatus orderStatus = valueOf(status.toUpperCase());
-            return orderRepository.findAllByCustomerAndStatusAndCreatedAtBetween(customer, orderStatus, from, to, pageable);
-        }
-    }
-
-    @Override
     public Page<Order> getAll(Example<Order> example, Pageable pageable) {
         return orderRepository.findAll(example, pageable);
     }
@@ -211,13 +201,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Page<Order> findAllByCustomerAndCreatedAtBetween(Customer customer, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        return orderRepository.findAllByCustomerAndCreatedAtBetween(customer, from, to, pageable);
+    }
+
+    @Override
+    public Page<Order> findAllByCustomerAndStatusInAndCreatedAtBetween(Customer customer, List<OrderStatus> statuses, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        return orderRepository.findAllByCustomerAndStatusInAndCreatedAtBetween(customer, statuses, from, to, pageable);
+    }
+
+    @Override
     public Page<Order> findAllByStoreAndCreatedAtBetween(Store store, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return orderRepository.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
     }
 
     @Override
-    public Page<Order> findAllByStoreAndStatusAndCreatedAtBetween(Store store, OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable) {
-        return orderRepository.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
+    public Page<Order> findAllByStoreAndStatusInAndCreatedAtBetween(Store store, List<OrderStatus> orderStatuses, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        return orderRepository.findAllByStoreAndStatusInAndCreatedAtBetween(store, orderStatuses, from, to, pageable);
     }
 
     @Override

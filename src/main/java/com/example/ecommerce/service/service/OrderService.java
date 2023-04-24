@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 public interface OrderService {
@@ -22,7 +23,6 @@ public interface OrderService {
 
     void save(Order order);
 
-    Page<Order> getAllOrdersOfCustomer(Integer pageNumber, Integer elementsPerPage,  Customer customer, String status, String filter, String sortBy, LocalDateTime from, LocalDateTime to);
 
     Page<Order> getAll(Example<Order> example, Pageable pageable);
 
@@ -34,7 +34,7 @@ public interface OrderService {
 
     Page<Order> findAllByStoreAndCreatedAtBetween(Store store, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    Page<Order> findAllByStoreAndStatusAndCreatedAtBetween(Store store, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<Order> findAllByStoreAndStatusInAndCreatedAtBetween(Store store, List<Order.OrderStatus> orderStatuses, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     Page<Order> findAll(Example<Order> example, Pageable pageable);
 
@@ -51,4 +51,8 @@ public interface OrderService {
 
     Order findByOrderCode(String orderCode);
 
+
+    Page<Order> findAllByCustomerAndCreatedAtBetween(Customer customer, LocalDateTime from, LocalDateTime to, Pageable pageable);
+
+    Page<Order> findAllByCustomerAndStatusInAndCreatedAtBetween(Customer customer, List<Order.OrderStatus> statuses, LocalDateTime from, LocalDateTime to, Pageable pageable);
 }

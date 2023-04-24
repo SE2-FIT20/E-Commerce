@@ -179,17 +179,8 @@ public class DeliveryPartnerServiceImpl implements DeliveryPartnerService {
             throw new IllegalStateException("Order does not belong to delivery partner");
         }
 
-        if (updateRequest.getStatus() != null) {
-            Order.OrderStatus orderStatus = updateRequest.getStatus();
-            order.setStatus(orderStatus);
 
-            if (orderStatus.equals(Order.OrderStatus.DELIVERED)) {
-                order.setDeliveredAt(LocalDateTime.now());
-                sendNotificationForCustomer(order, order.getCustomer());
-            }
-        }
-
-        orderService.save(order);
+        orderService.updateOrder(updateRequest);
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)

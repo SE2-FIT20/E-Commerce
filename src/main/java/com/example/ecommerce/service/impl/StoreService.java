@@ -118,8 +118,16 @@ public class StoreService {
         if (status.equals("ALL")) {
             page = orderService.findAllByStoreAndCreatedAtBetween(store, from, to, pageable);
         } else {
-            OrderStatus orderStatus = fromString(status.toUpperCase());
-            page = orderService.findAllByStoreAndStatusAndCreatedAtBetween(store, orderStatus, from, to, pageable);
+            List<OrderStatus> statuses = new ArrayList<>();
+            // the status of "CANCELLED" is a combination of "CANCELLED_BY_STORE" and "CANCELLED_BY_CUSTOMER
+            if (status.equals("CANCELLED")) {
+                statuses.add(CANCELLED_BY_STORE);
+                statuses.add(CANCELLED_BY_CUSTOMER);
+            } else {
+                OrderStatus orderStatus = fromString(status.toUpperCase());
+                statuses.add(orderStatus);
+            }
+            page = orderService.findAllByStoreAndStatusInAndCreatedAtBetween(store, statuses, from, to, pageable);
         }
 
         PageResponse pageResponse = PageResponse.builder()

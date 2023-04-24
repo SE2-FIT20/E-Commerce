@@ -14,11 +14,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findAllByStoreAndCreatedAtBetween(Store store, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    Page<Order> findAllByStoreAndStatusAndCreatedAtBetween(Store store, Order.OrderStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<Order> findAllByStoreAndStatusInAndCreatedAtBetween(Store store, List<Order.OrderStatus> statuses, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     Page<Order> findAllByCustomerAndCreatedAtBetween(Customer customer, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    Page<Order> findAllByCustomerAndStatusAndCreatedAtBetween(Customer customer, Order.OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<Order> findAllByCustomerAndStatusInAndCreatedAtBetween(Customer customer, List<Order.OrderStatus> orderStatuses, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     Long countByCustomerAndStatusInAndCreatedAtBetween(Customer customer, List<Order.OrderStatus> orderStatuses, LocalDateTime from, LocalDateTime to);
 
