@@ -142,7 +142,7 @@ public class StoreService {
         Store store = findStoreById(storeId);
         Order order = orderService.findOrderById(request.getOrderId());
 
-        if (order.getStore().getId().equals(store.getId())) {
+        if (!order.getStore().getId().equals(store.getId())) {
             throw new IllegalStateException("Order does not belong to this store");
         }
 

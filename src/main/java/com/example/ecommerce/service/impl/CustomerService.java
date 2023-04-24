@@ -9,6 +9,7 @@ import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.*;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.CustomerRepository;
+import com.example.ecommerce.repository.PromotionRepository;
 import com.example.ecommerce.service.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
@@ -36,6 +37,8 @@ public class CustomerService {
     private final ReviewService reviewService;
     private final NotificationService notificationService;
     private final PaymentInformationService paymentInformationService;
+    private final PromotionRepository promotionRepository;
+
     public void save(Customer customer) {
         customerRepository.save(customer);
     }
@@ -121,6 +124,14 @@ public class CustomerService {
         // CREATE ORDER
         // items in the cart are grouped into group by store
         createOrdersByStore(request, customer, deliveryPartner);
+
+        // if customer use promotion, set used to true
+        if (!cart.getPromotions().isEmpty()) {
+            cart.getPromotions().forEach(promotion -> {
+                promotion.setUsed(true);
+            });
+            promotionRepository.saveAll(cart.getPromotions());
+        }
 
         cart.setItems(new ArrayList<>()); // empty the cart of customer after checking out
         customerRepository.save(customer);
