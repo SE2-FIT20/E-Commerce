@@ -347,7 +347,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public ResponseEntity<Response> getMiniGameVouchers() {
+    public ResponseEntity<Response> getMiniGameVouchers(String filter, String sortBy) {
 
         List<VoucherSet> voucherSets = voucherSetService.findAllByExpiredAtAfter(LocalDateTime.now());
 

@@ -13,5 +13,5 @@ import java.time.LocalDateTime;
 public interface CouponSetRepository extends JpaRepository<CouponSet, Long> {
     Page<CouponSet> findAllByStore(Store store, Pageable pageable);
 
-    Page<CouponSet> findAllByStoreAndExpiredAtAfter(Store store, LocalDateTime now, Pageable pageable);
+    Page<CouponSet> findAllByStoreAndExpiredAtAfterOrderByPercentDesc(Store store, LocalDateTime now, Pageable pageable);
 }

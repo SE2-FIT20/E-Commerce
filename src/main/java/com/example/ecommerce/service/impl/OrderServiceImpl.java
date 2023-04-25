@@ -152,8 +152,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void save(Order order) {
-        String uuid = generateRandomString(6);
-        order.setOrderCode(uuid);
+        if (order.getOrderCode() == null) {
+            String uuid = generateRandomString(6);
+            order.setOrderCode(uuid);
+        }
         orderRepository.save(order);
     }
 

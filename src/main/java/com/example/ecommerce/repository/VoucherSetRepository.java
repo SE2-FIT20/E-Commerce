@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface VoucherSetRepository extends JpaRepository<VoucherSet, Long> {
-    List<VoucherSet> findAllByExpiredAtAfter(LocalDateTime now);
+    List<VoucherSet> findAllByExpiredAtAfterOrderByPercentDesc(LocalDateTime now);
 }

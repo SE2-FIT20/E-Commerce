@@ -377,8 +377,9 @@ public class AnonymousController {
     }
 
     @GetMapping("/mini-game-vouchers")
-    public ResponseEntity<Response> getMiniGameVouchers() {
-        return promotionService.getMiniGameVouchers();
+    public ResponseEntity<Response> getMiniGameVouchers(@RequestParam(defaultValue = "createdAt", required = false) String filter,
+                                                        @RequestParam(defaultValue = "desc", required = false) String sortBy) {
+        return promotionService.getMiniGameVouchers(filter, sortBy);
     }
 
     public User getCurrentUser() {
