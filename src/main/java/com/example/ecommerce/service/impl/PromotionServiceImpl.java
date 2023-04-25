@@ -349,7 +349,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> getMiniGameVouchers() {
 
-        List<VoucherSet> voucherSets = voucherSetService.findAllByExpiredAtBefore(LocalDateTime.now());
+        List<VoucherSet> voucherSets = voucherSetService.findAllByExpiredAtAfter(LocalDateTime.now());
 
         return ResponseEntity.ok(Response.builder()
                 .status(200)

@@ -77,8 +77,8 @@ public class VoucherSetServiceImpl implements VoucherSetService {
     }
 
     @Override
-    public List<VoucherSet> findAllByExpiredAtBefore(LocalDateTime now) {
+    public List<VoucherSet> findAllByExpiredAtAfter(LocalDateTime now) {
 
-        return voucherSetRepository.findAllByExpiredAtBefore(now);
+        return voucherSetRepository.findAllByExpiredAtAfter(now);
     }
 }

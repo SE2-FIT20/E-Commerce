@@ -21,5 +21,5 @@ public interface VoucherSetService {
 
     void save(VoucherSet voucherSet);
 
-    List<VoucherSet> findAllByExpiredAtBefore(LocalDateTime now);
+    List<VoucherSet> findAllByExpiredAtAfter(LocalDateTime now);
 }
