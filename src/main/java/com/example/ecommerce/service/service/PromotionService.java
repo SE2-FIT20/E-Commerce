@@ -12,7 +12,7 @@ public interface PromotionService {
     ResponseEntity<Response> getVoucherByCode(String code);
 
     void save(Promotion promotion);
-
+    boolean checkIfPromotionAndThrowExceptionIfUsable(Promotion promotion);
 
     ResponseEntity<Response> getAllVoucherSets(Integer page, Integer elementsPerPage, String filter, String sortBy);
 

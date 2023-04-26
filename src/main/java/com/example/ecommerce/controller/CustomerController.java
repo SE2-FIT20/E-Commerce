@@ -225,7 +225,6 @@ public class CustomerController {
         return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), promotionId);
     }
 
-
     @PutMapping("/remove-voucher-coupon-to-cart/{promotionId}")
     public ResponseEntity<Response> removeVouchersCouponsToCart(@PathVariable Long promotionId) {
         User currentCustomer = getCurrentCustomer();

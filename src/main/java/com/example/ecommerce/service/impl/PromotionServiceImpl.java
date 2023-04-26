@@ -6,10 +6,7 @@ import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.response.PageResponse;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
-import com.example.ecommerce.repository.CouponRepository;
-import com.example.ecommerce.repository.PromotionRepository;
-import com.example.ecommerce.repository.PromotionSetRepository;
-import com.example.ecommerce.repository.VoucherRepository;
+import com.example.ecommerce.repository.*;
 import com.example.ecommerce.service.service.CouponSetService;
 import com.example.ecommerce.service.service.MiniGamePlayingRecordService;
 import com.example.ecommerce.service.service.PromotionService;
@@ -35,8 +32,8 @@ public class PromotionServiceImpl implements PromotionService {
     private final VoucherSetService voucherSetService;
     private final CouponRepository couponRepository;
     private final CouponSetService couponSetService;
-    private final StoreService storeService;
-    private final CustomerService customerService;
+    private final StoreRepository storeRepository;
+    private final CustomerRepository customerRepository;
     private final MiniGamePlayingRecordService miniGamePlayingRecordService;
 //    private final StoreService storeService;
     @Override
@@ -151,7 +148,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> createCouponSet(Long storeId, CreatePromotionRequest request) {
-        Store store = storeService.findStoreById(storeId);
+        Store store = getStoreById(storeId);
         couponSetService.createCouponSet(store, request);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
@@ -163,7 +160,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> getAllCouponSetsOfStore(Long id, Integer pageNumber, Integer elementsPerPage, String filter, String sortBy) {
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
-        Store store = storeService.findStoreById(id);
+        Store store = getStoreById(id);
 
         Page<CouponSet> page =  couponSetService.findAllByStore(store, pageable);
 
@@ -218,7 +215,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> getAllCouponsOfCouponSet(Long id, Long couponSetId, Integer page, Integer elementsPerPage, String status, String filter, String sortBy) {
 
-        Store store = storeService.findStoreById(id);
+        Store store = storeRepository.findById(id).get();
         CouponSet couponSet = couponSetService.findById(couponSetId);
         if (!couponSet.getStore().getId().equals(store.getId())) {
             throw new IllegalArgumentException("Coupon set does not belong to this store");
@@ -258,7 +255,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> deleteCouponById(Long storeId, Long couponId) {
 
-        Store store = storeService.findStoreById(storeId);
+        Store store = getStoreById(storeId);
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new NotFoundException("Coupon not found"));
         if (!coupon.getCouponSet().getStore().getId().equals(store.getId())) {
@@ -275,7 +272,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> deleteCouponSetById(Long id, Long couponSetId) {
 
-        Store store = storeService.findStoreById(id);
+        Store store = getStoreById(id);
         CouponSet couponSet = couponSetService.findById(couponSetId);
         if (!couponSet.getStore().getId().equals(store.getId())) {
             throw new IllegalArgumentException("Coupon set does not belong to this store");
@@ -288,9 +285,19 @@ public class PromotionServiceImpl implements PromotionService {
                 .build());
     }
 
+
+    private Customer getCustomerById(Long customerId) {
+        return customerRepository.findById(customerId)
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
+    }
+
+    private Store getStoreById(Long storeId) {
+        return storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException("Store not found"));
+    }
     @Override
     public ResponseEntity<Response> getVouchersCoupons(Long customerId) {
-        Customer customer = customerService.findCustomerById(customerId);
+        Customer customer = getCustomerById(customerId);
 
         List<Voucher> vouchers = voucherRepository.findAllByCustomerAndIsUsed(customer, false);
         List<Coupon> coupons = couponRepository.findAllByCustomerAndIsUsed(customer, false);
@@ -327,7 +334,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public ResponseEntity<Response> updateCouponSet(Long storeId, Long couponSetId, UpdatePromotionRequest request) {
 
-        Store store = storeService.findStoreById(storeId);
+        Store store = getStoreById(storeId);
         CouponSet couponSet = couponSetService.findById(couponSetId);
         if (!couponSet.getStore().getId().equals(store.getId())) {
             throw new IllegalArgumentException("Coupon set does not belong to this store");
@@ -362,7 +369,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> getCouponSetsByStore(Long storeId, Integer pageNumber, Integer elementsPerPage, String filter, String sortBy) {
-        Store store = storeService.findStoreById(storeId);
+        Store store = getStoreById(storeId);
         Pageable pageable = PageRequest.of(pageNumber, elementsPerPage, Sort.Direction.valueOf(sortBy.toUpperCase()), filter);
         Page<CouponSet> couponSets = couponSetService.findAllByStoreAndExpiredAtAfter(store, LocalDateTime.now(), pageable);
 
@@ -383,7 +390,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Transactional
     @Override
     public ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, Long promotionSetId) {
-        Customer customer = customerService.findCustomerById(customerId);
+        Customer customer = getCustomerById(customerId);
         // the promotion set is either a voucher set or a coupon set
         PromotionSet promotionSet = promotionSetRepository.findById(promotionSetId)
                 .orElseThrow(() -> new NotFoundException("Promotion not found"));
@@ -418,7 +425,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> addVouchersCouponsToCart(Long customerId, Long promotionId) {
-        Customer customer = customerService.findCustomerById(customerId);
+        Customer customer = getCustomerById(customerId);
         Cart cart = customer.getCart();
         Promotion promotion = findPromotionById(promotionId);
 
@@ -426,14 +433,7 @@ public class PromotionServiceImpl implements PromotionService {
             throw new IllegalArgumentException("Promotion does not belong to this customer");
         }
 
-        if (promotion.isUsed()) {
-            throw new IllegalArgumentException("Promotion has been already used!");
-        }
-
-        if (promotion.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Promotion has expired!");
-        }
-
+        checkIfPromotionAndThrowExceptionIfUsable(promotion);
 
         if (promotion instanceof Voucher) {
             Voucher voucher = (Voucher) promotion;
@@ -454,13 +454,28 @@ public class PromotionServiceImpl implements PromotionService {
 
         }
 
-        customerService.save(customer);
+        customerRepository.save(customer);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Add promotion to cart successfully")
                 .build());
     }
+    public boolean checkIfPromotionAndThrowExceptionIfUsable(Promotion promotion) {
+        if (promotion.isUsed()) {
+            throw new IllegalArgumentException("Promotion has been already used!");
+        }
 
+
+        if (promotion.getStartAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Promotion has not started yet!");
+        }
+
+        if (promotion.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Promotion has expired!");
+        }
+
+        return true;
+    }
     @Override
     public ResponseEntity<Response> getVoucherSetById(Long id) {
         VoucherSet voucherSet = voucherSetService.findById(id);
@@ -473,7 +488,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> getCouponSetById(Long storeId, Long couponSetId) {
-        Store store = storeService.findStoreById(storeId);
+        Store store = getStoreById(storeId);
         CouponSet couponSet = couponSetService.findById(couponSetId);
 
         if (!couponSet.getStore().getId().equals(storeId)) {
@@ -489,7 +504,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public ResponseEntity<Response> removeVouchersCouponsToCart(Long customerId, Long promotionId) {
-        Customer customer = customerService.findCustomerById(customerId);
+        Customer customer = getCustomerById(customerId);
         Cart cart = customer.getCart();
         Promotion promotion = findPromotionById(promotionId);
 
@@ -509,7 +524,7 @@ public class PromotionServiceImpl implements PromotionService {
             cart.removeCoupon((Coupon) promotion);
         }
 
-        customerService.save(customer);
+        customerRepository.save(customer);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Remove promotion from cart successfully")

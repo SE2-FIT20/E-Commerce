@@ -41,6 +41,7 @@ public class CustomerService {
     private final PromotionRepository promotionRepository;
     private final MiniGamePlayingRecordService miniGamePlayingRecordService;
     private final TransactionService transactionService;
+    private final PromotionService promotionService;
     public void save(Customer customer) {
         customerRepository.save(customer);
     }
@@ -513,22 +514,12 @@ public class CustomerService {
         List<Promotion> usable = new ArrayList<>();
         List<Promotion> unUsable = new ArrayList<>();
         for (Promotion promotion : promotions) {
-            if (promotion instanceof Voucher) {
-                usable.add(promotion); // because vouchers can be used for every product
+
+            boolean isUsable = checkIfPromotionUsable(promotion, cart);
+            if (isUsable) {
+                usable.add(promotion);
             } else {
-                Coupon coupon = (Coupon) promotion;
-                boolean productOfStoreInCart = cart.getItems().stream()
-                        .anyMatch(cartItem -> cartItem.getItems()
-                                .stream()
-                                .anyMatch(orderItem -> orderItem.getProduct().getStore().getId().equals(coupon.getStore().getId()
-                        ))
-                        );
-                // because coupon of a store is only usable for products of that store
-                if (productOfStoreInCart) {
-                    usable.add(promotion);
-                } else {
-                    unUsable.add(promotion);
-                }
+                unUsable.add(promotion);
             }
         }
 
@@ -542,6 +533,31 @@ public class CustomerService {
                 .message("Get vouchers and coupons to add to cart successfully")
                 .data(map)
                 .build());
+    }
+
+    private boolean checkIfPromotionUsable(Promotion promotion, Cart cart) {
+
+        try {
+            promotionService.checkIfPromotionAndThrowExceptionIfUsable(promotion);
+            // because vouchers can be used for every product
+            if (promotion instanceof Voucher) {
+                return true;
+            } else {
+                Coupon coupon = (Coupon) promotion;
+                boolean productOfStoreInCart = cart.getItems().stream()
+                        .anyMatch(cartItem -> cartItem.getItems()
+                                .stream()
+                                .anyMatch(orderItem -> orderItem.getProduct().getStore().getId().equals(coupon.getStore().getId()
+                                ))
+                        );
+                // because coupon of a store is only usable for products of that store
+                return productOfStoreInCart;
+            }
+
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 
