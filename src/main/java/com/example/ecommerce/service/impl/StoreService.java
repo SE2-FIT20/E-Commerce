@@ -154,9 +154,23 @@ public class StoreService {
             throw new IllegalStateException("Order does not belong to this store");
         }
 
-        //TODO: check if the update status is valid or not!
-        order.setStatus(request.getStatus());
-        orderService.save(order);
+
+        List<Order.OrderStatus> allowedStatus = List.of(READY_FOR_DELIVERY, CANCELLED_BY_STORE);
+        if (!allowedStatus.contains(request.getStatus())) {
+            throw new IllegalStateException("Store can only update order to READY_FOR_DELIVERY or CANCELLED_BY_STORE");
+        }
+
+        if (request.getStatus().equals(READY_FOR_DELIVERY)) {
+            if (!order.getStatus().equals(PENDING)) {
+                throw new IllegalStateException("You can only update order to READY_FOR_DELIVERY when the order is PENDING");
+            }
+        } else if (request.getStatus().equals(CANCELLED_BY_STORE)) {
+            if (!order.getStatus().equals(PENDING)) {
+                throw new IllegalStateException("You can only update order to CANCELLED_BY_STORE when the order is PENDING");
+            }
+        }
+
+        orderService.updateOrder(request);
         sendNotificationToNotifyNewOrderStatus(request, order);
         return ResponseEntity.ok(Response.builder()
                 .status(200)

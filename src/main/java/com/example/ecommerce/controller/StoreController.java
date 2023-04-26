@@ -313,7 +313,6 @@ public class StoreController {
         return promotionService.updateCouponSet(currentStore.getId(), couponSetId, request);
     }
 
-    //TODO: cancel order
     @GetMapping("/coupon-sets/{couponSetId}")
     public ResponseEntity<Response> getCouponSetById(@PathVariable Long couponSetId) {
         User currentStore = getCurrentStore();

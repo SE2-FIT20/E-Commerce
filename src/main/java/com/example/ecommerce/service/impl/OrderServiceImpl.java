@@ -7,10 +7,7 @@ import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.OrderRepository;
-import com.example.ecommerce.service.service.NotificationService;
-import com.example.ecommerce.service.service.OrderService;
-import com.example.ecommerce.service.service.ProductService;
-import com.example.ecommerce.service.service.UserService;
+import com.example.ecommerce.service.service.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
@@ -22,6 +19,7 @@ import java.util.*;
 
 import static com.example.ecommerce.domain.Order.*;
 import static com.example.ecommerce.domain.Order.OrderStatus.*;
+import static com.example.ecommerce.domain.Transaction.TransactionType.IN;
 
 @AllArgsConstructor
 @Service
@@ -33,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final NotificationService notificationService;
     private final UserService userService;
     private final ProductService productService;
-
+    private final TransactionService transactionService;
     public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
@@ -44,7 +42,6 @@ public class OrderServiceImpl implements OrderService {
     public ResponseEntity<Response> updateOrder(UpdateOrderRequest request) {
         Order order = findOrderById(request.getOrderId());
 
-        //TODO: check if the update status is valid or not!
         order.setStatus(request.getStatus());
         if (request.getStatus().equals(DELIVERED)) {
             handleWhenOrderIsDelivered(order);
@@ -78,13 +75,28 @@ public class OrderServiceImpl implements OrderService {
         }
         productService.saveAll(products);
 
-        // refund the money to customer
-        User customer = userService.findUserById(order.getCustomer().getId());
-        customer.setBalance(customer.getBalance() + order.getTotalPrice());
-        userService.save(customer);
 
+        if (order.getPaymentMethod().equals(PaymentMethod.ONLINE_PAYMENT)) {
+            // refund the money to customer if the order is cancelled and the payment method is online payment
+            createRefundTransaction(order.getCustomer().getId(), order.getTotalPrice());
+            User customer = userService.findUserById(order.getCustomer().getId());
+            customer.setBalance(customer.getBalance() + order.getTotalPrice());
+            userService.save(customer);
+        }
     }
 
+    private void createRefundTransaction(long customerId, double totalPrice) {
+        User customer = userService.findUserById(customerId);
+        String description = "You have received a refund of " + totalPrice + " from order cancellation";
+        Transaction transaction = Transaction.builder()
+                .user(customer)
+                .amount(totalPrice)
+                .transactionType(IN)
+                .description(description)
+                .createdAt(LocalDateTime.now())
+                .build();
+        transactionService.save(transaction);
+    }
     @Transactional
     @Override
     public void handleWhenOrderIsDelivered(Order order) {

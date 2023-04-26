@@ -11,6 +11,7 @@ import com.example.ecommerce.repository.PromotionRepository;
 import com.example.ecommerce.repository.PromotionSetRepository;
 import com.example.ecommerce.repository.VoucherRepository;
 import com.example.ecommerce.service.service.CouponSetService;
+import com.example.ecommerce.service.service.MiniGamePlayingRecordService;
 import com.example.ecommerce.service.service.PromotionService;
 import com.example.ecommerce.service.service.VoucherSetService;
 import jakarta.transaction.Transactional;
@@ -36,7 +37,7 @@ public class PromotionServiceImpl implements PromotionService {
     private final CouponSetService couponSetService;
     private final StoreService storeService;
     private final CustomerService customerService;
-
+    private final MiniGamePlayingRecordService miniGamePlayingRecordService;
 //    private final StoreService storeService;
     @Override
     public ResponseEntity<Response> createVoucherSet(CreatePromotionRequest request) {
@@ -387,14 +388,26 @@ public class PromotionServiceImpl implements PromotionService {
         PromotionSet promotionSet = promotionSetRepository.findById(promotionSetId)
                 .orElseThrow(() -> new NotFoundException("Promotion not found"));
 
+        if (promotionSet.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Promotion is expired");
+        }
+
+        // the customer can only save one voucher per day (through playing the mini game)
+        if (promotionSet instanceof VoucherSet) {
+            boolean checkIfCustomerSavedAVoucherToday = miniGamePlayingRecordService.checkIfCustomerSavedAVoucherToday(customer.getId());
+            if (checkIfCustomerSavedAVoucherToday) {
+                throw new IllegalArgumentException("You has already saved a voucher today");
+            } else {
+                // save the mini game playing record
+                miniGamePlayingRecordService.saveMiniGamePlayingRecord(customer);
+            }
+        }
+
         // get an unused promotion from the promotion set (it can be a voucher or a coupon)
         Promotion unUsedPromotion = promotionSet.getAnUnUsedItem();
         unUsedPromotion.setCustomer(customer);
         promotionRepository.save(unUsedPromotion); // since the promotion is the owner of the relationship, saving it will update the customer's promotion list
 
-//       no need to do this since the promotion is the owner of the relationship
-//        customer.getVouchersAndCoupons().add(unUsedPromotion);
-//        customerService.save(customer);
 
             return ResponseEntity.ok(Response.builder()
                     .status(200)

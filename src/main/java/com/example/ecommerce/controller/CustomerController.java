@@ -8,6 +8,7 @@ import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.impl.CustomerService;
 import com.example.ecommerce.service.service.PromotionService;
+import com.example.ecommerce.service.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -34,6 +35,9 @@ public class CustomerController {
 
     @Autowired
     private PromotionService promotionService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @ApiResponses(
             value = {
@@ -240,6 +244,13 @@ public class CustomerController {
         return customerService.checkEligibleToReview(currentCustomer.getId(), productId);
     }
 
+
+    @GetMapping("/check-eligible-to-play-mini-game")
+    public ResponseEntity<Response> checkEligibleToPlayMiniGame() {
+        User currentCustomer = getCurrentCustomer();
+        return customerService.checkEligibleToPlayMiniGame(currentCustomer.getId());
+    }
+
     @GetMapping("/orders-count")
     public ResponseEntity<Response> getOrders(@RequestParam(required = false) String from,
                                               @RequestParam(required = false) String to) {
@@ -265,7 +276,6 @@ public class CustomerController {
         User currentCustomer = getCurrentCustomer();
         return customerService.countOrders(currentCustomer.getId(), fromDateTime, toDateTime);
     }
-
 
     @GetMapping("/payment-information")
     public ResponseEntity<Response> getPaymentInformation() {
@@ -437,6 +447,20 @@ public class CustomerController {
         return customerService.topUpBalance(currentCustomer.getId(), topUpBalanceRequest);
     }
 
+
+    @GetMapping("/transactions")
+    public ResponseEntity<Response> getAllTransactions(@RequestParam(defaultValue = "0", required = false) Integer page,
+                                                       @RequestParam(defaultValue = "0",  required = false) Integer elementsPerPage,
+                                                       @RequestParam(defaultValue = "ALL",  required = false)  String status,
+                                                       @RequestParam(defaultValue = "createdAt",  required = false) String filter,
+                                                       @RequestParam(defaultValue = "desc",  required = false) String sortBy) {
+        if (elementsPerPage == 0) {
+            elementsPerPage = Integer.parseInt(defaultElementPerPage);
+        }
+
+        User currentCustomer = getCurrentCustomer();
+        return transactionService.getAllTransactions(currentCustomer.getId(), page, elementsPerPage, status, filter, sortBy);
+    }
 
     @Operation (
             summary = "Get information of account"

@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.example.ecommerce.domain.Order.OrderStatus.*;
+import static com.example.ecommerce.domain.Transaction.TransactionType.IN;
+import static com.example.ecommerce.domain.Transaction.TransactionType.OUT;
 import static com.example.ecommerce.dto.request.order.AddToCartRequest.OrderItemDTO;
 import static com.example.ecommerce.utils.Utils.isValidCardNumber;
 
@@ -37,7 +39,8 @@ public class CustomerService {
     private final NotificationService notificationService;
     private final PaymentInformationService paymentInformationService;
     private final PromotionRepository promotionRepository;
-
+    private final MiniGamePlayingRecordService miniGamePlayingRecordService;
+    private final TransactionService transactionService;
     public void save(Customer customer) {
         customerRepository.save(customer);
     }
@@ -118,6 +121,8 @@ public class CustomerService {
                 throw new IllegalStateException("Not enough balance to checkout");
             }
             customer.setBalance(customer.getBalance() - totalAmount);
+
+            createOutTransaction(customer, totalAmount);
         }
 
         // CREATE ORDER
@@ -140,6 +145,18 @@ public class CustomerService {
                     .message("Checkout successfully")
                     .data(null)
                     .build());
+    }
+
+    private void createOutTransaction(Customer customer, double totalAmount) {
+        String description = "You have paid " + totalAmount + " for your order";
+        Transaction transaction = Transaction.builder()
+                .user(customer)
+                .amount(totalAmount)
+                .description(description)
+                .transactionType(OUT)
+                .createdAt(LocalDateTime.now())
+                .build();
+        transactionService.save(transaction);
     }
 
     private void createOrdersByStore(CheckoutRequest request, Customer customer, DeliveryPartner deliveryPartner) {
@@ -233,7 +250,6 @@ public class CustomerService {
         Product product = productService.findProductById(reviewRequest.getProductId());
         List<Order> orders = customer.getOrders();
 
-        // TODO: temporary solution, need to be improved
         for (Order order : orders) {
             if (order.getStatus().equals(DELIVERED)) {
                 List<OrderItem> orderItems = order.getItems();
@@ -376,6 +392,7 @@ public class CustomerService {
         List<Order> orders = customer.getOrders();
 
         boolean existInOrder = orders.stream()
+                .filter(order -> order.getStatus().equals(DELIVERED))
                 .anyMatch(order -> order.getItems()
                         .stream()
                         .anyMatch(orderItem -> orderItem.getProduct().getId().equals(productId))
@@ -400,6 +417,7 @@ public class CustomerService {
             throw new IllegalStateException("Amount must be greater than 0");
         }
 
+        createInTransaction(customer, request.getAmount());
         customer.setBalance(customer.getBalance() + request.getAmount());
         save(customer);
         return ResponseEntity.ok(Response.builder()
@@ -407,6 +425,17 @@ public class CustomerService {
                 .message("Top up balance successfully")
                 .data(null)
                 .build());
+    }
+
+    private void createInTransaction(Customer customer, Double amount) {
+        String message = "Top up " + amount + " VND to your account";
+        Transaction transaction = Transaction.builder()
+                .user(customer)
+                .amount(amount)
+                .description(message)
+                .transactionType(IN)
+                .build();
+        transactionService.save(transaction);
     }
 
     public ResponseEntity<Response> getPaymentInformation(Long id) {
@@ -532,6 +561,21 @@ public class CustomerService {
                 .message("Update order successfully")
                 .data(null)
                 .build());
+
+    }
+
+    public ResponseEntity<Response> checkEligibleToPlayMiniGame(Long id) {
+        Customer customer = findCustomerById(id); // check customer exist
+
+        boolean alreadyPlayedToday = miniGamePlayingRecordService.checkIfCustomerSavedAVoucherToday(customer.getId());
+        Map<String, Boolean> map = Map.of("eligible", !alreadyPlayedToday);
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Check eligible to play mini game successfully")
+                .data(map)
+                .build());
+
 
     }
 }

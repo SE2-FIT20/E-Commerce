@@ -1,10 +1,7 @@
 package com.example.ecommerce.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -20,6 +17,9 @@ public class Voucher extends Promotion {
     @JsonIgnore
     private VoucherSet voucherSet;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private MiniGamePlayingRecord miniGamePlayingRecord;
     @Override
     public double getPercent() {
         return voucherSet.getPercent();
