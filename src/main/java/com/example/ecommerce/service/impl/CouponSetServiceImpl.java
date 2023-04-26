@@ -72,6 +72,6 @@ public class CouponSetServiceImpl implements CouponSetService {
 
     @Override
     public Page<CouponSet> findAllByStoreAndExpiredAtAfter(Store store, LocalDateTime now, Pageable pageable) {
-        return couponSetRepository.findAllByStoreAndExpiredAtAfter(store, now, pageable);
+        return couponSetRepository.findAllByStoreAndExpiredAtAfterOrderByPercentDesc(store, now, pageable);
     }
 }
