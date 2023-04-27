@@ -51,7 +51,7 @@ public class CouponSet extends PromotionSet{
     @Override
     public Promotion getAnUnUsedItem() {
         return coupons.stream()
-                .filter(coupon -> !coupon.isUsed())
+                .filter(coupon -> !coupon.isUsed() && coupon.getCustomer() == null)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No coupon available for this coupon set"));
     }

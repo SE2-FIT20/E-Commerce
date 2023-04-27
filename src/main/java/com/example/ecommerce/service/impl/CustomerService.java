@@ -249,35 +249,51 @@ public class CustomerService {
     public ResponseEntity<Response> createReview(User currentCustomer, CreateReviewRequest reviewRequest) {
         Customer customer = findCustomerById(currentCustomer.getId());
         Product product = productService.findProductById(reviewRequest.getProductId());
-        List<Order> orders = customer.getOrders();
 
+        boolean hasAlreadyReview = reviewService.existsByCustomerAndProduct(customer, product);
+
+        if (hasAlreadyReview) {
+            throw new IllegalStateException("You have already reviewed this product");
+        }
+
+        boolean hasBoughtThisProductSuccessfully = checkBoughtProductSuccessfully(customer, product);
+        if (!hasBoughtThisProductSuccessfully) {
+            throw new IllegalStateException("You need to buy this product before you can review it");
+        }
+
+        Review review = Review.builder()
+                .customer(customer)
+                .product(product)
+                .rating(reviewRequest.getRating())
+                .comment(reviewRequest.getComment())
+                .images(reviewRequest.getImages())
+                .createdAt(LocalDateTime.now())
+                .build();
+        reviewService.save(review);
+        return ResponseEntity.ok(
+                Response.builder()
+                        .status(200)
+                        .message("Create review successfully")
+                        .data(null)
+                        .build());
+
+
+    }
+
+    private boolean checkBoughtProductSuccessfully(Customer customer, Product product) {
+        List<Order> orders = customer.getOrders();
         for (Order order : orders) {
             if (order.getStatus().equals(DELIVERED)) {
                 List<OrderItem> orderItems = order.getItems();
                 for (OrderItem orderItem : orderItems) {
                     if (orderItem.getProduct().equals(new ProductBriefInfo(product))) {
-                        Review review = Review.builder()
-                                .customer(customer)
-                                .product(product)
-                                .rating(reviewRequest.getRating())
-                                .comment(reviewRequest.getComment())
-                                .images(reviewRequest.getImages())
-                                .createdAt(LocalDateTime.now())
-                                .build();
-                        reviewService.save(review);
-                        return ResponseEntity.ok(Response.builder().status(200).message("Create review successfully").data(null).build());
+                        return true;
                     }
                 }
             }
         }
 
-        throw new IllegalStateException("You need to buy this product before you can review it");
-//        return ResponseEntity.ok(Response.builder()
-//                .status(400)
-//                .message("You need to buy this product before you can review it")
-//                .data(null)
-//                .build());
-
+        return false;
     }
 
     public ResponseEntity<Response> updateReview(Long customerId, UpdateReviewRequest updateReviewRequest, Long reviewId) {
@@ -592,6 +608,30 @@ public class CustomerService {
                 .data(map)
                 .build());
 
+
+    }
+
+    public ResponseEntity<Response> getPromotionsInCart(User currentCustomer) {
+        Customer customer = findCustomerById(currentCustomer.getId());
+        Cart cart = customer.getCart();
+
+        Map<String, Promotion> map = new HashMap<>();
+        map.put("voucher", null);
+        map.put("coupon", null);
+
+        for (Promotion promotion : cart.getPromotions()) {
+            if (promotion instanceof Voucher) {
+                map.put("voucher", promotion);
+            } else {
+                map.put("coupon", promotion);
+            }
+        }
+
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Get promotions in cart successfully")
+                .data(map)
+                .build());
 
     }
 }

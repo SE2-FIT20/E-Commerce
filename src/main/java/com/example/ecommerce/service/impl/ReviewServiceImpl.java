@@ -1,5 +1,6 @@
 package com.example.ecommerce.service.impl;
 
+import com.example.ecommerce.domain.Customer;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Review;
 import com.example.ecommerce.domain.User;
@@ -59,6 +60,11 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Page<Review> findAllByProduct(Product product, Pageable pageable) {
         return reviewRepository.findAllByProduct(product, pageable);
+    }
+
+    @Override
+    public boolean existsByCustomerAndProduct(Customer customer, Product product) {
+        return reviewRepository.existsByCustomerAndProduct(customer, product);
     }
 
 }

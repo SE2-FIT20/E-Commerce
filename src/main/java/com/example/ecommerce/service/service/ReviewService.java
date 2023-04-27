@@ -1,5 +1,6 @@
 package com.example.ecommerce.service.service;
 
+import com.example.ecommerce.domain.Customer;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.Review;
 import com.example.ecommerce.domain.User;
@@ -26,4 +27,6 @@ public interface ReviewService {
     Page<Review> findAll(Example<Review> example, Pageable pageable);
 
     Page<Review> findAllByProduct(Product product, Pageable pageable);
+
+    boolean existsByCustomerAndProduct(Customer customer, Product product);
 }

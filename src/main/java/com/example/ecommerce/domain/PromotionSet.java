@@ -58,9 +58,6 @@ public abstract class PromotionSet {
         return removed;
     }
 
-
-
-
     @JsonIgnore
     public abstract Promotion getAnUnUsedItem();
     public String getStatus() {

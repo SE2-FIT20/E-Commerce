@@ -1,5 +1,7 @@
 package com.example.ecommerce.controller;
 
+import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.auth.ChangePasswordRequest;
 import com.example.ecommerce.dto.request.auth.LoginRequest;
 import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.response.Response;
@@ -13,6 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,122 +26,24 @@ public class AuthController {
 
     private final AuthService authService;
 
-
-    @Operation(
-            summary = "Register account",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = RegistrationRequest.class),
-                            examples = @ExampleObject(value = """
-                                        {
-                                        "email": "Hainguyen@gmail.com",
-                                        "password": "123456",
-                                        "name": "Hai Nguyen BuyItAll Store",
-                                        "role": "STORE"
-                                        }
-                                        """
-                            )
-                    )
-            )
-
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Register account successfully!",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = Response.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                        "status": 200,
-                                        "message": "Registration successfully!",
-                                        "data": null
-                                    }
-                                    """)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Wrong username or password",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = Response.class),
-                            examples = @ExampleObject(value = """
-                                    {
-                                        "status": 400,
-                                        "message": "Email already exists",
-                                        "data": null
-                                    }
-                                    """)
-                    )
-            )
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/change-password")
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        User currentUser = getCurrentUser();
+        return authService.changePassword(currentUser,changePasswordRequest);
     }
-    )
+
     @PostMapping("/register")
     public ResponseEntity<Response> register(@RequestBody  RegistrationRequest request) {
         return authService.register(request);
     }
 
-    @Operation(
-            summary = "Login",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = RegistrationRequest.class),
-                            examples = @ExampleObject(value = """
-                                        {
-                                        "email": "Hainguyen@gmail.com",
-                                        "password": "123456"
-                                        }
-                                        """
-                            )
-                    )
-            )
-
-    )
-    @ApiResponses (
-            value = {
-                    @ApiResponse (
-                            responseCode = "200",
-                            description = "Login successfully",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject(value = """
-                                    {
-                                        "status": 200,
-                                        "message": "Login successfully",
-                                        "data": {
-                                            "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJlbWFpbCI6ImN1czNAYy5jb20iLCJpYXQiOjE2NzQ1NTgwMzksImV4cCI6MTY3NTE2MjgzOX0.AJmtO2jLNF1GahDPnbstJwVZCulIGI6_pB-ObbqhVMo",
-                                            "role": "STORE"
-                                        }
-                                    }
-                                    """)
-                            )
-
-                    ),
-                    @ApiResponse (
-                            responseCode = "400",
-                            description = "Wrong username or password",
-                            content = @Content (
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class),
-                                    examples = @ExampleObject ( value ="""
-                                    {
-                                        "status": 400,
-                                        "message": "Wrong username or password",
-                                        "data": null
-                                    }
-                                    """)
-                            )
-                    )
-            }
-    )
-
     @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody LoginRequest logInRequest) {
         return authService.login(logInRequest);
+    }
+
+    public User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

@@ -4,11 +4,13 @@ import com.example.ecommerce.domain.Cart;
 import com.example.ecommerce.domain.Customer;
 import com.example.ecommerce.domain.Store;
 import com.example.ecommerce.domain.User;
+import com.example.ecommerce.dto.request.auth.ChangePasswordRequest;
 import com.example.ecommerce.dto.response.LoginResponse;
 import com.example.ecommerce.dto.request.auth.LoginRequest;
 import com.example.ecommerce.dto.request.auth.RegistrationRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.exception.LoginFailedException;
+import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.exception.RegistrationException;
 import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.service.impl.CustomerService;
@@ -23,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Random;
 
 import static com.example.ecommerce.utils.Utils.generateAvatarLink;
 
@@ -126,6 +127,29 @@ public class AuthServiceImpl implements AuthService {
         }
 
 
+
+    }
+
+    @Override
+    public ResponseEntity<Response> changePassword(User currentUser, ChangePasswordRequest changePasswordRequest) {
+
+        String oldPassword = changePasswordRequest.getOldPassword();
+        String newPassword = changePasswordRequest.getNewPassword();
+
+        if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
+            throw new BadCredentialsException("Wrong old password!");
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(currentUser);
+
+        Response response = Response.builder()
+                .status(200)
+                .message("Change password successfully!")
+                .build();
+
+        return ResponseEntity.ok(response);
 
     }
 }
