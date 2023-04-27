@@ -126,12 +126,18 @@ public class CustomerService {
             createOutTransaction(customer, totalAmount);
         }
 
+
         // CREATE ORDER
         // items in the cart are grouped into group by store
         createOrdersByStore(request, customer, deliveryPartner);
 
         // if customer use promotion, set used to true
         if (!cart.getPromotions().isEmpty()) {
+
+            boolean allPromotionAreApplicable = checkAllPromotionAreApplicable(cart);
+            if (!allPromotionAreApplicable) {
+                throw new IllegalStateException("There is a promotion that is not applicable");
+            }
             cart.getPromotions().forEach(promotion -> {
                 promotion.setUsed(true);
             });
@@ -146,6 +152,19 @@ public class CustomerService {
                     .message("Checkout successfully")
                     .data(null)
                     .build());
+    }
+
+    private boolean checkAllPromotionAreApplicable(Cart cart) {
+        List<Promotion> promotionList = cart.getPromotions();
+
+        for (Promotion promotion : promotionList) {
+            boolean isUsable = checkIfPromotionUsable(promotion, cart);
+            if (!isUsable) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void createOutTransaction(Customer customer, double totalAmount) {
