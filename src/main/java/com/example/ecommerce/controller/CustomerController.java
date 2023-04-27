@@ -58,6 +58,7 @@ public class CustomerController {
         User currentCustomer = getCurrentCustomer();
         return customerService.removeFromCart(currentCustomer,removeFromCartRequest);
     }
+
     @GetMapping("/cart")
     public ResponseEntity<Response> getCartItems() {
         return customerService.getCartItems(getCurrentCustomer());
@@ -67,6 +68,7 @@ public class CustomerController {
     public ResponseEntity<Response> getPromotionsInCart() {
         return customerService.getPromotionsInCart(getCurrentCustomer());
     }
+
     @PostMapping("/checkout")
     public ResponseEntity<Response> checkout(@RequestBody CheckoutRequest request) {
         User currentCustomer = getCurrentCustomer();
@@ -131,10 +133,18 @@ public class CustomerController {
         return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), promotionSetIds);
     }
 
-    @PutMapping("/remove-voucher-coupon-to-cart/{promotionId}")
+    @PutMapping("/remove-voucher-coupon-from-cart/{promotionId}")
     public ResponseEntity<Response> removeVouchersCouponsToCart(@PathVariable Long promotionId) {
         User currentCustomer = getCurrentCustomer();
         return promotionService.removeVouchersCouponsToCart(currentCustomer.getId(), promotionId);
+    }
+
+
+
+    @PutMapping("/remove-all-voucher-coupon-from-cart")
+    public ResponseEntity<Response> removeAllVouchersCouponsToCart() {
+        User currentCustomer = getCurrentCustomer();
+        return promotionService.removeAllVouchersCouponsToCart(currentCustomer.getId());
     }
 
     @GetMapping("/vouchers-coupons-to-add-to-cart")

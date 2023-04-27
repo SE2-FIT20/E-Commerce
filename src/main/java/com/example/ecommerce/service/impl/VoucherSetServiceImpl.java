@@ -18,6 +18,7 @@ import java.util.List;
 import static com.example.ecommerce.utils.Utils.generateAvatarLink;
 
 @Service
+//TODO: handle locked exception
 @AllArgsConstructor
 public class VoucherSetServiceImpl implements VoucherSetService {
     private final VoucherSetRepository voucherSetRepository;

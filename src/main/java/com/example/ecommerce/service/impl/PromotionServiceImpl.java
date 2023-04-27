@@ -548,6 +548,19 @@ public class PromotionServiceImpl implements PromotionService {
                 .build());
     }
 
+    @Override
+    public ResponseEntity<Response> removeAllVouchersCouponsToCart(Long id) {
+        Customer customer = getCustomerById(id);
+        Cart cart = customer.getCart();
+
+        cart.setPromotions(new ArrayList<>());
+        customerRepository.save(customer);
+        return ResponseEntity.ok(Response.builder()
+                .status(200)
+                .message("Remove all promotions from cart successfully")
+                .build());
+    }
+
     private Promotion findPromotionById(Long promotionId) {
         return promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new NotFoundException("Promotion not found"));

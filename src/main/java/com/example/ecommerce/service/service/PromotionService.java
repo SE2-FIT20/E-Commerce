@@ -63,4 +63,5 @@ public interface PromotionService {
 
     ResponseEntity<Response> removeVouchersCouponsToCart(Long customerId, Long promotionId);
 
+    ResponseEntity<Response> removeAllVouchersCouponsToCart(Long id);
 }
