@@ -49,4 +49,8 @@ public class Voucher extends Promotion {
     public String getDescription() {
         return voucherSet.getDescription();
     }
+
+    public String getType() {
+        return "voucher";
+    }
 }

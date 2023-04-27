@@ -25,6 +25,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+//todo: CHANGE PASSWORD
+//TODO: only review once
+//TODO: get promotion is currently on cart
 @RequestMapping("/api/customer")
 public class CustomerController {
 
@@ -214,16 +217,16 @@ public class CustomerController {
         return promotionService.getVouchersCoupons(currentCustomer.getId());
     }
 
-    @PutMapping("/vouchers-coupons")
-    public ResponseEntity<Response> saveVoucherOrCoupon(@RequestBody List<Long> promotionSetIds) {
+    @PutMapping("/vouchers-coupons/{promotionId}")
+    public ResponseEntity<Response> saveVoucherOrCoupon(@PathVariable Long promotionId) {
         User currentCustomer = getCurrentCustomer();
-        return promotionService.saveVoucherOrCoupon(currentCustomer.getId(), promotionSetIds);
+        return promotionService.saveVoucherOrCoupon(currentCustomer.getId(), promotionId);
     }
 
-    @PutMapping("/add-voucher-coupon-to-cart/{promotionId}")
-    public ResponseEntity<Response> addVouchersCouponsToCart(@PathVariable Long promotionId) {
+    @PutMapping("/add-voucher-coupon-to-cart")
+    public ResponseEntity<Response> addVouchersCouponsToCart(@RequestBody List<Long> promotionSetIds) {
         User currentCustomer = getCurrentCustomer();
-        return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), promotionId);
+        return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), promotionSetIds);
     }
 
     @PutMapping("/remove-voucher-coupon-to-cart/{promotionId}")
@@ -440,13 +443,11 @@ public class CustomerController {
         return customerService.updateAccount(currentCustomer.getId(), accountRequest);
     }
 
-
     @PutMapping("/top-up-balance")
     public ResponseEntity<Response> topUpBalance(@RequestBody TopUpBalanceRequest topUpBalanceRequest) {
         User currentCustomer = getCurrentCustomer();
         return customerService.topUpBalance(currentCustomer.getId(), topUpBalanceRequest);
     }
-
 
     @GetMapping("/transactions")
     public ResponseEntity<Response> getAllTransactions(@RequestParam(defaultValue = "0", required = false) Integer page,

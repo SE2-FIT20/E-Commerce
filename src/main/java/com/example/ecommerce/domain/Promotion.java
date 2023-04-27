@@ -26,7 +26,8 @@ public abstract class Promotion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Customer customer;
-
+    @Transient
+    private String type;
     public CustomerBriefInfo getCustomer() {
         if (customer == null) {
             return null;

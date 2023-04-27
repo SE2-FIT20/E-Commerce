@@ -23,7 +23,6 @@ import static com.example.ecommerce.utils.Utils.generateRandomString;
 @DiscriminatorValue("coupon_set")
 public class CouponSet extends PromotionSet{
 
-
     @OneToMany(mappedBy = "couponSet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Coupon> coupons;

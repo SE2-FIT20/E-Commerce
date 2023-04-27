@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -359,6 +360,7 @@ public class PromotionServiceImpl implements PromotionService {
 
         List<VoucherSet> voucherSets = voucherSetService.findAllByExpiredAtAfter(LocalDateTime.now());
 
+        voucherSets.stream().filter(v -> v.getQuantityAvailable() > 0).collect(Collectors.toList());
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Get mini game vouchers successfully")
@@ -389,25 +391,15 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Transactional
     @Override
-    public ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, List<Long> promotionSetId) {
+    public ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, Long promotionSetId) {
         Customer customer = getCustomerById(customerId);
         // the promotion set is either a voucher set or a coupon set
+        PromotionSet promotionSet = promotionSetRepository.findById(promotionSetId)
+                .orElseThrow(() -> new NotFoundException("Promotion set not found"));
 
-        List<PromotionSet> promotionSets = promotionSetRepository.findAllById(promotionSetId);
-        if (promotionSets.isEmpty()) {
-            throw new IllegalArgumentException("Promotion sets not found");
-        }
 
-        if (promotionSets.size() > 2) {
-            throw new IllegalArgumentException("Promotion sets must be less than 2");
-        }
 
-        boolean isOfTheSame = promotionSets.stream().map(PromotionSet::getClass).distinct().count() == 1;
-        if (isOfTheSame) {
-            throw new IllegalArgumentException("Promotion sets must be not of the same type");
-        }
 
-        for (PromotionSet promotionSet : promotionSets) {
             if (promotionSet.getExpiredAt().isBefore(LocalDateTime.now())) {
                 throw new IllegalArgumentException("Promotion is expired");
             }
@@ -427,7 +419,7 @@ public class PromotionServiceImpl implements PromotionService {
             Promotion unUsedPromotion = promotionSet.getAnUnUsedItem();
             unUsedPromotion.setCustomer(customer);
             promotionRepository.save(unUsedPromotion); // since the promotion is the owner of the relationship, saving it will update the customer's promotion list
-        }
+
 
 
 
@@ -439,37 +431,47 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public ResponseEntity<Response> addVouchersCouponsToCart(Long customerId, Long promotionId) {
+    public ResponseEntity<Response> addVouchersCouponsToCart(Long customerId, List<Long> promotionIds) {
         Customer customer = getCustomerById(customerId);
         Cart cart = customer.getCart();
-        Promotion promotion = findPromotionById(promotionId);
+        List<Promotion> promotions = promotionRepository.findAllById(promotionIds);
 
-        if (!promotion.getCustomer().getId().equals(customerId)) {
-            throw new IllegalArgumentException("Promotion does not belong to this customer");
+
+        boolean isOfTheSame = promotions.stream().map(Promotion::getClass).distinct().count() == 1;
+        if (isOfTheSame) {
+            throw new IllegalArgumentException("Cannot add 2 promotion of the same type to cart");
         }
 
-        checkIfPromotionAndThrowExceptionIfUsable(promotion);
+        for (Promotion promotion : promotions) {
 
-        if (promotion instanceof Voucher) {
-            Voucher voucher = (Voucher) promotion;
-            boolean cartAlreadyHasAVoucher = cart.getPromotions().stream().anyMatch(p -> p instanceof Voucher);
-            if (cartAlreadyHasAVoucher) {
-                throw new IllegalArgumentException("Cart already has a voucher!");
+            if (!promotion.getCustomer().getId().equals(customerId)) {
+                throw new IllegalArgumentException("Promotion does not belong to this customer");
             }
-            cart.addVoucher(voucher);
+
+            checkIfPromotionAndThrowExceptionIfUsable(promotion);
+
+            if (promotion instanceof Voucher) {
+                Voucher voucher = (Voucher) promotion;
+                boolean cartAlreadyHasAVoucher = cart.getPromotions().stream().anyMatch(p -> p instanceof Voucher);
+                if (cartAlreadyHasAVoucher) {
+                    throw new IllegalArgumentException("Cart already has a voucher!");
+                }
+                cart.addVoucher(voucher);
 
 
-        } else if (promotion instanceof Coupon) {
-            Coupon coupon = (Coupon) promotion;
-            boolean cartAlreadyHasAPromotion = cart.getPromotions().stream().anyMatch(p -> p instanceof Coupon);
-            if (cartAlreadyHasAPromotion) {
-                throw new IllegalArgumentException("Cart already has a coupon!");
+            } else if (promotion instanceof Coupon) {
+                Coupon coupon = (Coupon) promotion;
+                boolean cartAlreadyHasAPromotion = cart.getPromotions().stream().anyMatch(p -> p instanceof Coupon);
+                if (cartAlreadyHasAPromotion) {
+                    throw new IllegalArgumentException("Cart already has a coupon!");
+                }
+                cart.addCoupon(coupon);
+
             }
-            cart.addCoupon(coupon);
+
+            customerRepository.save(customer);
 
         }
-
-        customerRepository.save(customer);
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Add promotion to cart successfully")

@@ -55,4 +55,8 @@ public class Coupon extends Promotion{
     public String getDescription() {
         return couponSet.getDescription();
     }
+
+    public String getType() {
+        return "coupon";
+    }
 }
