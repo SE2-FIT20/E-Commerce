@@ -581,66 +581,6 @@ public class AdminController {
         return feedbackService.deleteById(id);
     }
 
-//    @Operation(
-//            summary = "Get all promotions",
-//            security = @SecurityRequirement(name = "bearerAuth")
-//
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(responseCode = "200", description = "Get promotion successfully!",
-//                            content = @Content(mediaType = "application/json",
-//                                    schema = @Schema(implementation = Response.class),
-//                                    examples = @ExampleObject(value = """
-//                                            {
-//                                                "status": 200,
-//                                                "message": "Get all promotions successfully",
-//                                                "data": [
-//                                                {
-//                                                    "id" : 1,
-//                                                    "percent" : 12,
-//                                                    "storeId" : 35,
-//                                                    "isGlobal": false
-//                                                },
-//                                                {
-//                                                    "id" : 2,
-//                                                    "percent" : 10,
-//                                                    "storeId" : null,
-//                                                    "isGlobal": true
-//                                                }
-//                                                ]
-//                                            }
-//                                            """)
-//                            )
-//                    ),
-//                    @ApiResponse(responseCode = "400", description = "Get promotion failed!",
-//                            content = @Content(mediaType = "application/json",
-//                                    schema = @Schema(implementation = Response.class),
-//                                    examples = @ExampleObject(value = """
-//                                            {
-//                                                "status": 400,
-//                                                "message": "Get all promotions failed",
-//                                                "data": null
-//                                            }
-//                                            """)
-//                            )
-//                    )
-//            }
-//    )
-//    @GetMapping("/promotions")
-//    public ResponseEntity<Response> getAllVouchers(
-//            @RequestParam(defaultValue = "0", required = false) Integer page,
-//            @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
-//            @RequestParam(defaultValue = "all", required = false) String status,
-//            @RequestParam(defaultValue = "createdAt", required = false) String filter,
-//            @RequestParam(defaultValue = "desc", required = false) String sortBy) {
-//        if (elementsPerPage == 0) {
-//            elementsPerPage = Integer.parseInt(defaultElementPerPage);
-//        }
-//
-//        return promotionService.getAllVouchers(page, elementsPerPage, status, filter, sortBy);
-//    }
-
     @GetMapping("/voucher-sets")
     public ResponseEntity<Response> getAllVoucherSets(@RequestParam(defaultValue = "0", required = false) Integer page,
                                                       @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,

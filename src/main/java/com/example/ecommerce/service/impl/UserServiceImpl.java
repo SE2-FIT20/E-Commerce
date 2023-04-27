@@ -138,7 +138,8 @@ public class UserServiceImpl implements UserService {
         }
 
         ExampleMatcher matcher = ExampleMatcher.matchingAll()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                .withIgnorePaths("balance");
 
         if (!status.equalsIgnoreCase("ALL")) {
             if (status.equalsIgnoreCase("LOCKED")) {

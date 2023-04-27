@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -213,10 +214,10 @@ public class CustomerController {
         return promotionService.getVouchersCoupons(currentCustomer.getId());
     }
 
-    @PutMapping("/vouchers-coupons/{promotionSetId}")
-    public ResponseEntity<Response> saveVoucherOrCoupon(@PathVariable Long promotionSetId) {
+    @PutMapping("/vouchers-coupons")
+    public ResponseEntity<Response> saveVoucherOrCoupon(@RequestBody List<Long> promotionSetIds) {
         User currentCustomer = getCurrentCustomer();
-        return promotionService.saveVoucherOrCoupon(currentCustomer.getId(), promotionSetId);
+        return promotionService.saveVoucherOrCoupon(currentCustomer.getId(), promotionSetIds);
     }
 
     @PutMapping("/add-voucher-coupon-to-cart/{promotionId}")

@@ -172,14 +172,14 @@ public class ProductServiceImpl implements ProductService {
             store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Store not found"));
         }
 
-        if (category != null && !category.equals("all")) {
+        if (category != null && !category.equalsIgnoreCase("all")) {
             categoryEnum = Category.valueOf(category.toUpperCase());;
         }
 
         Page<Product> page;
 
-        if (status.toUpperCase().equals("ALL")
-            || status.toUpperCase().equals("SOLD_OUT")
+        if (status.equalsIgnoreCase("ALL")
+            || status.equalsIgnoreCase("SOLD_OUT")
         ) {
             Product product = new Product();
 
@@ -191,13 +191,14 @@ public class ProductServiceImpl implements ProductService {
                 product.setStore(store);
             }
 
-            if (status.toUpperCase().equals("SOLD_OUT")){
+            if (status.equalsIgnoreCase("SOLD_OUT")){
                 product.setQuantity(0);
             }
 
             ExampleMatcher matcher = ExampleMatcher
                     .matching()
-                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                    .withIgnorePaths("sold");
 
             Example<Product> example = Example.of(product, matcher);
             page = productRepository.findAll(example, pageable);

@@ -389,31 +389,46 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Transactional
     @Override
-    public ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, Long promotionSetId) {
+    public ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, List<Long> promotionSetId) {
         Customer customer = getCustomerById(customerId);
         // the promotion set is either a voucher set or a coupon set
-        PromotionSet promotionSet = promotionSetRepository.findById(promotionSetId)
-                .orElseThrow(() -> new NotFoundException("Promotion not found"));
 
-        if (promotionSet.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Promotion is expired");
+        List<PromotionSet> promotionSets = promotionSetRepository.findAllById(promotionSetId);
+        if (promotionSets.isEmpty()) {
+            throw new IllegalArgumentException("Promotion sets not found");
         }
 
-        // the customer can only save one voucher per day (through playing the mini game)
-        if (promotionSet instanceof VoucherSet) {
-            boolean checkIfCustomerSavedAVoucherToday = miniGamePlayingRecordService.checkIfCustomerSavedAVoucherToday(customer.getId());
-            if (checkIfCustomerSavedAVoucherToday) {
-                throw new IllegalArgumentException("You has already saved a voucher today");
-            } else {
-                // save the mini game playing record
-                miniGamePlayingRecordService.saveMiniGamePlayingRecord(customer);
+        if (promotionSets.size() > 2) {
+            throw new IllegalArgumentException("Promotion sets must be less than 2");
+        }
+
+        boolean isOfTheSame = promotionSets.stream().map(PromotionSet::getClass).distinct().count() == 1;
+        if (isOfTheSame) {
+            throw new IllegalArgumentException("Promotion sets must be not of the same type");
+        }
+
+        for (PromotionSet promotionSet : promotionSets) {
+            if (promotionSet.getExpiredAt().isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("Promotion is expired");
             }
+
+            // the customer can only save one voucher per day (through playing the mini game)
+            if (promotionSet instanceof VoucherSet) {
+                boolean checkIfCustomerSavedAVoucherToday = miniGamePlayingRecordService.checkIfCustomerSavedAVoucherToday(customer.getId());
+                if (checkIfCustomerSavedAVoucherToday) {
+                    throw new IllegalArgumentException("You has already saved a voucher today");
+                } else {
+                    // save the mini game playing record
+                    miniGamePlayingRecordService.saveMiniGamePlayingRecord(customer);
+                }
+            }
+
+            // get an unused promotion from the promotion set (it can be a voucher or a coupon)
+            Promotion unUsedPromotion = promotionSet.getAnUnUsedItem();
+            unUsedPromotion.setCustomer(customer);
+            promotionRepository.save(unUsedPromotion); // since the promotion is the owner of the relationship, saving it will update the customer's promotion list
         }
 
-        // get an unused promotion from the promotion set (it can be a voucher or a coupon)
-        Promotion unUsedPromotion = promotionSet.getAnUnUsedItem();
-        unUsedPromotion.setCustomer(customer);
-        promotionRepository.save(unUsedPromotion); // since the promotion is the owner of the relationship, saving it will update the customer's promotion list
 
 
             return ResponseEntity.ok(Response.builder()

@@ -6,6 +6,8 @@ import com.example.ecommerce.dto.request.promotion.UpdatePromotionRequest;
 import com.example.ecommerce.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface PromotionService {
 
     ResponseEntity<Response> createVoucherSet(CreatePromotionRequest request);
@@ -51,7 +53,7 @@ public interface PromotionService {
 
     ResponseEntity<Response> getCouponSetsByStore(Long storeId, Integer page, Integer elementsPerPage, String filter, String sortBy);
 
-    ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, Long promotionSetId);
+    ResponseEntity<Response> saveVoucherOrCoupon(Long customerId, List<Long> promotionSetId);
 
     ResponseEntity<Response> addVouchersCouponsToCart(Long customerId, Long promotionId);
 
