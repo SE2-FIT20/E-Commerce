@@ -5,6 +5,7 @@ import com.example.ecommerce.dto.request.*;
 import com.example.ecommerce.dto.request.customer.UpdateCustomerRequest;
 import com.example.ecommerce.dto.request.order.AddToCartRequest;
 import com.example.ecommerce.dto.request.order.UpdateOrderRequest;
+import com.example.ecommerce.dto.request.promotion.AddPromotionToCartRequest;
 import com.example.ecommerce.dto.response.Response;
 import com.example.ecommerce.service.impl.CustomerService;
 import com.example.ecommerce.service.service.PromotionService;
@@ -128,9 +129,9 @@ public class CustomerController {
     }
 
     @PutMapping("/add-voucher-coupon-to-cart")
-    public ResponseEntity<Response> addVouchersCouponsToCart(@RequestBody List<Long> promotionSetIds) {
+    public ResponseEntity<Response> addVouchersCouponsToCart(@RequestBody AddPromotionToCartRequest request) {
         User currentCustomer = getCurrentCustomer();
-        return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), promotionSetIds);
+        return promotionService.addVouchersCouponsToCart(currentCustomer.getId(), request.getPromotionIds());
     }
 
     @PutMapping("/remove-voucher-coupon-from-cart/{promotionId}")
