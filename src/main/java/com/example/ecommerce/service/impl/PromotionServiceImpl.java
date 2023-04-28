@@ -444,6 +444,11 @@ public class PromotionServiceImpl implements PromotionService {
 
         for (Promotion promotion : promotions) {
 
+            boolean alreadyInCart = cart.getPromotions().stream().anyMatch(p -> p.getId().equals(promotion.getId()));
+
+            if (alreadyInCart) {
+                continue; // skip this promotion
+            }
             if (!promotion.getCustomer().getId().equals(customerId)) {
                 throw new IllegalArgumentException("Promotion does not belong to this customer");
             }

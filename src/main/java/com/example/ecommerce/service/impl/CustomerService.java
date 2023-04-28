@@ -545,9 +545,11 @@ public class CustomerService {
         Customer customer = findCustomerById(id);
         Cart cart = customer.getCart();
         List<Promotion> promotions = customer.getVouchersAndCoupons();
+        promotions.removeIf(promotion -> cart.getPromotions().stream().anyMatch(p -> p.getId().equals(promotion.getId()))); // ignore promotions that already in cart
 
         List<Promotion> usable = new ArrayList<>();
         List<Promotion> unUsable = new ArrayList<>();
+
         for (Promotion promotion : promotions) {
 
             boolean isUsable = checkIfPromotionUsable(promotion, cart);
