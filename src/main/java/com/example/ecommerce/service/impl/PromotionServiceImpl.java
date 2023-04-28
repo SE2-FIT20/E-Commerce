@@ -437,7 +437,7 @@ public class PromotionServiceImpl implements PromotionService {
         List<Promotion> promotions = promotionRepository.findAllById(promotionIds);
 
 
-        boolean isOfTheSame = promotions.stream().map(Promotion::getClass).distinct().count() == 1;
+        boolean isOfTheSame = promotions.size() >= 2 && promotions.stream().map(Promotion::getClass).distinct().count() == 1;
         if (isOfTheSame) {
             throw new IllegalArgumentException("Cannot add 2 promotion of the same type to cart");
         }
@@ -469,9 +469,11 @@ public class PromotionServiceImpl implements PromotionService {
 
             }
 
-            customerRepository.save(customer);
 
         }
+
+        customerRepository.save(customer);
+
         return ResponseEntity.ok(Response.builder()
                 .status(200)
                 .message("Add promotion to cart successfully")
@@ -483,7 +485,7 @@ public class PromotionServiceImpl implements PromotionService {
         }
 
 
-        if (promotion.getStartAt().isBefore(LocalDateTime.now())) {
+        if (promotion.getStartAt().isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("Promotion has not started yet!");
         }
 
