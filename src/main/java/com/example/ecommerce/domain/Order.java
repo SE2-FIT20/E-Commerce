@@ -79,6 +79,7 @@ public class Order {
     private LocalDateTime createdAt;
     private LocalDateTime deliveredAt;
     private String destinationAddress;
+
     private Long totalPrice;
     @Transient
     private Double shippingFee;

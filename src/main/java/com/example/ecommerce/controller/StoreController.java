@@ -228,67 +228,14 @@ public class StoreController {
     }
 
 
-    @Operation(summary = "update order ")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Update order successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 200,
-                "message": "Update order successfully",
-                "data": [
-                   {
-                   orderId: 1,
-                   status: "Pending"
-                   }
-                   ]
-            }
-            """))), @ApiResponse(responseCode = "400", description = "Update order failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 400,
-                "message": "Update order failed",
-                "data": null
-            }
-            """)))})
+
     @PutMapping("/update-status-order")
     public ResponseEntity<Response> updateOrder(@RequestBody UpdateOrderRequest request) {
         User currentStore = getCurrentStore();
         return storeService.updateOrder(currentStore.getId(), request);
     }
 
-    @Operation(summary = "get promotion")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get promotion successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 200,
-                "message": "Get promotion successfully",
-                "data": [
-                    {
-                        "id": 1,
-                        "name": "Promotion 1",
-                        "percent": 10,
-                        "storeId": null,
-                        "isGlobal": true,
-                    },
-                     {
-                        "id": 2,
-                        "name": "Promotion 2",
-                        "percent": 52,
-                        "storeId": 42,
-                        "isGlobal": false,
-                    }
-                     {
-                        "id": 3,
-                        "name": "Promotion 3",
-                        "percent": 50,
-                        "storeId": null,
-                        "isGlobal": true,
-                    }
-                ]
-            }
-            """))), @ApiResponse(responseCode = "400", description = "Get promotion failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 400,
-                "message": "Get promotion failed",
-                "data": null
-            }
-            """)))})
+
     @GetMapping("/coupon-sets")
     public ResponseEntity<Response> getAllCouponSets(@RequestParam(defaultValue = "0", required = false) Integer page,
                                                      @RequestParam(defaultValue = "0", required = false) Integer elementsPerPage,
@@ -355,26 +302,7 @@ public class StoreController {
         User currentStore = getCurrentStore();
         return promotionService.deleteCouponById(currentStore.getId(), couponId);
     }
-    @Operation(summary = "Get store information")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Get store information successfully!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 200,
-                "message": "Get store account successfully",
-                "data": {
-                    "id": 10,
-                    "name": "Store 1",
-                    "email": "ekaopsdk2gmail.com",
-                    "address": "Hanoi",
-                    "description": "Our store sells everything!"
-                }
-            }
-            """))), @ApiResponse(responseCode = "400", description = "Get store information failed!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(value = """
-            {
-                "status": 400,
-                "message": "Get store information failed",
-                "data": null
-            }
-            """)))})
+
     @GetMapping("/account")
     public ResponseEntity<Response> getAccountInformation() {
         User currentStore = getCurrentStore();
